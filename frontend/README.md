@@ -1,16 +1,30 @@
-# frontend
+# Nook Frontend
 
-A new Flutter project.
+Flutter client for Nook, targeting Android and web.
 
-## Getting Started
+This is currently the generated Flutter scaffold. Product UI, authentication, upload, gallery, collections, and search flows still need to be implemented.
 
-This project is a starting point for a Flutter application.
+## Role
 
-A few resources to get you started if this is your first Flutter project:
+- Provide the media-library interface
+- Support sign-in
+- Upload media through the backend/API layer
+- Display the user's gallery and collections
+- Support search, filtering, and original-file downloads over time
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Development
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+From this directory:
+
+```sh
+flutter pub get
+flutter run
+```
+
+For web:
+
+```sh
+flutter run -d chrome
+```
+
+See `../PROJECT_CONTEXT.md` for product and architecture context.
