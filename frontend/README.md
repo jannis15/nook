@@ -2,7 +2,7 @@
 
 Flutter client for Nook, targeting Android and web.
 
-This is currently the generated Flutter scaffold. Product UI, authentication, upload, gallery, collections, and search flows still need to be implemented.
+This is currently an initial Flutter shell. Authentication, upload, gallery, collections, and search flows still need to be implemented.
 
 ## Role
 
@@ -14,17 +14,14 @@ This is currently the generated Flutter scaffold. Product UI, authentication, up
 
 ## Development
 
-From this directory:
+This project uses FVM and pins Flutter in `.fvmrc`.
 
-```sh
-flutter pub get
-flutter run
-```
+Use the shared IntelliJ run configuration:
 
-For web:
+- `frontend/.idea/runConfigurations/main_dart.xml`
 
-```sh
-flutter run -d chrome
-```
+It launches `lib/main.dart` on Chrome with web port `3000`.
+
+If the SDK or packages are missing, run `fvm install` and `fvm flutter pub get` from this directory.
 
 See `../PROJECT_CONTEXT.md` for product and architecture context.
