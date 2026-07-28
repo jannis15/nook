@@ -1,0 +1,39 @@
+meta {
+  name: Local Sign In
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{supabaseUrl}}/auth/v1/token?grant_type=password
+  body: json
+  auth: none
+}
+
+headers {
+  apikey: {{supabasePublishableKey}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "email": "{{testEmail}}",
+    "password": "{{testPassword}}"
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+
+  if (body.access_token) {
+    bru.setEnvVar("accessToken", body.access_token);
+  }
+}
+
+tests {
+  test("returns an access token", function() {
+    const body = res.getBody();
+    expect(res.status).to.equal(200);
+    expect(body.access_token).to.be.a("string");
+  });
+}

@@ -2,14 +2,14 @@
 
 Flutter client for Nook, targeting Android and web.
 
-This is currently an initial Flutter shell. Authentication, upload, gallery, collections, and search flows still need to be implemented.
+This is currently an initial Flutter shell. Authentication/profile wiring is the near-term focus; upload, gallery, collections, and search are future product work.
 
 ## Role
 
 - Provide the media-library interface
 - Support sign-in
-- Upload media through the backend/API layer
-- Display the user's gallery and collections
+- Eventually upload media through the backend/API layer
+- Eventually display the user's gallery and collections
 - Support search, filtering, and original-file downloads over time
 
 ## Development

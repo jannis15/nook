@@ -10,9 +10,9 @@ Nook is built around a simple frustration: personal media is often scattered acr
 
 Nook should not become a social network, enterprise asset manager, or bloated all-in-one cloud platform. It should solve real personal media-library problems in small, useful increments.
 
-## First Milestone
+## First Product Milestone
 
-The first meaningful version should allow a user to sign in, upload one photo, view it in a gallery, then sign in on another device and see the same photo there.
+The first meaningful product version should allow a user to sign in, upload one photo, view it in a gallery, then sign in on another device and see the same photo there.
 
 That proves the core value before adding indexing, richer organization, background processing, or storage migration.
 
@@ -24,9 +24,9 @@ That proves the core value before adding indexing, richer organization, backgrou
 - Privacy-conscious: storage location and processing behavior should be understandable.
 - Useful before complete: each version should solve a real problem before expanding scope.
 
-## Initial Scope
+## Product Scope Direction
 
-The initial implementation should include:
+The product direction includes:
 
 - Authentication
 - Photo and video upload
@@ -38,7 +38,7 @@ The initial implementation should include:
 - Simple duplicate detection using content hashes
 - Original file downloads
 
-The initial implementation should avoid:
+The product direction should avoid:
 
 - Advanced sharing
 - Social feeds or comments
@@ -166,7 +166,8 @@ tag_id
 
 ## Implementation Notes
 
-- Keep the first version small and end-to-end before deepening individual subsystems.
+- Keep the first product version small and end-to-end before deepening individual subsystems.
+- The current implementation phase is backend/frontend foundation work: local Supabase, authentication wiring, profile APIs, tests, and development workflow. Media upload, gallery, collections, tags, and search are future product work, not immediate implementation requirements.
 - Prefer simple, explicit data ownership rules. Every user-owned row should be scoped by `owner_id` directly or indirectly.
 - Use Row Level Security for database access boundaries.
 - Keep storage paths and database metadata aligned so files remain traceable and exportable.

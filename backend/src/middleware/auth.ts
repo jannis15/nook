@@ -1,0 +1,69 @@
+import { createMiddleware } from 'hono/factory';
+import { apiError } from '../lib/errors.js';
+import { logger } from '../lib/logger.js';
+import type { RequestVariables } from './request-id.js';
+import { createSupabaseForToken, type Supabase } from '../lib/supabase.js';
+
+export type AuthVariables = {
+  accessToken: string;
+  supabase: Supabase;
+  userId: string;
+};
+
+export const requireAuth = createMiddleware<{
+  Variables: AuthVariables & RequestVariables;
+}>(async (c, next) => {
+  const authorization = c.req.header('authorization');
+  const bearerMatch = authorization?.match(/^Bearer[ \t]+(.+)$/i);
+  const accessToken = bearerMatch?.[1]?.trim();
+  const requestId = c.get('requestId');
+
+  if (!accessToken) {
+    logger.debug(
+      { path: new URL(c.req.url).pathname, requestId },
+      'Auth failed: missing bearer token',
+    );
+    return c.json(
+      apiError('missing_bearer_token', 'Missing bearer token'),
+      401,
+    );
+  }
+
+  let supabase: Supabase;
+  let userId: string;
+
+  try {
+    supabase = createSupabaseForToken(accessToken);
+    const { data, error } = await supabase.auth.getUser(accessToken);
+
+    if (error || !data.user) {
+      logger.debug(
+        { path: new URL(c.req.url).pathname, requestId },
+        'Auth failed: invalid bearer token',
+      );
+      return c.json(
+        apiError('invalid_bearer_token', 'Invalid bearer token'),
+        401,
+      );
+    }
+
+    userId = data.user.id;
+  } catch (error) {
+    logger.error(
+      { error, path: new URL(c.req.url).pathname, requestId },
+      'Auth failed: bearer token verification unavailable',
+    );
+    return c.json(
+      apiError('internal_server_error', 'Unable to verify bearer token'),
+      500,
+    );
+  }
+
+  c.set('accessToken', accessToken);
+  c.set('supabase', supabase);
+  c.set('userId', userId);
+
+  logger.debug({ requestId, userId }, 'Auth succeeded');
+
+  await next();
+});

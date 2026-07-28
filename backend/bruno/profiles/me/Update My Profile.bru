@@ -1,0 +1,28 @@
+meta {
+  name: Update My Profile
+  type: http
+  seq: 4
+}
+
+patch {
+  url: {{baseUrl}}/profiles/me
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "display_name": "Manual Test User"
+  }
+}
+
+tests {
+  test("returns 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("updates display_name", function() {
+    const body = res.getBody();
+    expect(body.profile.display_name).to.equal("Manual Test User");
+  });
+}

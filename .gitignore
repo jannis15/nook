@@ -6,9 +6,15 @@ dist/
 build/
 coverage/
 
+# Generated TypeScript config output
+**/vitest.config.js
+**/vitest.config.d.ts
+**/vitest.config.*.map
+
 # Environment files
 .env
 .env.*
+.env.local
 !.env.example
 
 # Logs
@@ -18,8 +24,18 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Supabase local CLI state
+backend/supabase/supabase/
+backend/supabase/.temp/
+backend/supabase/.branches/
+
 # OS/editor
 .DS_Store
 Thumbs.db
 .idea/
+!frontend/.idea/
+frontend/.idea/*
+!frontend/.idea/runConfigurations/
+frontend/.idea/runConfigurations/*
+!frontend/.idea/runConfigurations/main_dart.xml
 *.iml

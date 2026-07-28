@@ -1,19 +1,44 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node scripts/dev.mjs",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:integration": "node scripts/test-integration.mjs",
+    "db:types": "npx supabase gen types typescript --local > src/db/types.ts",
+    "supabase:start": "cd supabase && npx supabase start",
+    "supabase:ensure": "npm run supabase:status || npm run supabase:start",
+    "supabase:stop": "cd supabase && npx supabase stop",
+    "supabase:status": "cd supabase && npx supabase status",
+    "db:reset": "cd supabase && npx supabase db reset"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "hono": "^4.12.32"
+    "@hono/node-server": "^2.0.12",
+    "@hono/swagger-ui": "^0.6.1",
+    "@hono/zod-openapi": "^1.5.1",
+    "@supabase/supabase-js": "^2.111.0",
+    "dotenv": "^17.4.2",
+    "hono": "^4.12.32",
+    "pino": "^10.3.1",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.6",
     "@types/node": "^26.1.2",
-    "typescript": "^7.0.2"
+    "tsx": "^4.23.1",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.10"
   }
 }

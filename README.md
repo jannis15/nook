@@ -4,11 +4,11 @@
 
 Nook is a privacy-conscious media library for organizing and accessing personal photos and videos across devices. It is built around ownership, portability, thoughtful design, and the freedom to evolve without being tied permanently to one provider.
 
-The project is in initial setup. The repository currently contains documentation and starter scaffolds, not real product implementation.
+The project is in initial setup. The repository currently contains the early backend/frontend foundation, not the full media-library product implementation.
 
 ## Direction
 
-Nook starts with one practical goal: sign in, upload a photo, view it in a gallery, and access it from another device. That proves the core value before adding richer organization, indexing, processing, or storage migration.
+Nook starts with one practical product goal: sign in, upload a photo, view it in a gallery, and access it from another device. The current implementation is intentionally earlier than that: it is establishing local Supabase, authentication/profile APIs, tests, and development workflow before media upload work begins.
 
 The intended stack is:
 
@@ -22,10 +22,18 @@ The intended stack is:
 ```text
 .
 ├── backend/              # TypeScript/Hono backend scaffold
+│   └── supabase/         # Local Supabase config and migrations
 ├── frontend/             # Flutter app scaffold for Android and web
 ├── PROJECT_CONTEXT.md    # Product, architecture, and data-model context
 └── README.md             # Project overview
 ```
+
+## Development
+
+Use the project-specific READMEs for setup and local development commands:
+
+- `backend/README.md` for backend dependencies, local Supabase, and database commands
+- `frontend/README.md` for Flutter/FVM setup and running the app
 
 ## Context
 

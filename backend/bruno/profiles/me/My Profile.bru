@@ -1,0 +1,22 @@
+meta {
+  name: My Profile
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/profiles/me
+  body: none
+  auth: inherit
+}
+
+tests {
+  test("returns 200", function() {
+    expect(res.status).to.equal(200);
+  });
+
+  test("returns the signed-in profile", function() {
+    const body = res.getBody();
+    expect(body.profile.id).to.equal("00000000-0000-0000-0000-000000000001");
+  });
+}
