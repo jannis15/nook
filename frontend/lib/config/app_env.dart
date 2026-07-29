@@ -1,16 +1,18 @@
-// ignore_for_file: const_eval_throws_exception
-
 class AppEnv {
   const AppEnv._();
 
-  static const requiredDefines = [
-    _RequiredDefine('API_BASE_URL', bool.hasEnvironment('API_BASE_URL')),
-    _RequiredDefine('SUPABASE_URL', bool.hasEnvironment('SUPABASE_URL')),
-    _RequiredDefine(
-      'SUPABASE_PUBLISHABLE_KEY',
-      bool.hasEnvironment('SUPABASE_PUBLISHABLE_KEY'),
-    ),
-  ];
+  static void validateRequiredDefines() {
+    final missing = [
+      if (!const bool.hasEnvironment('API_BASE_URL')) 'API_BASE_URL',
+      if (!const bool.hasEnvironment('SUPABASE_URL')) 'SUPABASE_URL',
+      if (!const bool.hasEnvironment('SUPABASE_PUBLISHABLE_KEY'))
+        'SUPABASE_PUBLISHABLE_KEY',
+    ];
+
+    if (missing.isNotEmpty) {
+      throw StateError('Missing required dart defines: ${missing.join(', ')}');
+    }
+  }
 
   static const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
 
@@ -19,12 +21,4 @@ class AppEnv {
   static const supabasePublishableKey = String.fromEnvironment(
     'SUPABASE_PUBLISHABLE_KEY',
   );
-}
-
-class _RequiredDefine {
-  const _RequiredDefine(this.name, this.exists)
-    : assert(exists, 'Missing required dart define');
-
-  final String name;
-  final bool exists;
 }

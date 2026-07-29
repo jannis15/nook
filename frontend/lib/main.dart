@@ -11,12 +11,10 @@ import 'package:nook/presentation/l10n/app_localizations_context.dart';
 import 'package:nook/presentation/l10n/generated/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-const _requiredEnv = AppEnv.requiredDefines;
-
 Future<void> main() async {
-  _requiredEnv;
   WidgetsFlutterBinding.ensureInitialized();
   usePathUrlStrategy();
+  AppEnv.validateRequiredDefines();
 
   await Supabase.initialize(
     url: AppEnv.supabaseUrl,
