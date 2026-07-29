@@ -15,6 +15,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   flutter_localizations:
     sdk: flutter
+  flutter_svg: ^2.2.3
   flutter_web_plugins:
     sdk: flutter
   freezed_annotation: ^3.1.0
@@ -33,3 +34,15 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
+  assets:
+    - assets/brand/tanuki-button-icon.svg
+  fonts:
+    - family: DM Sans
+      fonts:
+        - asset: "assets/fonts/DMSans-VariableFont_opsz,wght.ttf"
+    - family: Fraunces
+      fonts:
+        - asset: "assets/fonts/Fraunces-Bold.ttf"
+          weight: 700
+        - asset: "assets/fonts/Fraunces-ExtraBold.ttf"
+          weight: 800

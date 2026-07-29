@@ -3,6 +3,7 @@ import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nook/domain/auth/repositories/auth_repository.dart';
 import 'package:nook/domain/auth/use_cases/login_use_case.dart';
 import 'package:nook/presentation/auth/login/login_cubit.dart';
@@ -10,6 +11,7 @@ import 'package:nook/presentation/auth/login/login_error_localizations.dart';
 import 'package:nook/presentation/auth/login/login_presentation_event.dart';
 import 'package:nook/presentation/auth/login/login_state.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
+import 'package:nook/presentation/notifications/app_snack_bar.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -22,9 +24,7 @@ class LoginPage extends StatelessWidget {
           LoginCubit(login: LoginUseCase(context.read<AuthRepository>())),
       child: BlocPresentationListener<LoginCubit, LoginPresentationEvent>(
         listener: (context, event) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(event.localized(context.l10n))),
-          );
+          showAppSnackBar(context, event.localized(context.l10n));
         },
         child: const _LoginView(),
       ),
@@ -114,7 +114,7 @@ class _LoginView extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 24),
-                          FilledButton(
+                          FilledButton.icon(
                             onPressed: state.isSubmitting
                                 ? null
                                 : () async {
@@ -125,7 +125,10 @@ class _LoginView extends StatelessWidget {
                                       TextInput.finishAutofillContext();
                                     }
                                   },
-                            child: state.isSubmitting
+                            icon: state.isSubmitting
+                                ? const SizedBox.shrink()
+                                : const _TanukiButtonIcon(),
+                            label: state.isSubmitting
                                 ? const SizedBox.square(
                                     dimension: 20,
                                     child: CircularProgressIndicator(
@@ -144,6 +147,22 @@ class _LoginView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class _TanukiButtonIcon extends StatelessWidget {
+  const _TanukiButtonIcon();
+
+  @override
+  Widget build(BuildContext context) {
+    final color = IconTheme.of(context).color ?? Colors.white;
+
+    return SvgPicture.asset(
+      'assets/brand/tanuki-button-icon.svg',
+      width: 20,
+      height: 20,
+      colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
     );
   }
 }

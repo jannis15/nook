@@ -18,21 +18,98 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Flutter client for Nook.">
+  <meta name="theme-color" content="#8F7357">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="frontend">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Nook">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>frontend</title>
+  <title>Nook</title>
   <link rel="manifest" href="manifest.json">
+  <style>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #F6F1E8;
+    }
+
+    flt-glass-pane,
+    flutter-view,
+    flt-scene-host,
+    canvas {
+      background: #F6F1E8 !important;
+    }
+
+    flt-progress-bar,
+    .flutter-loader,
+    .loading,
+    progress {
+      display: none !important;
+    }
+
+    .app-loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #F6F1E8;
+    }
+
+    .app-loading img {
+      width: 140px;
+      height: 140px;
+    }
+
+    .app-loading-progress {
+      position: relative;
+      width: 96px;
+      height: 4px;
+      margin-top: 18px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #D9C8B4;
+    }
+
+    .app-loading-progress::after {
+      position: absolute;
+      inset: 0;
+      width: 42%;
+      border-radius: inherit;
+      background: #8F7357;
+      content: '';
+      animation: app-loading-progress 1.25s ease-in-out infinite;
+    }
+
+    @keyframes app-loading-progress {
+      0% {
+        transform: translateX(-120%);
+      }
+
+      100% {
+        transform: translateX(260%);
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="app-loading" id="app-loading" aria-label="Loading Nook">
+    <img src="icons/Splash-280.png" alt="">
+    <div class="app-loading-progress" aria-hidden="true"></div>
+  </div>
+  <script>
+    window.addEventListener('flutter-first-frame', () => {
+      document.getElementById('app-loading')?.remove();
+    });
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
