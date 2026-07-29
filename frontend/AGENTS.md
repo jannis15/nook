@@ -1,4 +1,6 @@
 - Keep Flutter code organized into `data`, `domain`, and `presentation` layers.
+- Group feature-specific code directly inside each layer, for example `presentation/auth`, rather than adding another `features` folder.
 - Treat pages and localization files as presentation concerns.
 - Group localization keys by feature prefix, for example `loginTitle` and `loginSignInButton`.
 - Keep app-wide localization keys prefixed with `app`, for example `appTitle`.
+- This project uses FVM. Run Flutter and Dart commands through `fvm`, for example `fvm flutter analyze`.

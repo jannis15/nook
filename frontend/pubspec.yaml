@@ -9,10 +9,13 @@ environment:
 
 dependencies:
   auto_route: ^11.1.0
+  bloc_presentation: ^1.1.2+3
   flutter:
     sdk: flutter
+  flutter_bloc: ^9.1.1
   flutter_localizations:
     sdk: flutter
+  freezed_annotation: ^3.1.0
   intl: ^0.20.2
 
 dev_dependencies:
@@ -21,6 +24,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
+  freezed: ^3.2.5
 
 flutter:
   generate: true

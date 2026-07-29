@@ -118,11 +118,35 @@ abstract class AppLocalizations {
   /// **'Email'**
   String get loginEmailLabel;
 
+  /// No description provided for @loginEmailRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email.'**
+  String get loginEmailRequiredError;
+
+  /// No description provided for @loginEmailInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get loginEmailInvalidError;
+
   /// No description provided for @loginPasswordLabel.
   ///
   /// In en, this message translates to:
   /// **'Password'**
   String get loginPasswordLabel;
+
+  /// No description provided for @loginPasswordRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password.'**
+  String get loginPasswordRequiredError;
+
+  /// No description provided for @loginSubmissionFailedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your login details.'**
+  String get loginSubmissionFailedError;
 
   /// No description provided for @loginSignInButton.
   ///

@@ -21,7 +21,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginEmailLabel => 'Email';
 
   @override
+  String get loginEmailRequiredError => 'Enter your email.';
+
+  @override
+  String get loginEmailInvalidError => 'Enter a valid email address.';
+
+  @override
   String get loginPasswordLabel => 'Password';
+
+  @override
+  String get loginPasswordRequiredError => 'Enter your password.';
+
+  @override
+  String get loginSubmissionFailedError => 'Check your login details.';
 
   @override
   String get loginSignInButton => 'Sign in';

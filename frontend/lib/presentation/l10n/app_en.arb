@@ -4,6 +4,10 @@
   "loginTitle": "Nook",
   "loginSubtitle": "Sign in to your personal media library.",
   "loginEmailLabel": "Email",
+  "loginEmailRequiredError": "Enter your email.",
+  "loginEmailInvalidError": "Enter a valid email address.",
   "loginPasswordLabel": "Password",
+  "loginPasswordRequiredError": "Enter your password.",
+  "loginSubmissionFailedError": "Check your login details.",
   "loginSignInButton": "Sign in"
 }
