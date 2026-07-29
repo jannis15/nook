@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
-import 'router/app_router.dart';
+import 'package:nook/config/app_router.dart';
+import 'package:nook/config/app_theme.dart';
 
 void main() {
   runApp(const NookApp());
@@ -16,10 +16,8 @@ class NookApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'Nook',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorSchemeSeed: const Color(0xFF8F7357),
-      ),
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
       routerConfig: _appRouter.config(),
     );
   }
