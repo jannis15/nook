@@ -1,6 +1,15 @@
 import 'package:nook/domain/auth/use_cases/validate_email_use_case.dart';
+import 'package:nook/presentation/auth/login/login_presentation_event.dart';
 import 'package:nook/presentation/auth/login/login_state.dart';
 import 'package:nook/presentation/l10n/generated/app_localizations.dart';
+
+extension LoginPresentationEventLocalizations on LoginPresentationEvent {
+  String localized(AppLocalizations l10n) {
+    return switch (this) {
+      LoginSubmissionFailed() => l10n.loginSubmissionFailedError,
+    };
+  }
+}
 
 extension EmailValidationErrorLocalizations on EmailValidationError {
   String localized(AppLocalizations l10n) {

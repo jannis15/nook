@@ -1,11 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nook/config/app_env.dart';
 import 'package:nook/config/app_router.dart';
 import 'package:nook/config/app_theme.dart';
+import 'package:nook/data/auth/supabase_auth_repository.dart';
+import 'package:nook/domain/auth/repositories/auth_repository.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
 import 'package:nook/presentation/l10n/generated/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
-  runApp(const NookApp());
+const _requiredEnv = AppEnv.requiredDefines;
+
+Future<void> main() async {
+  _requiredEnv;
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: AppEnv.supabaseUrl,
+    publishableKey: AppEnv.supabasePublishableKey,
+  );
+
+  runApp(
+    RepositoryProvider<AuthRepository>(
+      create: (_) => SupabaseAuthRepository(Supabase.instance.client),
+      child: const NookApp(),
+    ),
+  );
 }
 
 final _appRouter = AppRouter();

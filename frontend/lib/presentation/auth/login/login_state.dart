@@ -14,6 +14,7 @@ abstract class LoginState with _$LoginState {
     @Default('') String password,
     EmailValidationError? emailError,
     LoginPasswordError? passwordError,
+    @Default(false) bool isSubmitting,
   }) = _LoginState;
 
   bool get isValid => emailError == null && passwordError == null;

@@ -22,6 +22,8 @@ Use the shared IntelliJ run configuration:
 
 It launches `lib/main.dart` on Chrome with web port `3000`.
 
+Local configuration is loaded through Dart defines from `.env.local`. Copy `.env.example` to `.env.local` and adjust values if your backend or Supabase local ports differ. `.env.local` is ignored by git.
+
 If the SDK or packages are missing, run `fvm install` and `fvm flutter pub get` from this directory.
 
 ## Agent Guidance

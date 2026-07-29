@@ -8,5 +8,6 @@
   "loginEmailInvalidError": "Enter a valid email address.",
   "loginPasswordLabel": "Password",
   "loginPasswordRequiredError": "Enter your password.",
+  "loginSubmissionFailedError": "Sign in failed. Check your email and password.",
   "loginSignInButton": "Sign in"
 }

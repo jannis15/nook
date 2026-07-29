@@ -1,12 +1,20 @@
+import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nook/domain/auth/use_cases/login_use_case.dart';
 import 'package:nook/domain/auth/use_cases/validate_email_use_case.dart';
+import 'package:nook/presentation/auth/login/login_presentation_event.dart';
 import 'package:nook/presentation/auth/login/login_state.dart';
 
-class LoginCubit extends Cubit<LoginState> {
-  LoginCubit({ValidateEmailUseCase validateEmail = const ValidateEmailUseCase()})
-    : _validateEmail = validateEmail,
-      super(const LoginState());
+class LoginCubit extends Cubit<LoginState>
+    with BlocPresentationMixin<LoginState, LoginPresentationEvent> {
+  LoginCubit({
+    required LoginUseCase login,
+    ValidateEmailUseCase validateEmail = const ValidateEmailUseCase(),
+  }) : _login = login,
+       _validateEmail = validateEmail,
+       super(const LoginState());
 
+  final LoginUseCase _login;
   final ValidateEmailUseCase _validateEmail;
 
   void emailChanged(String value) {
@@ -31,7 +39,11 @@ class LoginCubit extends Cubit<LoginState> {
     );
   }
 
-  bool submit() {
+  Future<bool> submit() async {
+    if (state.isSubmitting) {
+      return false;
+    }
+
     final emailError = _validateEmail(state.email);
     final passwordError = _validatePassword(state.password);
     final nextState = state.copyWith(
@@ -41,7 +53,24 @@ class LoginCubit extends Cubit<LoginState> {
 
     emit(nextState);
 
-    return nextState.isValid;
+    if (!nextState.isValid) {
+      return false;
+    }
+
+    emit(nextState.copyWith(isSubmitting: true));
+
+    final result = await _login(
+      email: nextState.email,
+      password: nextState.password,
+    );
+    if (result.isError()) {
+      emit(state.copyWith(isSubmitting: false));
+      emitPresentation(const LoginSubmissionFailed());
+      return false;
+    }
+
+    emit(state.copyWith(isSubmitting: false));
+    return true;
   }
 
   LoginPasswordError? _validatePassword(String value) {

@@ -1,8 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nook/domain/auth/repositories/auth_repository.dart';
+import 'package:nook/domain/auth/use_cases/login_use_case.dart';
 import 'package:nook/presentation/auth/login/login_cubit.dart';
 import 'package:nook/presentation/auth/login/login_error_localizations.dart';
+import 'package:nook/presentation/auth/login/login_presentation_event.dart';
 import 'package:nook/presentation/auth/login/login_state.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
 
@@ -13,8 +18,16 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => LoginCubit(),
-      child: const _LoginView(),
+      create: (context) =>
+          LoginCubit(login: LoginUseCase(context.read<AuthRepository>())),
+      child: BlocPresentationListener<LoginCubit, LoginPresentationEvent>(
+        listener: (context, event) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(event.localized(context.l10n))),
+          );
+        },
+        child: const _LoginView(),
+      ),
     );
   }
 }
@@ -58,7 +71,9 @@ class _LoginView extends StatelessWidget {
                               keyboardType: TextInputType.emailAddress,
                               textInputAction: TextInputAction.next,
                               autofillHints: const [AutofillHints.email],
-                              onChanged: context.read<LoginCubit>().emailChanged,
+                              onChanged: context
+                                  .read<LoginCubit>()
+                                  .emailChanged,
                               decoration: InputDecoration(
                                 labelText: context.l10n.loginEmailLabel,
                                 errorText: state.emailError?.localized(
@@ -81,8 +96,13 @@ class _LoginView extends StatelessWidget {
                               onChanged: context
                                   .read<LoginCubit>()
                                   .passwordChanged,
-                              onFieldSubmitted: (_) {
-                                context.read<LoginCubit>().submit();
+                              onFieldSubmitted: (_) async {
+                                final didLogin = await context
+                                    .read<LoginCubit>()
+                                    .submit();
+                                if (didLogin) {
+                                  TextInput.finishAutofillContext();
+                                }
                               },
                               decoration: InputDecoration(
                                 labelText: context.l10n.loginPasswordLabel,
@@ -95,8 +115,24 @@ class _LoginView extends StatelessWidget {
                           ),
                           const SizedBox(height: 24),
                           FilledButton(
-                            onPressed: context.read<LoginCubit>().submit,
-                            child: Text(context.l10n.loginSignInButton),
+                            onPressed: state.isSubmitting
+                                ? null
+                                : () async {
+                                    final didLogin = await context
+                                        .read<LoginCubit>()
+                                        .submit();
+                                    if (didLogin) {
+                                      TextInput.finishAutofillContext();
+                                    }
+                                  },
+                            child: state.isSubmitting
+                                ? const SizedBox.square(
+                                    dimension: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(context.l10n.loginSignInButton),
                           ),
                         ],
                       ),
