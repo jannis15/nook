@@ -1,11 +1,8 @@
-import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nook/domain/auth/use_cases/validate_email_use_case.dart';
-import 'package:nook/presentation/auth/login/login_presentation_event.dart';
 import 'package:nook/presentation/auth/login/login_state.dart';
 
-class LoginCubit extends Cubit<LoginState>
-    with BlocPresentationMixin<LoginState, LoginPresentationEvent> {
+class LoginCubit extends Cubit<LoginState> {
   LoginCubit({ValidateEmailUseCase validateEmail = const ValidateEmailUseCase()})
     : _validateEmail = validateEmail,
       super(const LoginState());
@@ -14,23 +11,22 @@ class LoginCubit extends Cubit<LoginState>
 
   void emailChanged(String value) {
     final email = value.trim();
-    final emailError = _validateEmail(email);
 
     emit(
       state.copyWith(
         email: email,
-        emailError: emailError,
+        emailError: state.emailError == null ? null : _validateEmail(email),
       ),
     );
   }
 
   void passwordChanged(String value) {
-    final passwordError = _validatePassword(value);
-
     emit(
       state.copyWith(
         password: value,
-        passwordError: passwordError,
+        passwordError: state.passwordError == null
+            ? null
+            : _validatePassword(value),
       ),
     );
   }
@@ -44,15 +40,6 @@ class LoginCubit extends Cubit<LoginState>
     );
 
     emit(nextState);
-
-    if (!nextState.isValid) {
-      emitPresentation(
-        LoginSubmissionFailed(
-          emailError: emailError,
-          passwordError: passwordError,
-        ),
-      );
-    }
 
     return nextState.isValid;
   }

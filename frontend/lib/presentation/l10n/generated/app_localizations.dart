@@ -142,12 +142,6 @@ abstract class AppLocalizations {
   /// **'Enter your password.'**
   String get loginPasswordRequiredError;
 
-  /// No description provided for @loginSubmissionFailedError.
-  ///
-  /// In en, this message translates to:
-  /// **'Check your login details.'**
-  String get loginSubmissionFailedError;
-
   /// No description provided for @loginSignInButton.
   ///
   /// In en, this message translates to:

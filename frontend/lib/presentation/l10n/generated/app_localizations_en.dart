@@ -33,8 +33,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginPasswordRequiredError => 'Enter your password.';
 
   @override
-  String get loginSubmissionFailedError => 'Check your login details.';
-
-  @override
   String get loginSignInButton => 'Sign in';
 }
