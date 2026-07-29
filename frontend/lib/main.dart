@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:nook/config/app_env.dart';
 import 'package:nook/config/app_router.dart';
 import 'package:nook/config/app_theme.dart';
@@ -14,24 +16,44 @@ const _requiredEnv = AppEnv.requiredDefines;
 Future<void> main() async {
   _requiredEnv;
   WidgetsFlutterBinding.ensureInitialized();
+  usePathUrlStrategy();
 
   await Supabase.initialize(
     url: AppEnv.supabaseUrl,
     publishableKey: AppEnv.supabasePublishableKey,
   );
 
+  final authRepository = SupabaseAuthRepository(Supabase.instance.client);
+
   runApp(
-    RepositoryProvider<AuthRepository>(
-      create: (_) => SupabaseAuthRepository(Supabase.instance.client),
-      child: const NookApp(),
+    RepositoryProvider<AuthRepository>.value(
+      value: authRepository,
+      child: NookApp(authRepository: authRepository),
     ),
   );
 }
 
-final _appRouter = AppRouter();
+class NookApp extends StatefulWidget {
+  const NookApp({required this.authRepository, super.key});
 
-class NookApp extends StatelessWidget {
-  const NookApp({super.key});
+  final AuthRepository authRepository;
+
+  @override
+  State<NookApp> createState() => _NookAppState();
+}
+
+class _NookAppState extends State<NookApp> {
+  late final _appRouter = AppRouter(widget.authRepository);
+  late final _reevaluateListenable = ReevaluateListenable.stream(
+    widget.authRepository.identity,
+  );
+
+  @override
+  void dispose() {
+    _reevaluateListenable.dispose();
+    _appRouter.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +64,9 @@ class NookApp extends StatelessWidget {
       supportedLocales: AppLocalizations.supportedLocales,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      routerConfig: _appRouter.config(),
+      routerConfig: _appRouter.config(
+        reevaluateListenable: _reevaluateListenable,
+      ),
     );
   }
 }

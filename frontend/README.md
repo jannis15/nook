@@ -26,6 +26,10 @@ Local configuration is loaded through Dart defines from `.env.local`. Copy `.env
 
 If the SDK or packages are missing, run `fvm install` and `fvm flutter pub get` from this directory.
 
+## Architecture Notes
+
+Authentication-aware navigation is handled at the router boundary. Unknown paths redirect to `/`, `/` redirects to the guarded default route, and AutoRoute guards choose between `/auth/login` and `/home` from the domain auth identity. The router also reevaluates guards from the auth identity stream, so session restore, sign-in, and sign-out can update navigation without page-level routing checks.
+
 ## Agent Guidance
 
 `AGENTS.md` contains local conventions for coding agents working in this frontend, such as layering and localization key naming rules.

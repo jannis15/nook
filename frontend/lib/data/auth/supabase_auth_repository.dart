@@ -1,12 +1,31 @@
 import 'package:multiple_result/multiple_result.dart';
+import 'package:nook/domain/auth/entities/app_identity.dart';
 import 'package:nook/domain/auth/entities/auth_failure.dart';
 import 'package:nook/domain/auth/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuthRepository implements AuthRepository {
-  const SupabaseAuthRepository(this._supabaseClient);
+  SupabaseAuthRepository(this._supabaseClient)
+    : _currentIdentity = _identityFromUser(
+        _supabaseClient.auth.currentSession?.user,
+      );
 
   final SupabaseClient _supabaseClient;
+  AppIdentity _currentIdentity;
+
+  @override
+  AppIdentity get currentIdentity => _currentIdentity;
+
+  @override
+  late final Stream<AppIdentity> identity = _supabaseClient
+      .auth
+      .onAuthStateChange
+      .map((event) {
+        final identity = _identityFromUser(event.session?.user);
+        _currentIdentity = identity;
+        return identity;
+      })
+      .handleError((Object _, StackTrace _) {});
 
   @override
   Future<Result<Unit, AuthFailure>> loginWithPassword({
@@ -29,5 +48,13 @@ class SupabaseAuthRepository implements AuthRepository {
     } catch (_) {
       return const Error(UnknownAuthFailure());
     }
+  }
+
+  static AppIdentity _identityFromUser(User? user) {
+    if (user == null) {
+      return const AnonymousAppIdentity();
+    }
+
+    return AuthenticatedAppIdentity(id: user.id, email: user.email);
   }
 }
