@@ -11,7 +11,7 @@ import 'package:nook/presentation/auth/login/login_error_localizations.dart';
 import 'package:nook/presentation/auth/login/login_presentation_event.dart';
 import 'package:nook/presentation/auth/login/login_state.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
-import 'package:nook/presentation/notifications/app_snack_bar.dart';
+import 'package:nook/presentation/utils/app_notification.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -24,7 +24,11 @@ class LoginPage extends StatelessWidget {
           LoginCubit(login: LoginUseCase(context.read<AuthRepository>())),
       child: BlocPresentationListener<LoginCubit, LoginPresentationEvent>(
         listener: (context, event) {
-          showAppSnackBar(context, event.localized(context.l10n));
+          showAppNotification(
+            context,
+            event.localized(context.l10n),
+            type: AppNotificationType.error,
+          );
         },
         child: const _LoginView(),
       ),

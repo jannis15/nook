@@ -30,6 +30,7 @@ describe('PATCH /profiles/me', () => {
   it('updates the display name with a trimmed value', async () => {
     const profile: Profile = {
       id: testUserId,
+      email: 'test@nook.local',
       display_name: 'Updated User',
       created_at: '2026-07-28T00:00:00.000Z',
       updated_at: '2026-07-28T00:01:00.000Z',

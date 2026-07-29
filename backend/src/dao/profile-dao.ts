@@ -1,6 +1,6 @@
 import type { Profile, Supabase } from '../lib/supabase.js';
 
-const profileColumns = 'id, display_name, created_at, updated_at';
+const profileColumns = 'id, email, display_name, created_at, updated_at';
 
 export async function findProfileById(
   supabase: Supabase,

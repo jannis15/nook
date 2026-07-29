@@ -25,6 +25,7 @@ const requestId = 'request-1';
 const userId = '00000000-0000-0000-0000-000000000001';
 const profile: Profile = {
   id: userId,
+  email: 'test@nook.local',
   display_name: 'Test User',
   created_at: '2026-07-28T00:00:00.000Z',
   updated_at: '2026-07-28T00:00:00.000Z',

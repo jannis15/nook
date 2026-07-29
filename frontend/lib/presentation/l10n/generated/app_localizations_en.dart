@@ -38,4 +38,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginSignInButton => 'Sign in';
+
+  @override
+  String get homeLogoutButton => 'Sign out';
+
+  @override
+  String get homeLogoutFailedError => 'Sign out failed. Try again.';
 }

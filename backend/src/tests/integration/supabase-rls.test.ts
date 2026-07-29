@@ -32,12 +32,16 @@ describeIntegration('Supabase profiles RLS integration', () => {
 
       const { data, error } = await signedUpUser.client
         .from('profiles')
-        .select('id, display_name')
+        .select('id, email, display_name')
         .eq('id', userId)
         .single();
 
       expect(error).toBeNull();
-      expect(data).toEqual({ id: userId, display_name: displayName });
+      expect(data).toEqual({
+        id: userId,
+        email: signedUpUser.email,
+        display_name: displayName,
+      });
     } finally {
       await deleteTestUser(userId);
     }
@@ -50,23 +54,28 @@ describeIntegration('Supabase profiles RLS integration', () => {
     try {
       const { data: profile, error: readError } = await client
         .from('profiles')
-        .select('id, display_name')
+        .select('id, email, display_name')
         .eq('id', seededUser.id)
         .single();
 
       expect(readError).toBeNull();
-      expect(profile).toEqual({ id: seededUser.id, display_name: 'Test User' });
+      expect(profile).toEqual({
+        id: seededUser.id,
+        email: seededUser.email,
+        display_name: 'Test User',
+      });
 
       const { data: updatedProfile, error: updateError } = await client
         .from('profiles')
         .update({ display_name: displayName })
         .eq('id', seededUser.id)
-        .select('id, display_name')
+        .select('id, email, display_name')
         .single();
 
       expect(updateError).toBeNull();
       expect(updatedProfile).toEqual({
         id: seededUser.id,
+        email: seededUser.email,
         display_name: displayName,
       });
     } finally {
@@ -139,9 +148,10 @@ async function signInSeededUser() {
 async function signUpTestUser(displayName: string) {
   const client = createSupabaseClient();
   const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  const email = `integration-${uniqueId}@nook.local`;
 
   const { data, error } = await client.auth.signUp({
-    email: `integration-${uniqueId}@nook.local`,
+    email,
     password: 'password',
     options: {
       data: {
@@ -156,6 +166,7 @@ async function signUpTestUser(displayName: string) {
 
   return {
     client: createSupabaseClient(data.session?.access_token),
+    email,
     userId: data.user?.id ?? '',
   };
 }

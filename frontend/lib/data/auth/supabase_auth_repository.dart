@@ -2,30 +2,24 @@ import 'package:multiple_result/multiple_result.dart';
 import 'package:nook/domain/auth/entities/app_identity.dart';
 import 'package:nook/domain/auth/entities/auth_failure.dart';
 import 'package:nook/domain/auth/repositories/auth_repository.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseAuthRepository implements AuthRepository {
   SupabaseAuthRepository(this._supabaseClient)
-    : _currentIdentity = _identityFromUser(
-        _supabaseClient.auth.currentSession?.user,
-      );
+    : _identity = BehaviorSubject.seeded(
+        _identityFromUser(_supabaseClient.auth.currentSession?.user),
+      ) {
+    _supabaseClient.auth.onAuthStateChange.listen((event) {
+      _identity.add(_identityFromUser(event.session?.user));
+    });
+  }
 
   final SupabaseClient _supabaseClient;
-  AppIdentity _currentIdentity;
+  final BehaviorSubject<AppIdentity> _identity;
 
   @override
-  AppIdentity get currentIdentity => _currentIdentity;
-
-  @override
-  late final Stream<AppIdentity> identity = _supabaseClient
-      .auth
-      .onAuthStateChange
-      .map((event) {
-        final identity = _identityFromUser(event.session?.user);
-        _currentIdentity = identity;
-        return identity;
-      })
-      .handleError((Object _, StackTrace _) {});
+  ValueStream<AppIdentity> get identity => _identity.stream;
 
   @override
   Future<Result<Unit, AuthFailure>> loginWithPassword({
@@ -45,6 +39,17 @@ class SupabaseAuthRepository implements AuthRepository {
       }
 
       return const Error(UnknownAuthFailure());
+    } catch (_) {
+      return const Error(UnknownAuthFailure());
+    }
+  }
+
+  @override
+  Future<Result<Unit, AuthFailure>> logout() async {
+    try {
+      await _supabaseClient.auth.signOut();
+
+      return Success.unit();
     } catch (_) {
       return const Error(UnknownAuthFailure());
     }

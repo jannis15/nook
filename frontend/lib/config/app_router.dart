@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:nook/config/auth_route_guards.dart';
-import 'package:nook/domain/auth/repositories/auth_repository.dart';
+import 'package:nook/domain/auth/use_cases/watch_identity_use_case.dart';
 import 'package:nook/presentation/auth/login/login_page.dart';
 import 'package:nook/presentation/home/home_page.dart';
 
@@ -8,9 +8,9 @@ part 'app_router.gr.dart';
 
 @AutoRouterConfig()
 class AppRouter extends RootStackRouter {
-  AppRouter(this._authRepository);
+  AppRouter(this._watchIdentity);
 
-  final AuthRepository _authRepository;
+  final WatchIdentityUseCase _watchIdentity;
 
   @override
   List<AutoRoute> get routes => [
@@ -19,12 +19,12 @@ class AppRouter extends RootStackRouter {
       page: HomeRoute.page,
       path: '/home',
       initial: true,
-      guards: [AuthRouteGuard(_authRepository)],
+      guards: [AuthRouteGuard(_watchIdentity)],
     ),
     AutoRoute(
       page: LoginRoute.page,
       path: '/auth/login',
-      guards: [GuestRouteGuard(_authRepository)],
+      guards: [GuestRouteGuard(_watchIdentity)],
     ),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];

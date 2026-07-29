@@ -74,6 +74,7 @@ insert into auth.identities (
   now()
 ) on conflict (provider_id, provider) do nothing;
 
-insert into public.profiles (id, display_name)
-values ('00000000-0000-0000-0000-000000000001', 'Test User')
-on conflict (id) do nothing;
+insert into public.profiles (id, email, display_name)
+values ('00000000-0000-0000-0000-000000000001', 'test@nook.local', 'Test User')
+on conflict (id) do update set
+  email = excluded.email;

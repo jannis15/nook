@@ -1,16 +1,16 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
-import 'package:nook/domain/auth/repositories/auth_repository.dart';
+import 'package:nook/domain/auth/use_cases/watch_identity_use_case.dart';
 
 class AuthRouteGuard extends AutoRouteGuard {
-  const AuthRouteGuard(this._authRepository);
+  const AuthRouteGuard(this._watchIdentity);
 
-  final AuthRepository _authRepository;
+  final WatchIdentityUseCase _watchIdentity;
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if (_authRepository.currentIdentity.isAuthenticated) {
+    if (_watchIdentity().value.isAuthenticated) {
       resolver.next();
       return;
     }
@@ -21,13 +21,13 @@ class AuthRouteGuard extends AutoRouteGuard {
 }
 
 class GuestRouteGuard extends AutoRouteGuard {
-  const GuestRouteGuard(this._authRepository);
+  const GuestRouteGuard(this._watchIdentity);
 
-  final AuthRepository _authRepository;
+  final WatchIdentityUseCase _watchIdentity;
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if (_authRepository.currentIdentity.isAuthenticated) {
+    if (_watchIdentity().value.isAuthenticated) {
       unawaited(router.pushPath('/home'));
       resolver.next(false);
       return;

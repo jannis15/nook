@@ -4,5 +4,6 @@
 - Group localization keys by feature prefix, for example `loginTitle` and `loginSignInButton`.
 - Keep app-wide localization keys prefixed with `app`, for example `appTitle`.
 - For forms, validate fields on submit first. While typing, only revalidate fields that already have an error so errors can clear once fixed.
+- Presentation state classes should be Freezed classes.
 - Frontend local env uses Dart defines from `.env.local`; keep secrets out of git and commit only `.env.example`.
 - This project uses FVM. Run Flutter and Dart commands through `fvm`, for example `fvm flutter analyze`.

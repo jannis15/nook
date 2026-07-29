@@ -153,6 +153,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in'**
   String get loginSignInButton;
+
+  /// No description provided for @homeLogoutButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get homeLogoutButton;
+
+  /// No description provided for @homeLogoutFailedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out failed. Try again.'**
+  String get homeLogoutFailedError;
 }
 
 class _AppLocalizationsDelegate

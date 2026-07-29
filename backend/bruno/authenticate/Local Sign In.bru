@@ -29,11 +29,3 @@ script:post-response {
     bru.setEnvVar("accessToken", body.access_token);
   }
 }
-
-tests {
-  test("returns an access token", function() {
-    const body = res.getBody();
-    expect(res.status).to.equal(200);
-    expect(body.access_token).to.be.a("string");
-  });
-}

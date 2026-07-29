@@ -9,5 +9,7 @@
   "loginPasswordLabel": "Password",
   "loginPasswordRequiredError": "Enter your password.",
   "loginSubmissionFailedError": "Sign in failed. Check your email and password.",
-  "loginSignInButton": "Sign in"
+  "loginSignInButton": "Sign in",
+  "homeLogoutButton": "Sign out",
+  "homeLogoutFailedError": "Sign out failed. Try again."
 }

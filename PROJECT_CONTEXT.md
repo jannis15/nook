@@ -72,6 +72,7 @@ Application-specific user information. `id` references the Supabase auth user.
 
 ```text
 id
+email
 display_name
 created_at
 updated_at
