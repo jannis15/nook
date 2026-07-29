@@ -1,0 +1,4 @@
+- Keep Flutter code organized into `data`, `domain`, and `presentation` layers.
+- Treat pages and localization files as presentation concerns.
+- Group localization keys by feature prefix, for example `loginTitle` and `loginSignInButton`.
+- Keep app-wide localization keys prefixed with `app`, for example `appTitle`.

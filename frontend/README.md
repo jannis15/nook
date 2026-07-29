@@ -24,4 +24,8 @@ It launches `lib/main.dart` on Chrome with web port `3000`.
 
 If the SDK or packages are missing, run `fvm install` and `fvm flutter pub get` from this directory.
 
+## Agent Guidance
+
+`AGENTS.md` contains local conventions for coding agents working in this frontend, such as layering and localization key naming rules.
+
 See `../PROJECT_CONTEXT.md` for product and architecture context.

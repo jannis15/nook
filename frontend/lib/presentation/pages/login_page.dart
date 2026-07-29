@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:nook/presentation/l10n/generated/app_localizations.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -7,6 +8,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -19,34 +22,37 @@ class LoginPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Nook',
+                    l10n.loginTitle,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.displaySmall,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Sign in to your personal media library.',
+                    l10n.loginSubtitle,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(height: 32),
                   TextField(
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
+                    decoration: InputDecoration(
+                      labelText: l10n.loginEmailLabel,
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 16),
                   TextField(
                     obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
+                    decoration: InputDecoration(
+                      labelText: l10n.loginPasswordLabel,
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 24),
-                  FilledButton(onPressed: null, child: const Text('Sign in')),
+                  FilledButton(
+                    onPressed: null,
+                    child: Text(l10n.loginSignInButton),
+                  ),
                 ],
               ),
             ),

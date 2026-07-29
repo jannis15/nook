@@ -1,0 +1,9 @@
+{
+  "@@locale": "en",
+  "appTitle": "Nook",
+  "loginTitle": "Nook",
+  "loginSubtitle": "Sign in to your personal media library.",
+  "loginEmailLabel": "Email",
+  "loginPasswordLabel": "Password",
+  "loginSignInButton": "Sign in"
+}

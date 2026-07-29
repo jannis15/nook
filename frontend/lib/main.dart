@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nook/config/app_router.dart';
 import 'package:nook/config/app_theme.dart';
+import 'package:nook/presentation/l10n/generated/app_localizations.dart';
 
 void main() {
   runApp(const NookApp());
@@ -14,8 +15,10 @@ class NookApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Nook',
+      onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       routerConfig: _appRouter.config(),

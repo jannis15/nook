@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:nook/pages/login_page.dart';
+import 'package:nook/presentation/pages/login_page.dart';
 
 part 'app_router.gr.dart';
 
