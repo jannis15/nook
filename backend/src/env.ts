@@ -19,7 +19,7 @@ export const env = {
       'http://localhost:3000,http://localhost:8080',
   ),
   supabaseUrl: requiredEnv('SUPABASE_URL'),
-  supabasePublishableKey: requiredEnv('SUPABASE_PUBLISHABLE_KEY'),
+  supabaseSecretKey: requiredEnv('SUPABASE_SECRET_KEY'),
 };
 
 function optionalLogLevel(value: string): LevelWithSilent {

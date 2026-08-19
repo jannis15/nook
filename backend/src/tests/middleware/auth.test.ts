@@ -4,7 +4,7 @@ import type { AuthVariables } from '../../middleware/auth.js';
 import type { RequestVariables } from '../../middleware/request-id.js';
 
 const getUser = vi.hoisted(() => vi.fn());
-const createSupabaseForToken = vi.hoisted(() => vi.fn());
+const createSupabaseAdminClient = vi.hoisted(() => vi.fn());
 const supabase = vi.hoisted(() => ({
   auth: {
     getUser,
@@ -16,7 +16,7 @@ const logger = vi.hoisted(() => ({
 }));
 
 vi.mock('../../lib/supabase.js', () => ({
-  createSupabaseForToken,
+  createSupabaseAdminClient,
 }));
 
 vi.mock('../../lib/logger.js', () => ({
@@ -29,8 +29,8 @@ const testRequestId = 'request-1';
 describe('requireAuth', () => {
   beforeEach(() => {
     getUser.mockReset();
-    createSupabaseForToken.mockReset();
-    createSupabaseForToken.mockReturnValue(supabase);
+    createSupabaseAdminClient.mockReset();
+    createSupabaseAdminClient.mockReturnValue(supabase);
   });
 
   it('rejects a missing authorization header', async () => {
@@ -43,7 +43,7 @@ describe('requireAuth', () => {
         message: 'Missing bearer token',
       },
     });
-    expect(createSupabaseForToken).not.toHaveBeenCalled();
+    expect(createSupabaseAdminClient).not.toHaveBeenCalled();
   });
 
   it('rejects malformed authorization headers', async () => {
@@ -61,7 +61,7 @@ describe('requireAuth', () => {
       });
     }
 
-    expect(createSupabaseForToken).not.toHaveBeenCalled();
+    expect(createSupabaseAdminClient).not.toHaveBeenCalled();
   });
 
   it('rejects an empty bearer token', async () => {
@@ -79,7 +79,7 @@ describe('requireAuth', () => {
       });
     }
 
-    expect(createSupabaseForToken).not.toHaveBeenCalled();
+    expect(createSupabaseAdminClient).not.toHaveBeenCalled();
   });
 
   it('accepts a case-insensitive bearer scheme and stores auth variables', async () => {
@@ -98,7 +98,7 @@ describe('requireAuth', () => {
       hasSupabase: true,
       userId: 'user-1',
     });
-    expect(createSupabaseForToken).toHaveBeenCalledWith('access-token');
+    expect(createSupabaseAdminClient).toHaveBeenCalledOnce();
     expect(getUser).toHaveBeenCalledWith('access-token');
   });
 

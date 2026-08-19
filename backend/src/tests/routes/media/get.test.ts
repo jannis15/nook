@@ -1,0 +1,116 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { ImageMediaEntity } from '../../../domain/media.js';
+import {
+  createMediaTestApp,
+  testRequireAuth,
+  testRequestId,
+  testSupabase,
+  testUserId,
+} from './test-utils.js';
+
+const listOwnMedia = vi.fn();
+
+vi.mock('../../../middleware/auth.js', () => ({
+  requireAuth: testRequireAuth,
+}));
+
+vi.mock('../../../domain/media-service.js', () => ({
+  listOwnMedia,
+}));
+
+const { registerGetMediaListRoute } = await import(
+  '../../../routes/media/get.js'
+);
+
+const imageMedia: ImageMediaEntity = {
+  id: '10000000-0000-4000-8000-000000000001',
+  ownerId: testUserId,
+  storageKey:
+    '00000000-0000-0000-0000-000000000001/media/10000000-0000-4000-8000-000000000001/original.jpg',
+  originalFilename: 'photo.jpg',
+  title: null,
+  description: null,
+  mediaType: 'image',
+  mimeType: 'image/jpeg',
+  fileSize: 12345,
+  contentHash: null,
+  width: 1200,
+  height: 800,
+  capturedAt: null,
+  status: 'ready',
+  processingError: null,
+  metadata: {},
+  createdAt: '2026-07-29T00:00:00.000Z',
+  updatedAt: '2026-07-29T00:00:00.000Z',
+};
+
+describe('GET /media', () => {
+  beforeEach(() => {
+    listOwnMedia.mockReset();
+  });
+
+  it('returns the authenticated user media list', async () => {
+    listOwnMedia.mockResolvedValue({ ok: true, media: [imageMedia] });
+
+    const response = await createMediaTestApp(
+      registerGetMediaListRoute,
+    ).request('/media?media_type=image&limit=25');
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      media: [
+        {
+          id: imageMedia.id,
+          original_filename: imageMedia.originalFilename,
+          title: imageMedia.title,
+          description: imageMedia.description,
+          media_type: 'image',
+          mime_type: imageMedia.mimeType,
+          file_size: imageMedia.fileSize,
+          content_hash: imageMedia.contentHash,
+          width: imageMedia.width,
+          height: imageMedia.height,
+          captured_at: imageMedia.capturedAt,
+          status: imageMedia.status,
+          created_at: imageMedia.createdAt,
+          updated_at: imageMedia.updatedAt,
+        },
+      ],
+    });
+    expect(listOwnMedia).toHaveBeenCalledWith(
+      testSupabase,
+      testUserId,
+      {
+        mediaType: 'image',
+        status: 'ready',
+        limit: 25,
+      },
+      testRequestId,
+    );
+  });
+
+  it('defaults the limit', async () => {
+    listOwnMedia.mockResolvedValue({ ok: true, media: [] });
+
+    const response = await createMediaTestApp(
+      registerGetMediaListRoute,
+    ).request('/media');
+
+    expect(response.status).toBe(200);
+    expect(listOwnMedia).toHaveBeenCalledWith(
+      testSupabase,
+      testUserId,
+      { limit: 50, status: 'ready' },
+      testRequestId,
+    );
+  });
+
+  it('returns 400 for invalid filters', async () => {
+    const response = await createMediaTestApp(
+      registerGetMediaListRoute,
+    ).request('/media?media_type=document');
+
+    expect(response.status).toBe(400);
+    expect(listOwnMedia).not.toHaveBeenCalled();
+  });
+});

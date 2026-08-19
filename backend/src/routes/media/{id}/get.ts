@@ -1,44 +1,44 @@
 import { createRoute, z } from '@hono/zod-openapi';
 import type { App } from '../../../app-types.js';
+import { getOwnMediaById } from '../../../domain/media-service.js';
 import { apiError, errorResponseSchema } from '../../../lib/errors.js';
 import { openApiTags } from '../../../lib/openapi-tags.js';
-import { updateOwnProfileDisplayName } from '../../../domain/profile-service.js';
 import { requireAuth } from '../../../middleware/auth.js';
-import { profileResponseSchema } from './types.js';
+import { toMediaResponse } from '../mapper.js';
+import { mediaResponseSchema } from '../types.js';
 
-const profilePatchSchema = z
-  .object({
-    display_name: z.string().trim().min(1).max(80).nullable(),
-  })
-  .strict();
+const mediaParamsSchema = z.object({
+  id: z
+    .string()
+    .uuid()
+    .openapi({
+      param: {
+        name: 'id',
+        in: 'path',
+      },
+    }),
+});
 
-const profileUpdateStatusByErrorCode = {
-  profile_not_found: 404,
+const getMediaByIdStatusByErrorCode = {
+  not_found: 404,
   internal_server_error: 500,
 } as const;
 
-const patchMeRoute = createRoute({
-  method: 'patch',
-  path: '/profiles/me',
-  tags: [openApiTags.profiles],
+const getMediaByIdRoute = createRoute({
+  method: 'get',
+  path: '/media/{id}',
+  tags: [openApiTags.media],
   middleware: [requireAuth] as const,
   security: [{ bearerAuth: [] }],
   request: {
-    body: {
-      required: true,
-      content: {
-        'application/json': {
-          schema: profilePatchSchema,
-        },
-      },
-    },
+    params: mediaParamsSchema,
   },
   responses: {
     200: {
-      description: 'Updated app profile',
+      description: 'Authenticated user media item',
       content: {
         'application/json': {
-          schema: profileResponseSchema,
+          schema: mediaResponseSchema,
         },
       },
     },
@@ -59,7 +59,7 @@ const patchMeRoute = createRoute({
       },
     },
     404: {
-      description: 'Profile not found',
+      description: 'Media not found',
       content: {
         'application/json': {
           schema: errorResponseSchema,
@@ -67,7 +67,7 @@ const patchMeRoute = createRoute({
       },
     },
     500: {
-      description: 'Profile update failed',
+      description: 'Media item load failed',
       content: {
         'application/json': {
           schema: errorResponseSchema,
@@ -77,23 +77,30 @@ const patchMeRoute = createRoute({
   },
 });
 
-export function registerPatchMeRoute(app: App) {
-  app.openapi(patchMeRoute, async (c) => {
-    const body = c.req.valid('json');
-    const result = await updateOwnProfileDisplayName(
+export function registerGetMediaByIdRoute(app: App) {
+  app.openapi(getMediaByIdRoute, async (c) => {
+    const params = c.req.valid('param');
+    const result = await getOwnMediaById(
       c.get('supabase'),
       c.get('userId'),
-      body.display_name,
+      params.id,
       c.get('requestId'),
     );
 
     if (!result.ok) {
       return c.json(
         apiError(result.error.code, result.error.message),
-        profileUpdateStatusByErrorCode[result.error.code],
+        getMediaByIdStatusByErrorCode[result.error.code],
       );
     }
 
-    return c.json({ profile: result.profile }, 200);
+    return c.json(
+      {
+        media: await toMediaResponse(c.get('supabase'), result.media, {
+          includeMediaUrl: true,
+        }),
+      },
+      200,
+    );
   });
 }

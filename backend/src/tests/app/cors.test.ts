@@ -9,7 +9,7 @@ describe('CORS', () => {
       ...originalEnv,
       CORS_ALLOWED_ORIGINS: 'http://localhost:3000,http://localhost:8080',
       SUPABASE_URL: 'http://127.0.0.1:54321',
-      SUPABASE_PUBLISHABLE_KEY: 'test-key',
+      SUPABASE_SECRET_KEY: 'test-key',
     };
   });
 

@@ -1,6 +1,6 @@
-# Bruno Manual Tests
+# Bruno Manual Requests
 
-Manual API tests live in this Bruno collection. Run the backend with local Supabase before using it:
+Manual API requests live in this Bruno collection. Run the backend with local Supabase before using it:
 
 ```sh
 npm run dev
@@ -12,7 +12,7 @@ Select the `Local` Bruno environment. Set `supabasePublishableKey` to the local 
 
 Run `authenticate/Local Sign In` first. It signs in with the seeded local user through local Supabase and stores `accessToken` as a secret in the selected Bruno environment.
 
-You do not need to paste the bearer token into each request. Requests under `profiles/` inherit bearer auth from the folder and use `{{accessToken}}` automatically.
+You do not need to paste the bearer token into each request. Requests under authenticated folders such as `profiles/` and `media/` inherit bearer auth from the folder and use `{{accessToken}}` automatically.
 
 Seeded local user:
 
@@ -31,3 +31,5 @@ Use one request file per HTTP method. Name request files exactly like their Brun
 Keep method order everywhere through the Bruno `seq` field: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
 
 Backend endpoint requests mirror the backend URL path. Helper requests that do not represent backend endpoints live in purpose-named folders, such as `authenticate/`.
+
+`media/Initialize Upload` stores the returned ID in `mediaId`. Upload the bytes to its returned `signed_upload_url` directly with a Storage client, then run `media/{id}/Complete Upload`. `media/{id}/Get Media` uses `mediaId`.

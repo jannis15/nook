@@ -34,25 +34,102 @@ export type Database = {
   }
   public: {
     Tables: {
+      media: {
+        Row: {
+          captured_at: string | null
+          content_hash: string | null
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          file_size: number
+          height: number | null
+          id: string
+          media_type: Database["public"]["Enums"]["media_type"]
+          metadata: Json
+          mime_type: string
+          original_filename: string
+          owner_id: string
+          processing_error: string | null
+          status: Database["public"]["Enums"]["media_status"]
+          storage_key: string
+          title: string | null
+          updated_at: string
+          upload_expires_at: string
+          width: number | null
+        }
+        Insert: {
+          captured_at?: string | null
+          content_hash?: string | null
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          file_size: number
+          height?: number | null
+          id?: string
+          media_type: Database["public"]["Enums"]["media_type"]
+          metadata?: Json
+          mime_type: string
+          original_filename: string
+          owner_id: string
+          processing_error?: string | null
+          status?: Database["public"]["Enums"]["media_status"]
+          storage_key: string
+          title?: string | null
+          updated_at?: string
+          upload_expires_at: string
+          width?: number | null
+        }
+        Update: {
+          captured_at?: string | null
+          content_hash?: string | null
+          created_at?: string
+          description?: string | null
+          duration_seconds?: number | null
+          file_size?: number
+          height?: number | null
+          id?: string
+          media_type?: Database["public"]["Enums"]["media_type"]
+          metadata?: Json
+          mime_type?: string
+          original_filename?: string
+          owner_id?: string
+          processing_error?: string | null
+          status?: Database["public"]["Enums"]["media_status"]
+          storage_key?: string
+          title?: string | null
+          updated_at?: string
+          upload_expires_at?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "media_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
           display_name: string | null
-          email: string | null
+          email: string
           id: string
           updated_at: string
         }
         Insert: {
           created_at?: string
           display_name?: string | null
-          email?: string | null
+          email: string
           id: string
           updated_at?: string
         }
         Update: {
           created_at?: string
           display_name?: string | null
-          email?: string | null
+          email?: string
           id?: string
           updated_at?: string
         }
@@ -66,7 +143,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      media_status: "pending" | "processing" | "ready" | "failed"
+      media_type: "image" | "video"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -741,7 +819,10 @@ export const Constants = {
     Enums: {},
   },
   public: {
-    Enums: {},
+    Enums: {
+      media_status: ["pending", "processing", "ready", "failed"],
+      media_type: ["image", "video"],
+    },
   },
   storage: {
     Enums: {

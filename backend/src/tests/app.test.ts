@@ -57,7 +57,7 @@ async function createApp({ docsEnabled }: { docsEnabled: boolean }) {
       logLevel: 'silent',
       nodeEnv: docsEnabled ? 'development' : 'production',
       port: 3001,
-      supabasePublishableKey: 'test-key',
+      supabaseSecretKey: 'test-key',
       supabaseUrl: 'http://localhost:54321',
     },
   }));

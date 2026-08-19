@@ -29,11 +29,14 @@ for (const name of [
   }
 }
 
-const tests = spawn('vitest run src/tests/integration/supabase-rls.test.ts', {
-  shell: true,
-  stdio: 'inherit',
-  env,
-});
+const tests = spawn(
+  'vitest run src/tests/integration/supabase-access.test.ts',
+  {
+    shell: true,
+    stdio: 'inherit',
+    env,
+  },
+);
 
 tests.on('exit', (code, signal) => {
   if (signal) {

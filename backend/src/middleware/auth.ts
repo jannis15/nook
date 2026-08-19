@@ -2,7 +2,7 @@ import { createMiddleware } from 'hono/factory';
 import { apiError } from '../lib/errors.js';
 import { logger } from '../lib/logger.js';
 import type { RequestVariables } from './request-id.js';
-import { createSupabaseForToken, type Supabase } from '../lib/supabase.js';
+import { createSupabaseAdminClient, type Supabase } from '../lib/supabase.js';
 
 export type AuthVariables = {
   accessToken: string;
@@ -33,7 +33,7 @@ export const requireAuth = createMiddleware<{
   let userId: string;
 
   try {
-    supabase = createSupabaseForToken(accessToken);
+    supabase = createSupabaseAdminClient();
     const { data, error } = await supabase.auth.getUser(accessToken);
 
     if (error || !data.user) {

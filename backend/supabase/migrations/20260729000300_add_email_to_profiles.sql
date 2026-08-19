@@ -7,6 +7,9 @@ from auth.users auth_user
 where profile.id = auth_user.id
   and profile.email is null;
 
+alter table public.profiles
+alter column email set not null;
+
 create or replace function public.create_profile_for_new_user()
 returns trigger
 language plpgsql

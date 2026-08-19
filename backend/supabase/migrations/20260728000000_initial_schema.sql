@@ -21,13 +21,5 @@ for each row execute function public.set_updated_at();
 
 alter table public.profiles enable row level security;
 
-grant select, update on public.profiles to authenticated;
-
-create policy "users can read own profile" on public.profiles
-for select to authenticated
-using (id = auth.uid());
-
-create policy "users can update own profile" on public.profiles
-for update to authenticated
-using (id = auth.uid())
-with check (id = auth.uid());
+revoke all on table public.profiles from anon, authenticated;
+grant all on table public.profiles to service_role;

@@ -21,7 +21,7 @@ const seededUser = {
   password: 'password',
 };
 
-describeIntegration('Supabase profiles RLS integration', () => {
+describeIntegration('Supabase backend-only data access integration', () => {
   it('creates a profile when a user signs up', async () => {
     const displayName = 'Integration Signup User';
     let userId: string | undefined;
@@ -30,7 +30,7 @@ describeIntegration('Supabase profiles RLS integration', () => {
       const signedUpUser = await signUpTestUser(displayName);
       userId = signedUpUser.userId;
 
-      const { data, error } = await signedUpUser.client
+      const { data, error } = await createAdminSupabaseClient()
         .from('profiles')
         .select('id, email, display_name')
         .eq('id', userId)
@@ -47,87 +47,99 @@ describeIntegration('Supabase profiles RLS integration', () => {
     }
   });
 
-  it('allows the seeded user to read and update their own profile', async () => {
+  it('denies direct authenticated access to profiles', async () => {
     const client = await signInSeededUser();
-    const displayName = `Seeded User ${Date.now()}`;
+    const { error: readError } = await client
+      .from('profiles')
+      .select('id, email, display_name')
+      .eq('id', seededUser.id)
+      .single();
+    const { error: updateError } = await client
+      .from('profiles')
+      .update({ display_name: 'Blocked update' })
+      .eq('id', seededUser.id);
+
+    expect(readError).not.toBeNull();
+    expect(updateError).not.toBeNull();
+  });
+
+  it('denies direct authenticated access to media', async () => {
+    const client = await signInSeededUser();
+    const { error: readError } = await client.from('media').select('id');
+    const { error: insertError } = await client.from('media').insert({
+      owner_id: seededUser.id,
+      storage_key: `${seededUser.id}/media/blocked/original.jpg`,
+      original_filename: 'blocked.jpg',
+      media_type: 'image',
+      mime_type: 'image/jpeg',
+      file_size: 12345,
+    });
+
+    expect(readError).not.toBeNull();
+    expect(insertError).not.toBeNull();
+  });
+
+  it('allows signed uploads without direct Storage access', async () => {
+    const userClient = await signInSeededUser();
+    const storageKey = `${seededUser.id}/media/signed-upload-test/original.jpg`;
+    const adminClient = createAdminSupabaseClient();
 
     try {
-      const { data: profile, error: readError } = await client
-        .from('profiles')
-        .select('id, email, display_name')
-        .eq('id', seededUser.id)
-        .single();
+      const { data, error } = await adminClient.storage
+        .from('media')
+        .createSignedUploadUrl(storageKey);
+      expect(error).toBeNull();
+      expect(data).not.toBeNull();
 
-      expect(readError).toBeNull();
-      expect(profile).toEqual({
-        id: seededUser.id,
-        email: seededUser.email,
-        display_name: 'Test User',
+      const response = await fetch(data?.signedUrl ?? '', {
+        method: 'PUT',
+        body: 'test image',
+        headers: {
+          'content-type': 'image/jpeg',
+          'x-upsert': 'false',
+        },
       });
+      expect(response.ok).toBe(true);
 
-      const { data: updatedProfile, error: updateError } = await client
-        .from('profiles')
-        .update({ display_name: displayName })
-        .eq('id', seededUser.id)
-        .select('id, email, display_name')
-        .single();
-
-      expect(updateError).toBeNull();
-      expect(updatedProfile).toEqual({
-        id: seededUser.id,
-        email: seededUser.email,
-        display_name: displayName,
-      });
+      const { data: objects, error: listError } = await userClient.storage
+        .from('media')
+        .list(`${seededUser.id}/media/signed-upload-test`);
+      expect(listError).toBeNull();
+      expect(objects).toEqual([]);
     } finally {
-      await client
-        .from('profiles')
-        .update({ display_name: 'Test User' })
-        .eq('id', seededUser.id);
+      await adminClient.storage.from('media').remove([storageKey]);
     }
   });
 
-  it('prevents one user from reading or updating another user profile', async () => {
-    const seededClient = await signInSeededUser();
-    const otherDisplayName = 'Integration Other User';
-    let otherUserId: string | undefined;
+  it('allows service-role media writes and enforces constraints', async () => {
+    const client = createAdminSupabaseClient();
+    const mediaId = '10000000-0000-4000-8000-000000000001';
 
     try {
-      const otherUser = await signUpTestUser(otherDisplayName);
-      const otherClient = otherUser.client;
-      otherUserId = otherUser.userId;
-
-      const { data: crossUserRead, error: crossUserReadError } =
-        await seededClient
-          .from('profiles')
-          .select('id, display_name')
-          .eq('id', otherUserId);
-
-      expect(crossUserReadError).toBeNull();
-      expect(crossUserRead).toEqual([]);
-
-      const { data: crossUserUpdate, error: crossUserUpdateError } =
-        await seededClient
-          .from('profiles')
-          .update({ display_name: 'Blocked Cross User Update' })
-          .eq('id', otherUserId)
-          .select('id, display_name');
-
-      expect(crossUserUpdateError).toBeNull();
-      expect(crossUserUpdate).toEqual([]);
-
-      const { data: otherProfile, error: otherReadError } = await otherClient
-        .from('profiles')
-        .select('id, display_name')
-        .eq('id', otherUserId)
-        .single();
-
-      expect(otherReadError).toBeNull();
-      expect(otherProfile).toEqual({
-        id: otherUserId,
-        display_name: otherDisplayName,
+      const { error: insertError } = await client.from('media').insert({
+        id: mediaId,
+        owner_id: seededUser.id,
+        storage_key: `${seededUser.id}/media/${mediaId}/original.jpg`,
+        original_filename: 'integration-photo.jpg',
+        media_type: 'image',
+        mime_type: 'image/jpeg',
+        file_size: 12345,
+        status: 'ready',
+        upload_expires_at: new Date().toISOString(),
       });
+
+      expect(insertError).toBeNull();
+
+      const { error: processingError } = await client
+        .from('media')
+        .update({
+          processing_error: 'Unexpected error',
+        })
+        .eq('id', mediaId);
+
+      expect(processingError).not.toBeNull();
     } finally {
-      await deleteTestUser(otherUserId);
+      await client.from('media').delete().eq('id', mediaId);
     }
   });
 });

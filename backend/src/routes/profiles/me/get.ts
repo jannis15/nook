@@ -1,6 +1,7 @@
 import { createRoute } from '@hono/zod-openapi';
 import type { App } from '../../../app-types.js';
 import { apiError, errorResponseSchema } from '../../../lib/errors.js';
+import { openApiTags } from '../../../lib/openapi-tags.js';
 import { getOwnProfile } from '../../../domain/profile-service.js';
 import { requireAuth } from '../../../middleware/auth.js';
 import { profileResponseSchema } from './types.js';
@@ -8,7 +9,7 @@ import { profileResponseSchema } from './types.js';
 const getMeRoute = createRoute({
   method: 'get',
   path: '/profiles/me',
-  tags: ['Profiles'],
+  tags: [openApiTags.profiles],
   middleware: [requireAuth] as const,
   security: [{ bearerAuth: [] }],
   responses: {

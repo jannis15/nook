@@ -1,18 +1,15 @@
 import { spawn, spawnSync } from 'node:child_process';
 
-const supabaseEnvNames = ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY'];
+const supabaseEnvNames = ['SUPABASE_URL', 'SUPABASE_SECRET_KEY'];
 
 run('npm run supabase:ensure');
 
-const status = spawnSync(
-  'npx supabase status -o env --override-name api.url=SUPABASE_URL --override-name auth.publishable_key=SUPABASE_PUBLISHABLE_KEY',
-  {
-    cwd: 'supabase',
-    shell: true,
-    encoding: 'utf8',
-    stdio: ['inherit', 'pipe', 'inherit'],
-  },
-);
+const status = spawnSync('npx supabase status -o env', {
+  cwd: 'supabase',
+  shell: true,
+  encoding: 'utf8',
+  stdio: ['inherit', 'pipe', 'inherit'],
+});
 
 if (status.status !== 0) {
   process.exit(status.status ?? 1);
@@ -23,11 +20,19 @@ const env = { ...process.env };
 for (const line of status.stdout.split('\n')) {
   const match = line.match(/^([A-Z0-9_]+)="(.*)"$/);
 
-  if (!match || !supabaseEnvNames.includes(match[1])) {
+  if (!match) {
     continue;
   }
 
-  env[match[1]] ??= match[2];
+  const name =
+    match[1] === 'API_URL'
+      ? 'SUPABASE_URL'
+      : match[1] === 'SECRET_KEY'
+        ? 'SUPABASE_SECRET_KEY'
+        : null;
+  if (name && supabaseEnvNames.includes(name)) {
+    env[name] ??= match[2];
+  }
 }
 
 for (const name of supabaseEnvNames) {

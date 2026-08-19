@@ -62,7 +62,7 @@ async function importEnv(overrides: NodeJS.ProcessEnv) {
     ENABLE_DOCS: undefined,
     NODE_ENV: undefined,
     PORT: undefined,
-    SUPABASE_PUBLISHABLE_KEY: 'test-key',
+    SUPABASE_SECRET_KEY: 'test-key',
     SUPABASE_URL: 'http://localhost:54321',
     ...overrides,
   };

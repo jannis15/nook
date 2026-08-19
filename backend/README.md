@@ -2,14 +2,15 @@
 
 TypeScript backend for Nook, built around Hono and local Supabase during early development.
 
-This is currently the backend foundation: local Supabase Auth/PostgreSQL/RLS, request validation, OpenAPI docs, health checks, authenticated profile APIs, and tests. Media upload, gallery, collection, tag, and search APIs are future product work and are not part of the immediate implementation scope.
+This is currently the backend foundation: local Supabase Auth/PostgreSQL, request validation, OpenAPI docs, health checks, authenticated profile and media APIs, and tests. Gallery, collection, tag, and search APIs are future product work and are not part of the immediate implementation scope.
 
 ## Role
 
 - Act as the application layer between Flutter clients and Supabase
 - Validate authenticated requests
-- Eventually coordinate media upload metadata
-- Eventually read and write media, collection, and tag records
+- Coordinate media upload metadata and direct-to-storage uploads
+- Read and delete media records
+- Eventually read and write collection and tag records
 - Keep storage-provider details abstract enough to allow future migration
 
 ## Development
@@ -25,11 +26,14 @@ npm run supabase:status
 
 `npm run dev` checks whether local Supabase is running, starts it if needed, and then starts the Hono backend watcher.
 
-Use the values from `npm run supabase:status` to update `.env.local`, including `SUPABASE_PUBLISHABLE_KEY`, if your local values differ.
+Use the values from `npm run supabase:status` to update `.env.local`, including `SUPABASE_SECRET_KEY`, if your local values differ. Do not expose this key to clients.
 
 The Hono server runs on `http://localhost:3001` by default. API documentation is generated from the route schemas and is available at `http://localhost:3001/docs`.
 
 Profile routes require `Authorization: Bearer <access-token>`. They intentionally work with the app profile from `public.profiles`, not the full Supabase Auth identity.
+
+See [Media Upload and Read Flow](docs/media-upload-flow.md) for the current
+upload lifecycle, storage protections, read URLs, and content-hash status.
 
 Manual API tests are available in `backend/bruno/`. They mirror endpoint paths in folders and use the documented method order from `backend/bruno/README.md`.
 
@@ -67,7 +71,7 @@ Run the backend test suite with:
 npm test
 ```
 
-Supabase/RLS integration tests require local Supabase to be running and seeded:
+Supabase integration tests require local Supabase to be running and seeded:
 
 ```sh
 npm run supabase:ensure
@@ -75,6 +79,6 @@ npm run db:reset
 npm run test:integration
 ```
 
-If your local Supabase publishable key differs from the default local key, set `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY` before running `npm run test:integration`.
+If your local Supabase keys differ from the defaults, set `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, and `SUPABASE_SECRET_KEY` before running `npm run test:integration`.
 
 See `../PROJECT_CONTEXT.md` for product, architecture, and data-model context.

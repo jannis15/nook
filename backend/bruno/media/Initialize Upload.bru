@@ -1,0 +1,27 @@
+meta {
+  name: Initialize Upload
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/media/uploads
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "filename": "photo.jpg",
+    "mime_type": "image/jpeg",
+    "file_size": 12345
+  }
+}
+
+script:post-response {
+  const body = res.getBody();
+
+  if (body.media?.id) {
+    bru.setEnvVar("mediaId", body.media.id);
+  }
+}

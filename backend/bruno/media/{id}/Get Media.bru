@@ -1,0 +1,11 @@
+meta {
+  name: Get Media
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/media/{{mediaId}}
+  body: none
+  auth: inherit
+}
