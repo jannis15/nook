@@ -268,12 +268,6 @@ abstract class AppLocalizations {
   /// **'Size'**
   String get mediaInfoSizeLabel;
 
-  /// No description provided for @mediaInfoStatusLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Status'**
-  String get mediaInfoStatusLabel;
-
   /// No description provided for @mediaInfoTypeLabel.
   ///
   /// In en, this message translates to:
@@ -303,6 +297,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Refresh'**
   String get mediaRefreshTooltip;
+
+  /// No description provided for @mediaTypeImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get mediaTypeImage;
+
+  /// No description provided for @mediaTypeVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get mediaTypeVideo;
 
   /// No description provided for @mediaUnmuteVideoTooltip.
   ///

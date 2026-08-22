@@ -57,3 +57,50 @@ class LoginRoute extends PageRouteInfo<void> {
     },
   );
 }
+
+/// generated route for
+/// [MediaDetailPage]
+class MediaDetailRoute extends PageRouteInfo<MediaDetailRouteArgs> {
+  MediaDetailRoute({
+    required String mediaId,
+    Media? initialMedia,
+    List<PageRouteInfo>? children,
+  }) : super(
+         MediaDetailRoute.name,
+         args: MediaDetailRouteArgs(
+           mediaId: mediaId,
+           initialMedia: initialMedia,
+         ),
+         rawPathParams: {'mediaId': mediaId},
+         initialChildren: children,
+       );
+
+  static const String name = 'MediaDetailRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<MediaDetailRouteArgs>();
+      return MediaDetailPage(
+        mediaId: args.mediaId,
+        initialMedia: args.initialMedia,
+      );
+    },
+  );
+}
+
+/// Arguments for [MediaDetailRoute].
+class MediaDetailRouteArgs {
+  /// Default constructor.
+  const MediaDetailRouteArgs({required this.mediaId, this.initialMedia});
+
+  /// Identifier from the media detail route path.
+  final String mediaId;
+
+  /// Media already available from the originating library view.
+  final Media? initialMedia;
+
+  @override
+  String toString() =>
+      'MediaDetailRouteArgs{mediaId: $mediaId, initialMedia: $initialMedia}';
+}

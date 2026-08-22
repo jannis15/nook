@@ -99,9 +99,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaInfoSizeLabel => 'Size';
 
   @override
-  String get mediaInfoStatusLabel => 'Status';
-
-  @override
   String get mediaInfoTypeLabel => 'Type';
 
   @override
@@ -115,6 +112,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mediaRefreshTooltip => 'Refresh';
+
+  @override
+  String get mediaTypeImage => 'Image';
+
+  @override
+  String get mediaTypeVideo => 'Video';
 
   @override
   String get mediaUnmuteVideoTooltip => 'Unmute video';

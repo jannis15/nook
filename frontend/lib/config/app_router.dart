@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:nook/config/auth_route_guards.dart';
 import 'package:nook/domain/auth/use_cases/watch_identity_use_case.dart';
+import 'package:nook/domain/media/entities/media.dart';
 import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 import 'package:nook/presentation/auth/loading/auth_loading_page.dart';
 import 'package:nook/presentation/auth/login/login_page.dart';
 import 'package:nook/presentation/home/home_page.dart';
+import 'package:nook/presentation/media/media_detail_page.dart';
 
 part 'app_router.gr.dart';
 
@@ -26,6 +28,11 @@ class AppRouter extends RootStackRouter {
       path: '/home',
       guards: [AuthRouteGuard(_watchIdentity, _watchOwnProfile)],
       transitionsBuilder: TransitionsBuilders.noTransition,
+    ),
+    AutoRoute(
+      page: MediaDetailRoute.page,
+      path: '/media/:mediaId',
+      guards: [AuthRouteGuard(_watchIdentity, _watchOwnProfile)],
     ),
     AutoRoute(page: LoginRoute.page, path: '/auth/login', guards: [GuestRouteGuard(_watchIdentity)]),
     RedirectRoute(path: '*', redirectTo: '/'),

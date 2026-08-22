@@ -29,11 +29,12 @@
   "mediaInfoDimensionsLabel": "Dimensions",
   "mediaInfoMimeTypeLabel": "MIME type",
   "mediaInfoSizeLabel": "Size",
-  "mediaInfoStatusLabel": "Status",
   "mediaInfoTypeLabel": "Type",
   "mediaMuteVideoTooltip": "Mute video",
   "mediaPauseVideoTooltip": "Pause video",
   "mediaPlayVideoTooltip": "Play video",
   "mediaRefreshTooltip": "Refresh",
+  "mediaTypeImage": "Image",
+  "mediaTypeVideo": "Video",
   "mediaUnmuteVideoTooltip": "Unmute video"
 }
