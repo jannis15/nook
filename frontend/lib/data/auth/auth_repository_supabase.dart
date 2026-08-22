@@ -41,6 +41,7 @@ class AuthRepositorySupabase implements AuthRepository {
   @override
   Future<Result<Unit, AuthFailure>> logout() async {
     try {
+      // Supabase clears the local session before attempting remote revocation.
       await _supabaseClient.auth.signOut();
 
       return Success.unit();

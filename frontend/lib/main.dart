@@ -32,8 +32,8 @@ Future<void> main() async {
   await Supabase.initialize(url: AppEnv.supabaseUrl, publishableKey: AppEnv.supabasePublishableKey);
 
   final supabaseClient = Supabase.instance.client;
-  final apiClient = createApiClient(supabaseClient);
   final authRepository = AuthRepositorySupabase(supabaseClient);
+  final apiClient = createApiClient(supabaseClient, authRepository);
   final profileRepository = ProfileRepositoryImpl(apiClient, authRepository: authRepository);
   final mediaRepository = MediaRepositoryImpl(apiClient);
   final watchIdentity = WatchIdentityUseCase(authRepository);
