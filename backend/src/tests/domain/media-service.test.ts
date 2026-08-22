@@ -91,11 +91,32 @@ describe('media service', () => {
           updatedAt: imageRow.updated_at,
         },
       ],
+      nextCursor: null,
     });
     expect(listMedia).toHaveBeenCalledWith(supabase, userId, {
       mediaType: 'image',
       status: 'ready',
       limit: 25,
+    });
+  });
+
+  it('returns a cursor from the last item when another page exists', async () => {
+    const laterImageRow = {
+      ...imageRow,
+      id: '20000000-0000-4000-8000-000000000002',
+      created_at: '2026-07-30T00:00:00.000Z',
+    };
+    listMedia.mockResolvedValue([laterImageRow, imageRow]);
+
+    await expect(
+      listOwnMedia(supabase, userId, { limit: 1 }, requestId),
+    ).resolves.toMatchObject({
+      ok: true,
+      media: [{ id: laterImageRow.id }],
+      nextCursor: {
+        createdAt: laterImageRow.created_at,
+        id: laterImageRow.id,
+      },
     });
   });
 

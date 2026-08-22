@@ -39,7 +39,7 @@ create trigger media_set_updated_at
 before update on public.media
 for each row execute function public.set_updated_at();
 
-create index media_owner_uploaded_idx on public.media (owner_id, created_at desc);
+create index media_owner_uploaded_idx on public.media (owner_id, created_at desc, id desc);
 create index media_owner_captured_idx on public.media (owner_id, captured_at desc);
 create index media_owner_media_type_idx on public.media (owner_id, media_type);
 create index media_owner_status_idx on public.media (owner_id, status);

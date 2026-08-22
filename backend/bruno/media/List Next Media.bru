@@ -1,0 +1,11 @@
+meta {
+  name: List Next Media
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/media?limit=50&cursor={{mediaCursor}}
+  body: none
+  auth: inherit
+}

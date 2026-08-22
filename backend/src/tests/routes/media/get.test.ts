@@ -50,7 +50,11 @@ describe('GET /media', () => {
   });
 
   it('returns the authenticated user media list', async () => {
-    listOwnMedia.mockResolvedValue({ ok: true, media: [imageMedia] });
+    listOwnMedia.mockResolvedValue({
+      ok: true,
+      media: [imageMedia],
+      nextCursor: { createdAt: imageMedia.createdAt, id: imageMedia.id },
+    });
 
     const response = await createMediaTestApp(
       registerGetMediaListRoute,
@@ -76,6 +80,9 @@ describe('GET /media', () => {
           updated_at: imageMedia.updatedAt,
         },
       ],
+      next_cursor: Buffer.from(
+        JSON.stringify({ createdAt: imageMedia.createdAt, id: imageMedia.id }),
+      ).toString('base64url'),
     });
     expect(listOwnMedia).toHaveBeenCalledWith(
       testSupabase,
@@ -105,10 +112,49 @@ describe('GET /media', () => {
     );
   });
 
+  it('decodes and forwards the cursor', async () => {
+    const cursor = Buffer.from(
+      JSON.stringify({
+        createdAt: imageMedia.createdAt,
+        id: imageMedia.id,
+      }),
+    ).toString('base64url');
+    listOwnMedia.mockResolvedValue({
+      ok: true,
+      media: [],
+      nextCursor: null,
+    });
+
+    const response = await createMediaTestApp(
+      registerGetMediaListRoute,
+    ).request(`/media?cursor=${cursor}`);
+
+    expect(response.status).toBe(200);
+    expect(listOwnMedia).toHaveBeenCalledWith(
+      testSupabase,
+      testUserId,
+      {
+        cursor: { createdAt: imageMedia.createdAt, id: imageMedia.id },
+        limit: 50,
+        status: 'ready',
+      },
+      testRequestId,
+    );
+  });
+
   it('returns 400 for invalid filters', async () => {
     const response = await createMediaTestApp(
       registerGetMediaListRoute,
     ).request('/media?media_type=document');
+
+    expect(response.status).toBe(400);
+    expect(listOwnMedia).not.toHaveBeenCalled();
+  });
+
+  it('returns 400 for an invalid cursor', async () => {
+    const response = await createMediaTestApp(
+      registerGetMediaListRoute,
+    ).request('/media?cursor=invalid');
 
     expect(response.status).toBe(400);
     expect(listOwnMedia).not.toHaveBeenCalled();

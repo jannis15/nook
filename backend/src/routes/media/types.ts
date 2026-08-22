@@ -39,6 +39,7 @@ export const mediaDetailSchema = z.discriminatedUnion('media_type', [
 
 export const mediaListResponseSchema = z.object({
   media: z.array(mediaSchema),
+  next_cursor: z.string().nullable(),
 });
 
 export const mediaResponseSchema = z.object({

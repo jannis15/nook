@@ -104,7 +104,9 @@ records.
 ## Reading Media
 
 `GET /media` returns only the authenticated user's `ready` media records. It
-does not include original-media URLs.
+uses opaque keyset pagination: the first request omits `cursor`, and each
+response returns a `next_cursor` for the next page or `null` when exhausted.
+It does not include original-media URLs.
 
 `GET /media/{media-id}` returns one authenticated user's media record and a
 signed `media_url` for the original object. Read URLs are valid for one hour.

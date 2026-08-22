@@ -7,7 +7,13 @@ import { requireAuth } from '../../middleware/auth.js';
 import { toMediaResponse } from './mapper.js';
 import { mediaListResponseSchema } from './types.js';
 
+type MediaCursor = {
+  createdAt: string;
+  id: string;
+};
+
 const mediaListQuerySchema = z.object({
+  cursor: z.string().optional().transform(parseMediaCursor),
   media_type: z.enum(['image', 'video']).optional(),
   limit: z.coerce.number().int().min(1).max(100).default(50),
 });
@@ -62,6 +68,7 @@ export function registerGetMediaListRoute(app: App) {
     const query = c.req.valid('query');
     const filters = {
       limit: query.limit,
+      ...(query.cursor ? { cursor: query.cursor } : {}),
       ...(query.media_type ? { mediaType: query.media_type } : {}),
       status: 'ready' as const,
     };
@@ -83,8 +90,45 @@ export function registerGetMediaListRoute(app: App) {
             toMediaResponse(c.get('supabase'), media),
           ),
         ),
+        next_cursor: result.nextCursor
+          ? encodeMediaCursor(result.nextCursor)
+          : null,
       },
       200,
     );
   });
+}
+
+function parseMediaCursor(
+  cursor: string | undefined,
+  ctx: z.RefinementCtx,
+): MediaCursor | undefined {
+  if (!cursor) return undefined;
+
+  try {
+    const value: unknown = JSON.parse(
+      Buffer.from(cursor, 'base64url').toString('utf8'),
+    );
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      'createdAt' in value &&
+      'id' in value &&
+      typeof value.createdAt === 'string' &&
+      !Number.isNaN(Date.parse(value.createdAt)) &&
+      typeof value.id === 'string' &&
+      z.uuid().safeParse(value.id).success
+    ) {
+      return { createdAt: value.createdAt, id: value.id };
+    }
+  } catch {
+    // Invalid cursors are reported as request validation errors.
+  }
+
+  ctx.addIssue({ code: 'custom', message: 'Invalid cursor' });
+  return z.NEVER;
+}
+
+function encodeMediaCursor(cursor: MediaCursor): string {
+  return Buffer.from(JSON.stringify(cursor)).toString('base64url');
 }

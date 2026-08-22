@@ -26,9 +26,15 @@ const mediaColumns = [
 const mediaSelect = mediaColumns.join(',');
 
 export type ListMediaFilters = {
+  cursor?: MediaCursor;
   mediaType?: 'image' | 'video';
   status?: 'pending' | 'processing' | 'ready' | 'failed';
   limit: number;
+};
+
+export type MediaCursor = {
+  createdAt: string;
+  id: string;
 };
 
 export async function createMedia(
@@ -81,7 +87,14 @@ export async function listMedia(
     .select(mediaSelect)
     .eq('owner_id', userId)
     .order('created_at', { ascending: false })
-    .limit(filters.limit);
+    .order('id', { ascending: false })
+    .limit(filters.limit + 1);
+
+  if (filters.cursor) {
+    query = query.or(
+      `created_at.lt.${filters.cursor.createdAt},and(created_at.eq.${filters.cursor.createdAt},id.lt.${filters.cursor.id})`,
+    );
+  }
 
   if (filters.mediaType) {
     query = query.eq('media_type', filters.mediaType);

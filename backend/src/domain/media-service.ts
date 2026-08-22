@@ -3,6 +3,7 @@ import {
   findMediaById,
   listMedia,
   type ListMediaFilters,
+  type MediaCursor,
 } from '../dao/media-dao.js';
 import { logger } from '../lib/logger.js';
 import type { Supabase } from '../lib/supabase.js';
@@ -11,7 +12,7 @@ import { toMediaEntity, type MediaEntity } from './media.js';
 type MediaErrorCode = 'not_found' | 'internal_server_error';
 
 type MediaListResult =
-  | { ok: true; media: MediaEntity[] }
+  | { ok: true; media: MediaEntity[]; nextCursor: MediaCursor | null }
   | { ok: false; error: { code: MediaErrorCode; message: string } };
 
 type MediaDetailResult =
@@ -32,12 +33,18 @@ export async function listOwnMedia(
 ): Promise<MediaListResult> {
   try {
     const media = await listMedia(supabase, userId, filters);
+    const page = media.slice(0, filters.limit);
+    const lastMedia = page.at(-1);
+    const nextCursor =
+      media.length > filters.limit && lastMedia
+        ? { createdAt: lastMedia.created_at, id: lastMedia.id }
+        : null;
 
     logger.debug(
-      { requestId, userId, count: media.length, filters },
+      { requestId, userId, count: page.length, filters },
       'Media list loaded',
     );
-    return { ok: true, media: media.map(toMediaEntity) };
+    return { ok: true, media: page.map(toMediaEntity), nextCursor };
   } catch (error) {
     logger.debug({ error, requestId, userId }, 'Media list failed');
     return {
