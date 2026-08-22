@@ -3,8 +3,19 @@ import 'package:toastification/toastification.dart';
 
 const Duration _notificationDuration = Duration(seconds: 4);
 
-enum AppNotificationType { standard, info, error }
+/// The visual treatment for an application notification.
+enum AppNotificationType {
+  /// A standard notification without an icon.
+  standard,
 
+  /// An informational notification.
+  info,
+
+  /// An error notification.
+  error,
+}
+
+/// Displays [message] as an application notification.
 void showAppNotification(
   BuildContext context,
   String message, {

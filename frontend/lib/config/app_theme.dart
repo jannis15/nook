@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// Application themes and their typography.
 abstract final class AppTheme {
   static const _primary = Color(0xFF8F7357);
   static const _onPrimary = Color(0xFFFFF9F0);
@@ -9,6 +10,7 @@ abstract final class AppTheme {
   static const _bodyFontFamily = 'DM Sans';
   static const _displayFontFamily = 'Fraunces';
 
+  /// The application's light theme.
   static final light = _withTextTheme(
     ThemeData(
       colorScheme: ColorScheme.fromSeed(seedColor: _primary).copyWith(
@@ -25,22 +27,16 @@ abstract final class AppTheme {
       inputDecorationTheme: const InputDecorationTheme(
         filled: true,
         fillColor: Color(0xFFFFF9F0),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: _primary, width: 2),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: _lightContainer),
-        ),
+        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: _primary, width: 2)),
+        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: _lightContainer)),
       ),
     ),
   );
 
+  /// The application's dark theme.
   static final dark = _withTextTheme(
     ThemeData(
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: _primary,
-        brightness: Brightness.dark,
-      ),
+      colorScheme: ColorScheme.fromSeed(seedColor: _primary, brightness: Brightness.dark),
     ),
   );
 
@@ -53,35 +49,18 @@ abstract final class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: baseTheme.colorScheme.inverseSurface,
-        contentTextStyle: TextStyle(
-          color: baseTheme.colorScheme.onInverseSurface,
-        ),
+        contentTextStyle: TextStyle(color: baseTheme.colorScheme.onInverseSurface),
       ),
       textTheme: dmSansTheme.copyWith(
-        displayLarge: dmSansTheme.displayLarge?.copyWith(
-          fontFamily: _displayFontFamily,
-          fontWeight: FontWeight.w800,
-        ),
-        displayMedium: dmSansTheme.displayMedium?.copyWith(
-          fontFamily: _displayFontFamily,
-          fontWeight: FontWeight.w800,
-        ),
-        displaySmall: dmSansTheme.displaySmall?.copyWith(
-          fontFamily: _displayFontFamily,
-          fontWeight: FontWeight.w700,
-        ),
-        headlineLarge: dmSansTheme.headlineLarge?.copyWith(
-          fontFamily: _displayFontFamily,
-          fontWeight: FontWeight.w700,
-        ),
+        displayLarge: dmSansTheme.displayLarge?.copyWith(fontFamily: _displayFontFamily, fontWeight: FontWeight.w800),
+        displayMedium: dmSansTheme.displayMedium?.copyWith(fontFamily: _displayFontFamily, fontWeight: FontWeight.w800),
+        displaySmall: dmSansTheme.displaySmall?.copyWith(fontFamily: _displayFontFamily, fontWeight: FontWeight.w700),
+        headlineLarge: dmSansTheme.headlineLarge?.copyWith(fontFamily: _displayFontFamily, fontWeight: FontWeight.w700),
         headlineMedium: dmSansTheme.headlineMedium?.copyWith(
           fontFamily: _displayFontFamily,
           fontWeight: FontWeight.w700,
         ),
-        headlineSmall: dmSansTheme.headlineSmall?.copyWith(
-          fontFamily: _displayFontFamily,
-          fontWeight: FontWeight.w700,
-        ),
+        headlineSmall: dmSansTheme.headlineSmall?.copyWith(fontFamily: _displayFontFamily, fontWeight: FontWeight.w700),
       ),
     );
   }

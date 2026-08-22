@@ -5,11 +5,18 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:nook/config/app_env.dart';
 import 'package:nook/config/app_router.dart';
 import 'package:nook/config/app_theme.dart';
-import 'package:nook/data/auth/supabase_auth_repository.dart';
-import 'package:nook/data/profile/api_profile_repository.dart';
+import 'package:nook/data/api/api_client.dart';
+import 'package:nook/data/auth/auth_repository_supabase.dart';
+import 'package:nook/data/media/repositories/media_repository_impl.dart';
+import 'package:nook/data/profile/repositories/profile_repository_impl.dart';
 import 'package:nook/domain/auth/repositories/auth_repository.dart';
+import 'package:nook/domain/auth/use_cases/login_use_case.dart';
 import 'package:nook/domain/auth/use_cases/logout_use_case.dart';
 import 'package:nook/domain/auth/use_cases/watch_identity_use_case.dart';
+import 'package:nook/domain/media/repositories/media_repository.dart';
+import 'package:nook/domain/media/use_cases/list_media_use_case.dart';
+import 'package:nook/domain/media/use_cases/load_media_detail_use_case.dart';
+import 'package:nook/domain/media/use_cases/upload_media_use_case.dart';
 import 'package:nook/domain/profile/repositories/profile_repository.dart';
 import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
@@ -22,17 +29,13 @@ Future<void> main() async {
   usePathUrlStrategy();
   AppEnv.validateRequiredDefines();
 
-  await Supabase.initialize(
-    url: AppEnv.supabaseUrl,
-    publishableKey: AppEnv.supabasePublishableKey,
-  );
+  await Supabase.initialize(url: AppEnv.supabaseUrl, publishableKey: AppEnv.supabasePublishableKey);
 
   final supabaseClient = Supabase.instance.client;
-  final authRepository = SupabaseAuthRepository(supabaseClient);
-  final profileRepository = ApiProfileRepository(
-    supabaseClient,
-    authRepository: authRepository,
-  );
+  final apiClient = createApiClient(supabaseClient);
+  final authRepository = AuthRepositorySupabase(supabaseClient);
+  final profileRepository = ProfileRepositoryImpl(apiClient, authRepository: authRepository);
+  final mediaRepository = MediaRepositoryImpl(apiClient);
   final watchIdentity = WatchIdentityUseCase(authRepository);
   final watchOwnProfile = WatchOwnProfileUseCase(profileRepository);
 
@@ -41,33 +44,38 @@ Future<void> main() async {
       providers: [
         RepositoryProvider<AuthRepository>.value(value: authRepository),
         RepositoryProvider<ProfileRepository>.value(value: profileRepository),
+        RepositoryProvider<MediaRepository>.value(value: mediaRepository),
         RepositoryProvider<WatchIdentityUseCase>.value(value: watchIdentity),
-        RepositoryProvider<WatchOwnProfileUseCase>.value(
-          value: watchOwnProfile,
-        ),
-        RepositoryProvider<LogoutUseCase>.value(
-          value: LogoutUseCase(authRepository),
-        ),
+        RepositoryProvider<WatchOwnProfileUseCase>.value(value: watchOwnProfile),
+        RepositoryProvider<ListMediaUseCase>.value(value: ListMediaUseCase(mediaRepository)),
+        RepositoryProvider<LoadMediaDetailUseCase>.value(value: LoadMediaDetailUseCase(mediaRepository)),
+        RepositoryProvider<UploadMediaUseCase>.value(value: UploadMediaUseCase(mediaRepository)),
+        RepositoryProvider<LoginUseCase>.value(value: LoginUseCase(authRepository)),
+        RepositoryProvider<LogoutUseCase>.value(value: LogoutUseCase(authRepository)),
       ],
-      child: NookApp(watchIdentity: watchIdentity),
+      child: NookApp(watchIdentity: watchIdentity, watchOwnProfile: watchOwnProfile),
     ),
   );
 }
 
+/// The root application widget.
 class NookApp extends StatefulWidget {
-  const NookApp({required this.watchIdentity, super.key});
+  /// Default constructor.
+  const NookApp({required this.watchIdentity, required this.watchOwnProfile, super.key});
 
+  /// Provides the identity stream used to re-evaluate routes.
   final WatchIdentityUseCase watchIdentity;
+
+  /// Provides the profile stream used to gate authenticated routes.
+  final WatchOwnProfileUseCase watchOwnProfile;
 
   @override
   State<NookApp> createState() => _NookAppState();
 }
 
 class _NookAppState extends State<NookApp> {
-  late final _appRouter = AppRouter(widget.watchIdentity);
-  late final _reevaluateListenable = ReevaluateListenable.stream(
-    widget.watchIdentity(),
-  );
+  late final _appRouter = AppRouter(widget.watchIdentity, widget.watchOwnProfile);
+  late final _reevaluateListenable = ReevaluateListenable.stream(widget.watchIdentity());
 
   @override
   void dispose() {
@@ -86,9 +94,7 @@ class _NookAppState extends State<NookApp> {
         supportedLocales: AppLocalizations.supportedLocales,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
-        routerConfig: _appRouter.config(
-          reevaluateListenable: _reevaluateListenable,
-        ),
+        routerConfig: _appRouter.config(reevaluateListenable: _reevaluateListenable),
       ),
     );
   }

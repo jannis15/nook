@@ -15,6 +15,7 @@ linter:
     directives_ordering: true
     discarded_futures: true
     prefer_const_declarations: true
+    public_member_api_docs: true
     require_trailing_commas: true
     sort_pub_dependencies: true
     unawaited_futures: true

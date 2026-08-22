@@ -11,7 +11,9 @@ import 'package:nook/presentation/app_bar/main_app_bar_state.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
 import 'package:nook/presentation/utils/app_notification.dart';
 
+/// The application's persistent top app bar.
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
+  /// Default constructor.
   const MainAppBar({super.key});
 
   @override
@@ -24,31 +26,19 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
         watchOwnProfile: context.read<WatchOwnProfileUseCase>(),
         logout: context.read<LogoutUseCase>(),
       ),
-      child:
-          BlocPresentationListener<
-            MainAppBarCubit,
-            MainAppBarPresentationEvent
-          >(
-            listener: (context, event) {
-              switch (event) {
-                case MainAppBarLogoutFailed():
-                  showAppNotification(
-                    context,
-                    context.l10n.homeLogoutFailedError,
-                    type: AppNotificationType.error,
-                  );
-              }
-            },
-            child: AppBar(
-              title: const Text('Home'),
-              actions: const [
-                Padding(
-                  padding: EdgeInsets.only(right: 12),
-                  child: _ProfileMenuButton(),
-                ),
-              ],
-            ),
-          ),
+      child: BlocPresentationListener<MainAppBarCubit, MainAppBarPresentationEvent>(
+        listener: (context, event) {
+          switch (event) {
+            case MainAppBarLogoutFailed():
+              showAppNotification(context, context.l10n.homeLogoutFailedError, type: AppNotificationType.error);
+          }
+        },
+        child: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text(context.l10n.appTitle, style: Theme.of(context).textTheme.headlineSmall),
+          actions: const [Padding(padding: EdgeInsets.only(right: 12), child: _ProfileMenuButton())],
+        ),
+      ),
     );
   }
 }
@@ -83,7 +73,7 @@ class _ProfileMenuButtonState extends State<_ProfileMenuButton> {
     final overlay = Overlay.of(context);
     final cubit = context.read<MainAppBarCubit>();
 
-    _menuOverlay = OverlayEntry(
+    final menuOverlay = OverlayEntry(
       builder: (context) {
         return Stack(
           children: [
@@ -112,7 +102,8 @@ class _ProfileMenuButtonState extends State<_ProfileMenuButton> {
       },
     );
 
-    overlay.insert(_menuOverlay!);
+    _menuOverlay = menuOverlay;
+    overlay.insert(menuOverlay);
   }
 
   void _hideMenu() {
@@ -206,17 +197,13 @@ class _ProfileMenu extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.titleMedium,
                           ),
-                          if (user.email != null) ...[
-                            const SizedBox(height: 2),
-                            Text(
-                              user.email!,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
+                          const SizedBox(height: 2),
+                          Text(
+                            user.email,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                          ),
                         ],
                       ),
                     ),
@@ -240,12 +227,7 @@ class _ProfileMenu extends StatelessWidget {
 }
 
 class _ProfileMenuItem extends StatelessWidget {
-  const _ProfileMenuItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.isLoading = false,
-  });
+  const _ProfileMenuItem({required this.icon, required this.label, required this.onTap, this.isLoading = false});
 
   final IconData icon;
   final String label;
@@ -266,11 +248,7 @@ class _ProfileMenuItem extends StatelessWidget {
             Icon(icon, color: colorScheme.onSurfaceVariant),
             const SizedBox(width: 12),
             Expanded(child: Text(label)),
-            if (isLoading)
-              const SizedBox.square(
-                dimension: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
+            if (isLoading) const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2)),
           ],
         ),
       ),

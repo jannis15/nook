@@ -3,13 +3,14 @@ import 'package:nook/domain/auth/entities/app_identity.dart';
 import 'package:nook/domain/auth/entities/auth_failure.dart';
 import 'package:rxdart/rxdart.dart';
 
+/// Contract for session authentication operations.
 abstract interface class AuthRepository {
+  /// The current application identity.
   ValueStream<AppIdentity> get identity;
 
-  Future<Result<Unit, AuthFailure>> loginWithPassword({
-    required String email,
-    required String password,
-  });
+  /// Authenticates with an email address and password.
+  Future<Result<Unit, AuthFailure>> loginWithPassword({required String email, required String password});
 
+  /// Ends the current authenticated session.
   Future<Result<Unit, AuthFailure>> logout();
 }

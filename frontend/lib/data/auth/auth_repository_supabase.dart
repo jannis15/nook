@@ -5,11 +5,11 @@ import 'package:nook/domain/auth/repositories/auth_repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-class SupabaseAuthRepository implements AuthRepository {
-  SupabaseAuthRepository(this._supabaseClient)
-    : _identity = BehaviorSubject.seeded(
-        _identityFromUser(_supabaseClient.auth.currentSession?.user),
-      ) {
+/// A Supabase-backed authentication repository.
+class AuthRepositorySupabase implements AuthRepository {
+  /// Default constructor.
+  AuthRepositorySupabase(this._supabaseClient)
+    : _identity = BehaviorSubject.seeded(_identityFromUser(_supabaseClient.auth.currentSession?.user)) {
     _supabaseClient.auth.onAuthStateChange.listen((event) {
       _identity.add(_identityFromUser(event.session?.user));
     });
@@ -22,15 +22,9 @@ class SupabaseAuthRepository implements AuthRepository {
   ValueStream<AppIdentity> get identity => _identity.stream;
 
   @override
-  Future<Result<Unit, AuthFailure>> loginWithPassword({
-    required String email,
-    required String password,
-  }) async {
+  Future<Result<Unit, AuthFailure>> loginWithPassword({required String email, required String password}) async {
     try {
-      await _supabaseClient.auth.signInWithPassword(
-        email: email,
-        password: password,
-      );
+      await _supabaseClient.auth.signInWithPassword(email: email, password: password);
 
       return Success.unit();
     } on AuthException catch (error) {
@@ -60,6 +54,6 @@ class SupabaseAuthRepository implements AuthRepository {
       return const AnonymousAppIdentity();
     }
 
-    return AuthenticatedAppIdentity(id: user.id, email: user.email);
+    return AuthenticatedAppIdentity(id: user.id);
   }
 }

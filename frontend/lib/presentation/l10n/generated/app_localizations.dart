@@ -136,6 +136,18 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get loginPasswordLabel;
 
+  /// No description provided for @loginShowPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get loginShowPasswordButton;
+
+  /// No description provided for @loginHidePasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get loginHidePasswordButton;
+
   /// No description provided for @loginPasswordRequiredError.
   ///
   /// In en, this message translates to:
@@ -165,6 +177,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign out failed. Try again.'**
   String get homeLogoutFailedError;
+
+  /// No description provided for @mediaAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add media'**
+  String get mediaAddButton;
+
+  /// No description provided for @mediaCreatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get mediaCreatedLabel;
+
+  /// No description provided for @mediaDetailsCloseTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Close details'**
+  String get mediaDetailsCloseTooltip;
+
+  /// No description provided for @mediaDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get mediaDetailsTitle;
+
+  /// No description provided for @mediaEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Start by adding an image or video from your computer.'**
+  String get mediaEmptyDescription;
+
+  /// No description provided for @mediaEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No media yet'**
+  String get mediaEmptyTitle;
+
+  /// No description provided for @mediaFailureLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Media could not be loaded.'**
+  String get mediaFailureLoad;
+
+  /// No description provided for @mediaFailureNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Media not found.'**
+  String get mediaFailureNotFound;
+
+  /// No description provided for @mediaFailureUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong with your media.'**
+  String get mediaFailureUnknown;
+
+  /// No description provided for @mediaFailureUnauthenticated.
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in again.'**
+  String get mediaFailureUnauthenticated;
+
+  /// No description provided for @mediaFailureUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Only supported images and videos can be uploaded.'**
+  String get mediaFailureUnsupported;
+
+  /// No description provided for @mediaInfoContentHashLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Content hash'**
+  String get mediaInfoContentHashLabel;
+
+  /// No description provided for @mediaInfoDimensionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dimensions'**
+  String get mediaInfoDimensionsLabel;
+
+  /// No description provided for @mediaInfoMimeTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MIME type'**
+  String get mediaInfoMimeTypeLabel;
+
+  /// No description provided for @mediaInfoSizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get mediaInfoSizeLabel;
+
+  /// No description provided for @mediaInfoStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get mediaInfoStatusLabel;
+
+  /// No description provided for @mediaInfoTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get mediaInfoTypeLabel;
+
+  /// No description provided for @mediaMuteVideoTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute video'**
+  String get mediaMuteVideoTooltip;
+
+  /// No description provided for @mediaPauseVideoTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause video'**
+  String get mediaPauseVideoTooltip;
+
+  /// No description provided for @mediaPlayVideoTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Play video'**
+  String get mediaPlayVideoTooltip;
+
+  /// No description provided for @mediaRefreshTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get mediaRefreshTooltip;
+
+  /// No description provided for @mediaUnmuteVideoTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute video'**
+  String get mediaUnmuteVideoTooltip;
 }
 
 class _AppLocalizationsDelegate

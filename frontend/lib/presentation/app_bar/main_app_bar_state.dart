@@ -7,34 +7,33 @@ part 'main_app_bar_state.freezed.dart';
 const _generateInitials = GenerateInitialsUseCase();
 
 @freezed
+/// State displayed by the main app bar.
 abstract class MainAppBarState with _$MainAppBarState {
+  /// Creates a main app bar state.
   const MainAppBarState._();
 
-  const factory MainAppBarState({
-    required MainAppBarUser? user,
-    @Default(false) bool isLoggingOut,
-  }) = _MainAppBarState;
+  /// Default constructor.
+  const factory MainAppBarState({required MainAppBarUser? user, @Default(false) bool isLoggingOut}) = _MainAppBarState;
 }
 
 @freezed
+/// Presentation model for the signed-in user.
 abstract class MainAppBarUser with _$MainAppBarUser {
+  /// Creates a main app bar user.
   const MainAppBarUser._();
 
-  const factory MainAppBarUser({
-    required String id,
-    required String? displayName,
-    required String? email,
-  }) = _MainAppBarUser;
+  /// Default constructor.
+  const factory MainAppBarUser({required String id, required String? displayName, required String email}) =
+      _MainAppBarUser;
 
+  /// Creates an app bar user from [profile].
   factory MainAppBarUser.fromProfile(AppProfile profile) {
-    return MainAppBarUser(
-      id: profile.id,
-      displayName: profile.displayName,
-      email: profile.email,
-    );
+    return MainAppBarUser(id: profile.id, displayName: profile.displayName, email: profile.email);
   }
 
+  /// The name shown in the app bar.
   String get name => displayName ?? 'User';
 
+  /// The initials derived from [name].
   String get initials => _generateInitials(name);
 }

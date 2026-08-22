@@ -8,13 +8,13 @@ import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 import 'package:nook/presentation/app_bar/main_app_bar_presentation_event.dart';
 import 'package:nook/presentation/app_bar/main_app_bar_state.dart';
 
+/// Manages profile and sign-out state for the top app bar.
 class MainAppBarCubit extends Cubit<MainAppBarState>
     with BlocPresentationMixin<MainAppBarState, MainAppBarPresentationEvent> {
-  MainAppBarCubit({
-    required WatchOwnProfileUseCase watchOwnProfile,
-    required LogoutUseCase logout,
-  }) : _logout = logout,
-       super(MainAppBarState(user: _userFromProfile(watchOwnProfile().value))) {
+  /// Default constructor.
+  MainAppBarCubit({required WatchOwnProfileUseCase watchOwnProfile, required LogoutUseCase logout})
+    : _logout = logout,
+      super(MainAppBarState(user: _userFromProfile(watchOwnProfile().value))) {
     _profileSubscription = watchOwnProfile().listen(_profileChanged);
   }
 
@@ -25,6 +25,7 @@ class MainAppBarCubit extends Cubit<MainAppBarState>
     emit(state.copyWith(user: _userFromProfile(profile)));
   }
 
+  /// Ends the current session.
   Future<void> logout() async {
     if (state.isLoggingOut) {
       return;

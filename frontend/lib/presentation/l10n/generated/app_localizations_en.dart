@@ -30,6 +30,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginPasswordLabel => 'Password';
 
   @override
+  String get loginShowPasswordButton => 'Show password';
+
+  @override
+  String get loginHidePasswordButton => 'Hide password';
+
+  @override
   String get loginPasswordRequiredError => 'Enter your password.';
 
   @override
@@ -44,4 +50,72 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeLogoutFailedError => 'Sign out failed. Try again.';
+
+  @override
+  String get mediaAddButton => 'Add media';
+
+  @override
+  String get mediaCreatedLabel => 'Created';
+
+  @override
+  String get mediaDetailsCloseTooltip => 'Close details';
+
+  @override
+  String get mediaDetailsTitle => 'Details';
+
+  @override
+  String get mediaEmptyDescription =>
+      'Start by adding an image or video from your computer.';
+
+  @override
+  String get mediaEmptyTitle => 'No media yet';
+
+  @override
+  String get mediaFailureLoad => 'Media could not be loaded.';
+
+  @override
+  String get mediaFailureNotFound => 'Media not found.';
+
+  @override
+  String get mediaFailureUnknown => 'Something went wrong with your media.';
+
+  @override
+  String get mediaFailureUnauthenticated => 'Please sign in again.';
+
+  @override
+  String get mediaFailureUnsupported =>
+      'Only supported images and videos can be uploaded.';
+
+  @override
+  String get mediaInfoContentHashLabel => 'Content hash';
+
+  @override
+  String get mediaInfoDimensionsLabel => 'Dimensions';
+
+  @override
+  String get mediaInfoMimeTypeLabel => 'MIME type';
+
+  @override
+  String get mediaInfoSizeLabel => 'Size';
+
+  @override
+  String get mediaInfoStatusLabel => 'Status';
+
+  @override
+  String get mediaInfoTypeLabel => 'Type';
+
+  @override
+  String get mediaMuteVideoTooltip => 'Mute video';
+
+  @override
+  String get mediaPauseVideoTooltip => 'Pause video';
+
+  @override
+  String get mediaPlayVideoTooltip => 'Play video';
+
+  @override
+  String get mediaRefreshTooltip => 'Refresh';
+
+  @override
+  String get mediaUnmuteVideoTooltip => 'Unmute video';
 }

@@ -1,6 +1,9 @@
+/// Generates a compact initials string from a display name.
 class GenerateInitialsUseCase {
+  /// Default constructor.
   const GenerateInitialsUseCase();
 
+  /// Returns up to two uppercase initials for [value].
   String call(String value) {
     final initials = value
         .trim()
