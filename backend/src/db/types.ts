@@ -36,13 +36,9 @@ export type Database = {
     Tables: {
       media: {
         Row: {
-          captured_at: string | null
-          content_hash: string | null
           created_at: string
           description: string | null
-          duration_seconds: number | null
           file_size: number
-          height: number | null
           id: string
           media_type: Database["public"]["Enums"]["media_type"]
           metadata: Json
@@ -55,16 +51,11 @@ export type Database = {
           title: string | null
           updated_at: string
           upload_expires_at: string
-          width: number | null
         }
         Insert: {
-          captured_at?: string | null
-          content_hash?: string | null
           created_at?: string
           description?: string | null
-          duration_seconds?: number | null
           file_size: number
-          height?: number | null
           id?: string
           media_type: Database["public"]["Enums"]["media_type"]
           metadata?: Json
@@ -77,16 +68,11 @@ export type Database = {
           title?: string | null
           updated_at?: string
           upload_expires_at: string
-          width?: number | null
         }
         Update: {
-          captured_at?: string | null
-          content_hash?: string | null
           created_at?: string
           description?: string | null
-          duration_seconds?: number | null
           file_size?: number
-          height?: number | null
           id?: string
           media_type?: Database["public"]["Enums"]["media_type"]
           metadata?: Json
@@ -99,7 +85,6 @@ export type Database = {
           title?: string | null
           updated_at?: string
           upload_expires_at?: string
-          width?: number | null
         }
         Relationships: [
           {

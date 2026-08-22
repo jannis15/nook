@@ -9,3 +9,7 @@ get {
   body: none
   auth: inherit
 }
+
+script:post-response {
+  bru.setEnvVar('mediaCursor', res.body.next_cursor ?? '');
+}

@@ -36,10 +36,6 @@ export async function toMediaResponse(
     media_type: media.mediaType,
     mime_type: media.mimeType,
     file_size: media.fileSize,
-    content_hash: media.contentHash,
-    width: media.width,
-    height: media.height,
-    captured_at: media.capturedAt,
     status: media.status,
     created_at: media.createdAt,
     updated_at: media.updatedAt,
@@ -49,7 +45,6 @@ export async function toMediaResponse(
     return {
       ...base,
       media_type: 'video',
-      duration_seconds: media.durationSeconds,
     };
   }
 

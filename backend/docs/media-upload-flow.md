@@ -110,19 +110,8 @@ It does not include original-media URLs.
 
 `GET /media/{media-id}` returns one authenticated user's media record and a
 signed `media_url` for the original object. Read URLs are valid for one hour.
-Both list and detail responses include metadata such as media type, MIME type,
-file size, status, dimensions, and capture time.
-
-## Content Hash
-
-The `media.content_hash` column exists and is exposed as `content_hash` in media
-API responses. It is currently not calculated or written by the backend, so it
-is `null` for newly uploaded media.
-
-The database has an owner-scoped index for non-null content hashes. This
-suggests a future use for efficient same-owner content identity or duplicate
-detection, but no duplicate detection, integrity verification, or hash-based
-behavior is implemented today.
+Both list and detail responses include media type, MIME type, file size, and
+status.
 
 ## Current Limits
 
@@ -130,5 +119,4 @@ behavior is implemented today.
   completion.
 - No media update endpoint exists.
 - No file replacement endpoint exists.
-- Completion verifies object existence and byte size, not MIME contents or a
-  cryptographic content hash.
+- Completion verifies object existence and byte size, not MIME contents.

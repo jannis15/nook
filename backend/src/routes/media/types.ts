@@ -9,10 +9,6 @@ const baseMediaSchema = z.object({
   description: z.string().nullable(),
   mime_type: z.string(),
   file_size: z.number().int().nonnegative(),
-  content_hash: z.string().nullable(),
-  width: z.number().int().positive().nullable(),
-  height: z.number().int().positive().nullable(),
-  captured_at: z.string().nullable(),
   status: mediaStatusSchema,
   created_at: z.string(),
   updated_at: z.string(),
@@ -24,7 +20,6 @@ export const imageMediaSchema = baseMediaSchema.extend({
 
 export const videoMediaSchema = baseMediaSchema.extend({
   media_type: z.literal('video'),
-  duration_seconds: z.number().nonnegative().nullable(),
 });
 
 export const mediaSchema = z.discriminatedUnion('media_type', [

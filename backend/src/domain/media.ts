@@ -12,10 +12,6 @@ export type BaseMediaEntity = {
   description: string | null;
   mimeType: string;
   fileSize: number;
-  contentHash: string | null;
-  width: number | null;
-  height: number | null;
-  capturedAt: string | null;
   metadata: Json;
   createdAt: string;
   updatedAt: string;
@@ -39,7 +35,6 @@ export type ImageMediaEntity = BaseMediaEntity &
 export type VideoMediaEntity = BaseMediaEntity &
   MediaProcessingState & {
     mediaType: 'video';
-    durationSeconds: number | null;
   };
 
 export type MediaEntity = ImageMediaEntity | VideoMediaEntity;
@@ -54,10 +49,6 @@ export function toMediaEntity(row: MediaRow): MediaEntity {
     description: row.description,
     mimeType: row.mime_type,
     fileSize: row.file_size,
-    contentHash: row.content_hash,
-    width: row.width,
-    height: row.height,
-    capturedAt: row.captured_at,
     metadata: row.metadata,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -69,7 +60,6 @@ export function toMediaEntity(row: MediaRow): MediaEntity {
       ...base,
       ...processingState,
       mediaType: 'video',
-      durationSeconds: row.duration_seconds,
     };
   }
 
