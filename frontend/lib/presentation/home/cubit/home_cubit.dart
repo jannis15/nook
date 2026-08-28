@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:nook/domain/media/entities/media.dart';
 import 'package:nook/domain/media/entities/media_failure.dart';
+import 'package:nook/domain/media/use_cases/delete_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/list_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/upload_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/wait_for_media_status_use_case.dart';
@@ -21,20 +22,24 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
     required ListMediaUseCase listMedia,
     required UploadMediaUseCase uploadMedia,
     required WaitForMediaStatusUseCase waitForMediaStatus,
+    required DeleteMediaUseCase deleteMedia,
   }) : _listMedia = listMedia,
        _uploadMedia = uploadMedia,
        _waitForMediaStatus = waitForMediaStatus,
+       _deleteMedia = deleteMedia,
        super(const HomeState.loading());
 
   final ListMediaUseCase _listMedia;
   final UploadMediaUseCase _uploadMedia;
   final WaitForMediaStatusUseCase _waitForMediaStatus;
+  final DeleteMediaUseCase _deleteMedia;
   String? _nextCursor;
   bool _isLoadingMore = false;
   int _listRequestGeneration = 0;
   int _activeMediaStatusWaits = 0;
   final List<(MediaLibraryItem, String)> _queuedMediaStatusWaits = [];
   final Set<String> _waitingMediaIds = {};
+  final Set<String> _deletingMediaIds = {};
 
   /// Loads the current user's media library.
   Future<void> loadMedia() async {
@@ -54,9 +59,11 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
     switch (result) {
       case Success(:final success):
         final pendingItems = existingItems.whereType<PendingMediaLibraryItem>();
-        final uploadedItems = success.media.map(UploadedMediaLibraryItem.new).toList();
+        final uploadedItems = success.media
+            .map((media) => UploadedMediaLibraryItem(media, isDeleting: _deletingMediaIds.contains(media.id)))
+            .toList();
         _nextCursor = success.nextCursor;
-        emit(HomeState.loaded(items: [...pendingItems, ...uploadedItems]));
+        _emitItems([...pendingItems, ...uploadedItems]);
         for (final item in uploadedItems) {
           if (item.media.status == MediaStatus.pending || item.media.status == MediaStatus.processing) {
             _queueMediaStatusWait(item, item.media.id);
@@ -90,10 +97,10 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
         final existingMediaIds = _items.whereType<UploadedMediaLibraryItem>().map((item) => item.media.id).toSet();
         final uploadedItems = success.media
             .where((media) => !existingMediaIds.contains(media.id))
-            .map(UploadedMediaLibraryItem.new)
+            .map((media) => UploadedMediaLibraryItem(media, isDeleting: _deletingMediaIds.contains(media.id)))
             .toList();
         _nextCursor = success.nextCursor;
-        emit(HomeState.loaded(items: [..._items, ...uploadedItems]));
+        _emitItems([..._items, ...uploadedItems]);
         for (final item in uploadedItems) {
           if (item.media.status == MediaStatus.pending || item.media.status == MediaStatus.processing) {
             _queueMediaStatusWait(item, item.media.id);
@@ -110,7 +117,7 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
       return;
     }
 
-    emit(HomeState.loaded(items: [...pendingItems, ..._items]));
+    _emitItems([...pendingItems, ..._items]);
     MediaFailure? firstFailure;
 
     for (final pendingItem in pendingItems) {
@@ -208,6 +215,32 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
     emitPresentation(const HomeMediaOperationFailed(failure));
   }
 
+  /// Removes a locally failed upload from the media library.
+  void removeFailedUpload(PendingMediaLibraryItem item) {
+    if (item.status != PendingMediaStatus.failed) return;
+    _removeItem(item.id);
+  }
+
+  /// Deletes persisted [item] and marks its card as busy until the request completes.
+  Future<void> deleteMedia(UploadedMediaLibraryItem item) async {
+    if (!_deletingMediaIds.add(item.id)) return;
+    _replaceItem(
+      item.id,
+      UploadedMediaLibraryItem(item.media, localPreviewBytes: item.localPreviewBytes, isDeleting: true),
+    );
+
+    final result = await _deleteMedia(item.id);
+    switch (result) {
+      case Success():
+        _deletingMediaIds.remove(item.id);
+        _removeItem(item.id);
+      case Error(:final error):
+        _deletingMediaIds.remove(item.id);
+        _replaceItem(item.id, item);
+        emitPresentation(HomeMediaOperationFailed(error));
+    }
+  }
+
   List<MediaLibraryItem> get _items {
     return switch (state) {
       HomeLoaded(:final items) => items,
@@ -216,18 +249,22 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
   }
 
   void _replaceItem(String pendingItemId, MediaLibraryItem replacement, {String? uploadedMediaId}) {
-    emit(
-      HomeState.loaded(
-        items: [
-          for (final item in _items)
-            if (item.id == pendingItemId)
-              replacement
-            else if (item is UploadedMediaLibraryItem && item.media.id == uploadedMediaId)
-              ...const <MediaLibraryItem>[]
-            else
-              item,
-        ],
-      ),
-    );
+    _emitItems([
+      for (final item in _items)
+        if (item.id == pendingItemId)
+          replacement
+        else if (item is UploadedMediaLibraryItem && item.media.id == uploadedMediaId)
+          ...const <MediaLibraryItem>[]
+        else
+          item,
+    ]);
+  }
+
+  void _emitItems(List<MediaLibraryItem> items) {
+    emit(HomeState.loaded(items: items));
+  }
+
+  void _removeItem(String itemId) {
+    _emitItems(_items.where((item) => item.id != itemId).toList());
   }
 }

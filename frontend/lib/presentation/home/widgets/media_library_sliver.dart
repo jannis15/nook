@@ -14,6 +14,9 @@ class MediaLibrarySliver extends StatelessWidget {
     required this.items,
     required this.isLoading,
     required this.hasError,
+    required this.onRemoveFailedUpload,
+    required this.onDeleteMedia,
+    required this.onShowMobileMediaActions,
   });
 
   /// The responsive layout mode.
@@ -27,6 +30,15 @@ class MediaLibrarySliver extends StatelessWidget {
 
   /// Whether the initial library request failed.
   final bool hasError;
+
+  /// Removes an upload that failed.
+  final ValueChanged<PendingMediaLibraryItem> onRemoveFailedUpload;
+
+  /// Confirms and deletes persisted media.
+  final ValueChanged<UploadedMediaLibraryItem> onDeleteMedia;
+
+  /// Opens actions for persisted media on mobile.
+  final ValueChanged<UploadedMediaLibraryItem> onShowMobileMediaActions;
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +77,18 @@ class MediaLibrarySliver extends StatelessWidget {
 
   Widget _buildItemCard(MediaLibraryItem item) {
     return switch (item) {
-      UploadedMediaLibraryItem() => UploadedMediaLibraryItemCard(item: item, layoutMode: layoutMode),
-      PendingMediaLibraryItem() => PendingMediaLibraryItemCard(item: item, layoutMode: layoutMode),
+      UploadedMediaLibraryItem() => UploadedMediaLibraryItemCard(
+        item: item,
+        layoutMode: layoutMode,
+        isDeleting: item.isDeleting,
+        onDelete: () => onDeleteMedia(item),
+        onLongPress: () => onShowMobileMediaActions(item),
+      ),
+      PendingMediaLibraryItem() => PendingMediaLibraryItemCard(
+        item: item,
+        layoutMode: layoutMode,
+        onRemoveFailedUpload: onRemoveFailedUpload,
+      ),
     };
   }
 }

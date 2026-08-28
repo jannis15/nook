@@ -16,6 +16,11 @@
   "homeLogoutFailedError": "Sign out failed. Try again.",
   "mediaAddButton": "Add media",
   "mediaCreatedLabel": "Created",
+  "mediaDeleteAction": "Delete",
+  "mediaDeleteDialogCancel": "Cancel",
+  "mediaDeleteDialogConfirm": "Delete",
+  "mediaDeleteDialogMessage": "This will permanently delete this media.",
+  "mediaDeleteDialogTitle": "Delete media?",
   "mediaDetailsCloseTooltip": "Close details",
   "mediaDetailsTitle": "Details",
   "mediaEmptyDescription": "Start by adding an image or video from your computer.",
@@ -32,7 +37,9 @@
   "mediaPauseVideoTooltip": "Pause video",
   "mediaPlayVideoTooltip": "Play video",
   "mediaRefreshTooltip": "Refresh",
+  "mediaRemoveFailedUploadTooltip": "Remove failed upload",
   "mediaTypeImage": "Image",
   "mediaTypeVideo": "Video",
-  "mediaUnmuteVideoTooltip": "Unmute video"
+  "mediaUnmuteVideoTooltip": "Unmute video",
+  "mediaViewAction": "View"
 }

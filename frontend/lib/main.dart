@@ -14,6 +14,7 @@ import 'package:nook/domain/auth/use_cases/login_use_case.dart';
 import 'package:nook/domain/auth/use_cases/logout_use_case.dart';
 import 'package:nook/domain/auth/use_cases/watch_identity_use_case.dart';
 import 'package:nook/domain/media/repositories/media_repository.dart';
+import 'package:nook/domain/media/use_cases/delete_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/list_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/load_media_detail_use_case.dart';
 import 'package:nook/domain/media/use_cases/upload_media_use_case.dart';
@@ -48,6 +49,7 @@ Future<void> main() async {
         RepositoryProvider<MediaRepository>.value(value: mediaRepository),
         RepositoryProvider<WatchIdentityUseCase>.value(value: watchIdentity),
         RepositoryProvider<WatchOwnProfileUseCase>.value(value: watchOwnProfile),
+        RepositoryProvider<DeleteMediaUseCase>.value(value: DeleteMediaUseCase(mediaRepository)),
         RepositoryProvider<ListMediaUseCase>.value(value: ListMediaUseCase(mediaRepository)),
         RepositoryProvider<LoadMediaDetailUseCase>.value(value: LoadMediaDetailUseCase(mediaRepository)),
         RepositoryProvider<UploadMediaUseCase>.value(value: UploadMediaUseCase(mediaRepository)),

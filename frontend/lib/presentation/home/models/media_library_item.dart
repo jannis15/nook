@@ -17,13 +17,16 @@ sealed class MediaLibraryItem {
 /// A persisted media item.
 class UploadedMediaLibraryItem extends MediaLibraryItem {
   /// Default constructor.
-  const UploadedMediaLibraryItem(this.media, {this.localPreviewBytes});
+  const UploadedMediaLibraryItem(this.media, {this.localPreviewBytes, this.isDeleting = false});
 
   /// The persisted media item.
   final Media media;
 
   /// Original image bytes retained until a server preview is available.
   final Uint8List? localPreviewBytes;
+
+  /// Whether deletion is in progress.
+  final bool isDeleting;
 
   @override
   String get id => media.id;

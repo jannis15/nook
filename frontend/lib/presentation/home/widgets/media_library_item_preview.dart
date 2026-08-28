@@ -4,16 +4,20 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:nook/domain/media/entities/media.dart';
 import 'package:nook/presentation/home/models/media_library_item.dart';
+import 'package:nook/presentation/l10n/app_localizations_context.dart';
 import 'package:nook/presentation/utils/build_context_layout.dart';
 import 'package:nook/presentation/widgets/blur_hash_preview.dart';
 
 /// A preview for a persisted or pending media library item.
 class MediaLibraryItemPreview extends StatelessWidget {
   /// Default constructor.
-  const MediaLibraryItemPreview({super.key, required this.item});
+  const MediaLibraryItemPreview({super.key, required this.item, this.onRemoveFailedUpload});
 
   /// The item to preview.
   final MediaLibraryItem item;
+
+  /// Removes this failed pending upload.
+  final VoidCallback? onRemoveFailedUpload;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +30,7 @@ class MediaLibraryItemPreview extends StatelessWidget {
         bytes: bytes,
         mediaType: mediaType,
         status: status,
+        onRemoveFailedUpload: onRemoveFailedUpload,
       ),
     };
   }
@@ -105,11 +110,17 @@ class _UploadedPreviewContent extends StatelessWidget {
 }
 
 class _PendingMediaPreview extends StatelessWidget {
-  const _PendingMediaPreview({required this.bytes, required this.mediaType, required this.status});
+  const _PendingMediaPreview({
+    required this.bytes,
+    required this.mediaType,
+    required this.status,
+    this.onRemoveFailedUpload,
+  });
 
   final Uint8List bytes;
   final MediaType mediaType;
   final PendingMediaStatus status;
+  final VoidCallback? onRemoveFailedUpload;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +135,9 @@ class _PendingMediaPreview extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              isFailed
+              isFailed && onRemoveFailedUpload != null
+                  ? _FailedPendingMediaPreview(onRemove: onRemoveFailedUpload)
+                  : isFailed
                   ? _MediaPreviewFallback(mediaType: mediaType, isFailed: true)
                   : Stack(
                       fit: StackFit.expand,
@@ -139,6 +152,30 @@ class _PendingMediaPreview extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _FailedPendingMediaPreview extends StatelessWidget {
+  const _FailedPendingMediaPreview({required this.onRemove});
+
+  final VoidCallback? onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.error_outline_rounded, size: 46, color: context.colorScheme.error),
+          const SizedBox(height: 8),
+          TextButton.icon(
+            onPressed: onRemove,
+            icon: const Icon(Icons.close_rounded),
+            label: Text(context.l10n.mediaRemoveFailedUploadTooltip),
+          ),
+        ],
       ),
     );
   }

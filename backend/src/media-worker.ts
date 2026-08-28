@@ -112,14 +112,31 @@ async function processMedia(
     if (data.length === 0) {
       logger.warn(
         { mediaId: media.id },
-        'Media processing lease expired before finalization',
+        'Media processing job was no longer active before finalization',
       );
+      await removePreview(supabase, previewStorageKey, media.id);
       return;
     }
     logger.info({ mediaId: media.id }, 'Media processing completed');
   } catch (error) {
     logger.error({ error, mediaId: media.id }, 'Media processing failed');
     await finalizeFailure(supabase, media.id, leaseToken, error);
+  }
+}
+
+async function removePreview(
+  supabase: Supabase,
+  previewStorageKey: string,
+  mediaId: string,
+): Promise<void> {
+  const { error } = await supabase.storage
+    .from(mediaBucket)
+    .remove([previewStorageKey]);
+  if (error) {
+    logger.error(
+      { error, mediaId, previewStorageKey },
+      'Could not remove unfinalized media preview',
+    );
   }
 }
 

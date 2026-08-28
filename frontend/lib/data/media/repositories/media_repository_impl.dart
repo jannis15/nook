@@ -74,6 +74,20 @@ class MediaRepositoryImpl implements MediaRepository {
   }
 
   @override
+  Future<Result<void, MediaFailure>> deleteMedia(String id) async {
+    try {
+      await _dio.delete<void>('/media/$id');
+      return const Success(null);
+    } on DioException catch (error) {
+      _logger.warning('Could not delete media.', error, error.stackTrace);
+      return Error(_failureFromDioException(error));
+    } catch (error, stackTrace) {
+      _logger.severe('Could not delete media.', error, stackTrace);
+      return const Error(UnknownMediaFailure());
+    }
+  }
+
+  @override
   Future<Result<Media, MediaFailure>> waitForMediaStatus(String id) async {
     try {
       final response = await _dio.get<Map<String, Object?>>(

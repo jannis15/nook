@@ -6,9 +6,11 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nook/config/app_breakpoints.dart';
+import 'package:nook/config/app_router.dart';
 import 'package:nook/domain/media/entities/media.dart';
 import 'package:nook/domain/media/entities/media_failure.dart';
 import 'package:nook/domain/media/entities/supported_media_file_types.dart';
+import 'package:nook/domain/media/use_cases/delete_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/list_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/upload_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/wait_for_media_status_use_case.dart';
@@ -37,6 +39,7 @@ class HomePage extends StatelessWidget {
         listMedia: context.read<ListMediaUseCase>(),
         uploadMedia: context.read<UploadMediaUseCase>(),
         waitForMediaStatus: context.read<WaitForMediaStatusUseCase>(),
+        deleteMedia: context.read<DeleteMediaUseCase>(),
       ),
       child: const _HomeView(),
     );
@@ -135,6 +138,61 @@ class _HomeViewState extends State<_HomeView> {
     await context.read<HomeCubit>().uploadMedia(pendingUploads);
   }
 
+  void _openMedia(UploadedMediaLibraryItem item) {
+    unawaited(context.pushRoute(MediaDetailRoute(mediaId: item.media.id, initialMedia: item.media)));
+  }
+
+  Future<void> _showMobileMediaActions(UploadedMediaLibraryItem item) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.visibility_outlined),
+              title: Text(context.l10n.mediaViewAction),
+              onTap: () {
+                Navigator.of(sheetContext).pop();
+                _openMedia(item);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.delete_outline_rounded, color: context.colorScheme.error),
+              title: Text(context.l10n.mediaDeleteAction, style: TextStyle(color: context.colorScheme.error)),
+              onTap: () async {
+                Navigator.of(sheetContext).pop();
+                await _confirmDeleteMedia(item);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDeleteMedia(UploadedMediaLibraryItem item) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.l10n.mediaDeleteDialogTitle),
+        content: Text(context.l10n.mediaDeleteDialogMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(context.l10n.mediaDeleteDialogCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(context.l10n.mediaDeleteDialogConfirm),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true && mounted) unawaited(context.read<HomeCubit>().deleteMedia(item));
+  }
+
   void _showFailure(MediaFailure failure) {
     final message = switch (failure) {
       UnauthenticatedMediaFailure() => context.l10n.mediaFailureUnauthenticated,
@@ -217,6 +275,9 @@ class _HomeViewState extends State<_HomeView> {
                     items: items,
                     isLoading: isLoading,
                     hasError: hasError,
+                    onRemoveFailedUpload: context.read<HomeCubit>().removeFailedUpload,
+                    onDeleteMedia: _confirmDeleteMedia,
+                    onShowMobileMediaActions: _showMobileMediaActions,
                   ),
                 ),
               ],
@@ -271,6 +332,9 @@ class _HomeViewState extends State<_HomeView> {
                           items: items,
                           isLoading: isLoading,
                           hasError: hasError,
+                          onRemoveFailedUpload: context.read<HomeCubit>().removeFailedUpload,
+                          onDeleteMedia: _confirmDeleteMedia,
+                          onShowMobileMediaActions: _showMobileMediaActions,
                         ),
                       ),
                     ],

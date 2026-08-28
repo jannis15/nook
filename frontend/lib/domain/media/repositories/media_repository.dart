@@ -13,6 +13,9 @@ abstract interface class MediaRepository {
   /// Loads a media item by its identifier.
   Future<Result<MediaDetail, MediaFailure>> loadMediaDetail(String id);
 
+  /// Deletes a media item by its identifier.
+  Future<Result<void, MediaFailure>> deleteMedia(String id);
+
   /// Waits for the next media processing status update.
   Future<Result<Media, MediaFailure>> waitForMediaStatus(String id);
 

@@ -171,15 +171,21 @@ export async function deleteOwnMediaById(
       };
     }
 
+    await deleteMediaById(supabase, userId, mediaId);
+
+    const storageKeys = [
+      media.storage_key,
+      media.preview_storage_key,
+      `${media.owner_id}/media/${media.id}/preview.webp`,
+    ].filter((key): key is string => key !== null);
+
     const { error: storageError } = await supabase.storage
       .from(mediaBucket)
-      .remove([media.storage_key]);
+      .remove([...new Set(storageKeys)]);
 
     if (storageError) {
       throw storageError;
     }
-
-    await deleteMediaById(supabase, userId, mediaId);
 
     logger.debug({ requestId, userId, mediaId }, 'Media deleted');
     return { ok: true };

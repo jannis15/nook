@@ -6,13 +6,21 @@ import 'package:nook/presentation/utils/build_context_layout.dart';
 /// A non-selectable card for media that is uploading or failed to upload.
 class PendingMediaLibraryItemCard extends StatelessWidget {
   /// Default constructor.
-  const PendingMediaLibraryItemCard({super.key, required this.item, required this.layoutMode});
+  const PendingMediaLibraryItemCard({
+    super.key,
+    required this.item,
+    required this.layoutMode,
+    required this.onRemoveFailedUpload,
+  });
 
   /// The pending media item to display.
   final PendingMediaLibraryItem item;
 
   /// The responsive layout mode.
   final AppLayoutMode layoutMode;
+
+  /// Removes this failed upload.
+  final ValueChanged<PendingMediaLibraryItem> onRemoveFailedUpload;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +29,10 @@ class PendingMediaLibraryItemCard extends StatelessWidget {
         AppLayoutMode.mobile => double.infinity,
         AppLayoutMode.web => 220,
       },
-      child: MediaLibraryItemPreview(item: item),
+      child: MediaLibraryItemPreview(
+        item: item,
+        onRemoveFailedUpload: item.status == PendingMediaStatus.failed ? () => onRemoveFailedUpload(item) : null,
+      ),
     );
   }
 }

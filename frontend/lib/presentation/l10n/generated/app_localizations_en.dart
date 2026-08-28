@@ -58,6 +58,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaCreatedLabel => 'Created';
 
   @override
+  String get mediaDeleteAction => 'Delete';
+
+  @override
+  String get mediaDeleteDialogCancel => 'Cancel';
+
+  @override
+  String get mediaDeleteDialogConfirm => 'Delete';
+
+  @override
+  String get mediaDeleteDialogMessage =>
+      'This will permanently delete this media.';
+
+  @override
+  String get mediaDeleteDialogTitle => 'Delete media?';
+
+  @override
   String get mediaDetailsCloseTooltip => 'Close details';
 
   @override
@@ -108,6 +124,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mediaRefreshTooltip => 'Refresh';
 
   @override
+  String get mediaRemoveFailedUploadTooltip => 'Remove failed upload';
+
+  @override
   String get mediaTypeImage => 'Image';
 
   @override
@@ -115,4 +134,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get mediaUnmuteVideoTooltip => 'Unmute video';
+
+  @override
+  String get mediaViewAction => 'View';
 }

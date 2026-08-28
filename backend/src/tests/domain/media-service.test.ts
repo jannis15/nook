@@ -208,22 +208,29 @@ describe('media service', () => {
     });
   });
 
-  it('deletes media storage objects and row', async () => {
+  it('deletes the row and all media storage objects', async () => {
     const remove = vi.fn().mockResolvedValue({ error: null });
     const supabaseWithStorage = createSupabaseWithStorage(remove);
-    findMediaById.mockResolvedValue(imageRow);
+    const media = {
+      ...imageRow,
+      preview_storage_key: `${userId}/media/${mediaId}/preview.webp`,
+    };
+    findMediaById.mockResolvedValue(media);
     deleteMediaById.mockResolvedValue(undefined);
 
     await expect(
       deleteOwnMediaById(supabaseWithStorage, userId, mediaId, requestId),
     ).resolves.toEqual({ ok: true });
 
-    expect(remove).toHaveBeenCalledWith([imageRow.storage_key]);
     expect(deleteMediaById).toHaveBeenCalledWith(
       supabaseWithStorage,
       userId,
       mediaId,
     );
+    expect(remove).toHaveBeenCalledWith([
+      media.storage_key,
+      media.preview_storage_key,
+    ]);
   });
 
   it('maps missing media deletion to not_found', async () => {
@@ -262,7 +269,11 @@ describe('media service', () => {
       },
     });
 
-    expect(deleteMediaById).not.toHaveBeenCalled();
+    expect(deleteMediaById).toHaveBeenCalledWith(
+      supabaseWithStorage,
+      userId,
+      mediaId,
+    );
   });
 
   it('maps row deletion failures to internal_server_error', async () => {

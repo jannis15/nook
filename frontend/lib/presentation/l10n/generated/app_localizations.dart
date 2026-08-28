@@ -190,6 +190,36 @@ abstract class AppLocalizations {
   /// **'Created'**
   String get mediaCreatedLabel;
 
+  /// No description provided for @mediaDeleteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get mediaDeleteAction;
+
+  /// No description provided for @mediaDeleteDialogCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get mediaDeleteDialogCancel;
+
+  /// No description provided for @mediaDeleteDialogConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get mediaDeleteDialogConfirm;
+
+  /// No description provided for @mediaDeleteDialogMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will permanently delete this media.'**
+  String get mediaDeleteDialogMessage;
+
+  /// No description provided for @mediaDeleteDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete media?'**
+  String get mediaDeleteDialogTitle;
+
   /// No description provided for @mediaDetailsCloseTooltip.
   ///
   /// In en, this message translates to:
@@ -286,6 +316,12 @@ abstract class AppLocalizations {
   /// **'Refresh'**
   String get mediaRefreshTooltip;
 
+  /// No description provided for @mediaRemoveFailedUploadTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove failed upload'**
+  String get mediaRemoveFailedUploadTooltip;
+
   /// No description provided for @mediaTypeImage.
   ///
   /// In en, this message translates to:
@@ -303,6 +339,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unmute video'**
   String get mediaUnmuteVideoTooltip;
+
+  /// No description provided for @mediaViewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get mediaViewAction;
 }
 
 class _AppLocalizationsDelegate
