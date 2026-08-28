@@ -45,7 +45,13 @@ class _UploadedMediaPreview extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         child: DecoratedBox(
           decoration: BoxDecoration(color: context.colorScheme.surface),
-          child: _UploadedPreviewContent(media: media, localPreviewBytes: localPreviewBytes),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              _UploadedPreviewContent(media: media, localPreviewBytes: localPreviewBytes),
+              if (media.mediaType == MediaType.video) const _MediaVideoBadge(),
+            ],
+          ),
         ),
       ),
     );
@@ -115,17 +121,23 @@ class _PendingMediaPreview extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         child: DecoratedBox(
           decoration: BoxDecoration(color: context.colorScheme.surface),
-          child: isFailed
-              ? _MediaPreviewFallback(mediaType: mediaType, isFailed: true)
-              : Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    mediaType == MediaType.image
-                        ? _PendingImagePreview(bytes: bytes)
-                        : _MediaPreviewFallback(mediaType: mediaType),
-                    const _MediaProcessingOverlay(),
-                  ],
-                ),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              isFailed
+                  ? _MediaPreviewFallback(mediaType: mediaType, isFailed: true)
+                  : Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        mediaType == MediaType.image
+                            ? _PendingImagePreview(bytes: bytes)
+                            : _MediaPreviewFallback(mediaType: mediaType),
+                        const _MediaProcessingOverlay(),
+                      ],
+                    ),
+              if (mediaType == MediaType.video) const _MediaVideoBadge(),
+            ],
+          ),
         ),
       ),
     );
@@ -180,6 +192,30 @@ class _MediaProcessingOverlay extends StatelessWidget {
     return ColoredBox(
       color: context.colorScheme.surface.withValues(alpha: 0.68),
       child: const Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class _MediaVideoBadge extends StatelessWidget {
+  const _MediaVideoBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: context.colorScheme.scrim.withValues(alpha: 0.7),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Padding(
+            padding: EdgeInsets.all(5),
+            child: Icon(Icons.play_arrow_rounded, size: 20, color: Colors.white),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -203,40 +203,60 @@ class _MediaHud extends StatelessWidget {
       duration: const Duration(milliseconds: 180),
       child: IgnorePointer(
         ignoring: !isVisible,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                IconButton(
-                  onPressed: onBack,
-                  icon: const Icon(Icons.arrow_back_rounded),
-                  color: Colors.white,
-                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: Text(
-                      media.displayName,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(
-                        context,
-                      ).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
-                    ),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 144,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xB3000000), Color(0x00000000)],
                   ),
                 ),
-                IconButton(
-                  onPressed: onInfo,
-                  icon: const Icon(Icons.info_outline_rounded),
-                  color: Colors.white,
-                  tooltip: context.l10n.mediaDetailsTitle,
-                ),
-              ],
+              ),
             ),
-          ),
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    IconButton(
+                      onPressed: onBack,
+                      icon: const Icon(Icons.arrow_back_rounded),
+                      color: Colors.white,
+                      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          media.displayName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: onInfo,
+                      icon: const Icon(Icons.info_outline_rounded),
+                      color: Colors.white,
+                      tooltip: context.l10n.mediaDetailsTitle,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
