@@ -72,6 +72,23 @@ class _MediaLibraryActions extends StatelessWidget {
       label: Text(context.l10n.mediaAddButton),
     );
 
+    if (layoutMode == AppLayoutMode.mobile && showRefresh) {
+      return Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 12,
+          children: [
+            FilledButton.tonalIcon(
+              onPressed: isLoading ? null : onRefresh,
+              icon: const Icon(Icons.refresh_rounded),
+              label: Text(context.l10n.mediaRefreshTooltip),
+            ),
+            addButton,
+          ],
+        ),
+      );
+    }
+
     return Row(
       mainAxisSize: switch (layoutMode) {
         AppLayoutMode.mobile => MainAxisSize.max,

@@ -205,12 +205,6 @@ class _HomeViewState extends State<_HomeView> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _updateInlineAddMediaButtonVisibility();
-      }
-    });
-
     return BlocPresentationListener<HomeCubit, HomePresentationEvent>(
       listener: (context, event) {
         switch (event) {
@@ -218,20 +212,27 @@ class _HomeViewState extends State<_HomeView> {
             _showFailure(failure);
         }
       },
-      child: BlocBuilder<HomeCubit, HomeState>(
-        builder: (context, state) {
-          final items = switch (state) {
-            HomeLoaded(:final items) => items,
-            HomeLoading() || HomeError() => const <MediaLibraryItem>[],
-          };
-          final isLoading = state is HomeLoading;
-          final hasError = state is HomeError;
-
-          return switch (context.layoutMode) {
-            AppLayoutMode.mobile => _buildMobileLayout(items: items, isLoading: isLoading, hasError: hasError),
-            AppLayoutMode.web => _buildWebLayout(items: items, isLoading: isLoading, hasError: hasError),
-          };
+      child: BlocListener<HomeCubit, HomeState>(
+        listener: (_, _) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) _updateInlineAddMediaButtonVisibility();
+          });
         },
+        child: BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            final items = switch (state) {
+              HomeLoaded(:final items) => items,
+              HomeLoading() || HomeError() => const <MediaLibraryItem>[],
+            };
+            final isLoading = state is HomeLoading;
+            final hasError = state is HomeError;
+
+            return switch (context.layoutMode) {
+              AppLayoutMode.mobile => _buildMobileLayout(items: items, isLoading: isLoading, hasError: hasError),
+              AppLayoutMode.web => _buildWebLayout(items: items, isLoading: isLoading, hasError: hasError),
+            };
+          },
+        ),
       ),
     );
   }
