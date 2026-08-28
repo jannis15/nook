@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'media_upload_request_dto.g.dart';
 
 /// A request that initialises a direct media upload.
-@JsonSerializable()
+@JsonSerializable(createFactory: false)
 class MediaUploadRequestDto {
   /// Default constructor.
   const MediaUploadRequestDto({required this.filename, required this.mimeType, required this.fileSize});

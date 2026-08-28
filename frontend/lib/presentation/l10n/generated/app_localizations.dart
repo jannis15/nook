@@ -244,18 +244,6 @@ abstract class AppLocalizations {
   /// **'Only supported images and videos can be uploaded.'**
   String get mediaFailureUnsupported;
 
-  /// No description provided for @mediaInfoContentHashLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Content hash'**
-  String get mediaInfoContentHashLabel;
-
-  /// No description provided for @mediaInfoDimensionsLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Dimensions'**
-  String get mediaInfoDimensionsLabel;
-
   /// No description provided for @mediaInfoMimeTypeLabel.
   ///
   /// In en, this message translates to:

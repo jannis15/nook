@@ -17,6 +17,7 @@ import 'package:nook/domain/media/repositories/media_repository.dart';
 import 'package:nook/domain/media/use_cases/list_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/load_media_detail_use_case.dart';
 import 'package:nook/domain/media/use_cases/upload_media_use_case.dart';
+import 'package:nook/domain/media/use_cases/wait_for_media_status_use_case.dart';
 import 'package:nook/domain/profile/repositories/profile_repository.dart';
 import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
@@ -50,6 +51,7 @@ Future<void> main() async {
         RepositoryProvider<ListMediaUseCase>.value(value: ListMediaUseCase(mediaRepository)),
         RepositoryProvider<LoadMediaDetailUseCase>.value(value: LoadMediaDetailUseCase(mediaRepository)),
         RepositoryProvider<UploadMediaUseCase>.value(value: UploadMediaUseCase(mediaRepository)),
+        RepositoryProvider<WaitForMediaStatusUseCase>.value(value: WaitForMediaStatusUseCase(mediaRepository)),
         RepositoryProvider<LoginUseCase>.value(value: LoginUseCase(authRepository)),
         RepositoryProvider<LogoutUseCase>.value(value: LogoutUseCase(authRepository)),
       ],

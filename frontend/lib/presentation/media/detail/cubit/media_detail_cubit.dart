@@ -16,6 +16,8 @@ class MediaDetailCubit extends Cubit<MediaDetailState>
       super(const MediaDetailState());
 
   final LoadMediaDetailUseCase _loadMedia;
+  bool _restoreHudAfterInfo = false;
+  bool _restoreHudClickModeAfterInfo = false;
 
   /// Loads media detail, retaining [initialMedia] while the current data is refreshed.
   Future<void> loadMedia(String mediaId, {Media? initialMedia}) async {
@@ -58,14 +60,9 @@ class MediaDetailCubit extends Cubit<MediaDetailState>
 
   /// Opens media information, preserving HUD state for restoration on close.
   void openInfo() {
-    emit(
-      state.copyWith(
-        restoreHudAfterInfo: state.isHudVisible,
-        restoreHudClickModeAfterInfo: state.isHudClickMode,
-        isHudVisible: false,
-        isInfoVisible: true,
-      ),
-    );
+    _restoreHudAfterInfo = state.isHudVisible;
+    _restoreHudClickModeAfterInfo = state.isHudClickMode;
+    emit(state.copyWith(isHudVisible: false, isInfoVisible: true));
   }
 
   /// Closes media information and restores the HUD state when it was preserved.
@@ -73,11 +70,11 @@ class MediaDetailCubit extends Cubit<MediaDetailState>
     emit(
       state.copyWith(
         isInfoVisible: false,
-        isHudVisible: state.restoreHudAfterInfo,
-        isHudClickMode: state.restoreHudClickModeAfterInfo,
-        restoreHudAfterInfo: false,
-        restoreHudClickModeAfterInfo: false,
+        isHudVisible: _restoreHudAfterInfo,
+        isHudClickMode: _restoreHudClickModeAfterInfo,
       ),
     );
+    _restoreHudAfterInfo = false;
+    _restoreHudClickModeAfterInfo = false;
   }
 }

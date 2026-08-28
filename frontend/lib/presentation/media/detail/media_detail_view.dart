@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
 import 'package:bloc_presentation/bloc_presentation.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -129,8 +130,12 @@ class _MediaDetailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final media = state.media;
-    if (state.isLoading && media == null) return const Center(child: CircularProgressIndicator());
-    if (media == null) return Center(child: Text(context.l10n.mediaFailureLoad));
+    if (state.isLoading && media == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (media == null) {
+      return Center(child: Text(context.l10n.mediaFailureLoad));
+    }
     final cubit = context.read<MediaDetailCubit>();
     final isWeb = context.layoutMode == AppLayoutMode.web;
     return MouseRegion(
@@ -147,7 +152,18 @@ class _MediaDetailContent extends StatelessWidget {
                 MediaType.image => ImageMediaDetailView(media: media, onToggleHud: () => cubit.toggleHud(media)),
                 MediaType.video => switch (media) {
                   final MediaDetail detail => VideoMediaDetailView(media: detail),
-                  Media() => MediaFallback(media: media),
+                  Media(:final previewUrl) =>
+                    previewUrl == null
+                        ? MediaFallback(media: media)
+                        : GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => cubit.toggleHud(media),
+                            child: CachedNetworkImage(
+                              imageUrl: previewUrl,
+                              fit: BoxFit.contain,
+                              errorWidget: (_, _, _) => MediaFallback(media: media),
+                            ),
+                          ),
                 },
               },
             ),

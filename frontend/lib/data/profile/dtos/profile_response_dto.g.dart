@@ -7,4 +7,6 @@ part of 'profile_response_dto.dart';
 // **************************************************************************
 
 ProfileResponseDto _$ProfileResponseDtoFromJson(Map<String, dynamic> json) =>
-    ProfileResponseDto(profile: ProfileDto.fromJson(json['profile'] as Map<String, dynamic>));
+    ProfileResponseDto(
+      profile: ProfileDto.fromJson(json['profile'] as Map<String, dynamic>),
+    );

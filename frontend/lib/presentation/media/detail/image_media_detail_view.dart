@@ -7,6 +7,7 @@ import 'package:nook/domain/media/entities/media.dart';
 import 'package:nook/presentation/media/detail/cubit/image_media_detail_cubit.dart';
 import 'package:nook/presentation/media/detail/cubit/image_media_detail_state.dart';
 import 'package:nook/presentation/media/detail/widgets/media_fallback.dart';
+import 'package:nook/presentation/widgets/blur_hash_preview.dart';
 
 /// Displays a zoomable image and synchronises its loading state.
 class ImageMediaDetailView extends StatelessWidget {
@@ -61,7 +62,7 @@ class _ImageStageState extends State<_ImageStage> with SingleTickerProviderState
 
   @override
   void dispose() {
-    _resetController?.dispose();
+    _disposeResetController();
     _transformationController.dispose();
     _clearListeners();
     super.dispose();
@@ -88,11 +89,12 @@ class _ImageStageState extends State<_ImageStage> with SingleTickerProviderState
   String? _mediaUrl(Media media) {
     return switch (media) {
       MediaDetail(:final mediaUrl) => mediaUrl,
-      Media() => null,
+      Media(:final previewUrl) => previewUrl,
     };
   }
 
   void _handleInteractionEnd(ScaleEndDetails details) {
+    if (!mounted) return;
     final scale = _transformationController.value.getMaxScaleOnAxis();
     if (!scale.isFinite || scale <= 1.001) {
       _transformationController.value = Matrix4.identity();
@@ -102,7 +104,8 @@ class _ImageStageState extends State<_ImageStage> with SingleTickerProviderState
   }
 
   void _resetTransform() {
-    _resetController?.dispose();
+    if (!mounted) return;
+    _disposeResetController();
     final controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 180));
     _resetController = controller;
     final animation = Matrix4Tween(
@@ -119,6 +122,12 @@ class _ImageStageState extends State<_ImageStage> with SingleTickerProviderState
       ..forward().ignore();
   }
 
+  void _disposeResetController() {
+    final controller = _resetController;
+    _resetController = null;
+    controller?.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ImageMediaDetailCubit, ImageMediaDetailState>(
@@ -128,7 +137,9 @@ class _ImageStageState extends State<_ImageStage> with SingleTickerProviderState
           transformationController: _transformationController,
           minScale: 1,
           maxScale: 5,
-          onInteractionStart: (_) => _resetController?.stop(),
+          onInteractionStart: (_) {
+            if (mounted) _resetController?.stop();
+          },
           onInteractionEnd: _handleInteractionEnd,
           trackpadScrollCausesScale: true,
           child: Builder(
@@ -136,7 +147,7 @@ class _ImageStageState extends State<_ImageStage> with SingleTickerProviderState
               final imageUrl = state.imageUrl;
               return SizedBox.expand(
                 child: imageUrl == null
-                    ? MediaFallback(media: widget.media)
+                    ? _placeholder()
                     : Image(
                         image: CachedNetworkImageProvider(imageUrl),
                         fit: BoxFit.contain,
@@ -148,6 +159,12 @@ class _ImageStageState extends State<_ImageStage> with SingleTickerProviderState
         ),
       ),
     );
+  }
+
+  Widget _placeholder() {
+    final fallback = MediaFallback(media: widget.media);
+    final blurHash = widget.media.blurHash;
+    return blurHash == null ? fallback : BlurHashPreview(hash: blurHash, fallback: fallback, fit: BoxFit.contain);
   }
 }
 

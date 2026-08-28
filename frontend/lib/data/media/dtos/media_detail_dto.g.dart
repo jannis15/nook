@@ -6,26 +6,27 @@ part of 'media_detail_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-MediaDetailDto _$MediaDetailDtoFromJson(Map<String, dynamic> json) => MediaDetailDto(
-  id: json['id'] as String,
-  originalFilename: json['original_filename'] as String,
-  mediaType: $enumDecode(_$MediaTypeDtoEnumMap, json['media_type']),
-  mimeType: json['mime_type'] as String,
-  fileSize: (json['file_size'] as num).toInt(),
-  status: $enumDecode(_$MediaStatusDtoEnumMap, json['status']),
-  createdAt: DateTime.parse(json['created_at'] as String),
-  updatedAt: DateTime.parse(json['updated_at'] as String),
-  description: json['description'] as String?,
-  capturedAt: json['captured_at'] == null ? null : DateTime.parse(json['captured_at'] as String),
-  mediaUrl: json['media_url'] as String,
-  contentHash: json['content_hash'] as String?,
-  title: json['title'] as String?,
-  width: (json['width'] as num?)?.toInt(),
-  height: (json['height'] as num?)?.toInt(),
-  durationSeconds: (json['duration_seconds'] as num?)?.toDouble(),
-);
+MediaDetailDto _$MediaDetailDtoFromJson(Map<String, dynamic> json) =>
+    MediaDetailDto(
+      id: json['id'] as String,
+      originalFilename: json['original_filename'] as String,
+      mediaType: $enumDecode(_$MediaTypeDtoEnumMap, json['media_type']),
+      mimeType: json['mime_type'] as String,
+      fileSize: (json['file_size'] as num).toInt(),
+      status: $enumDecode(_$MediaStatusDtoEnumMap, json['status']),
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+      description: json['description'] as String?,
+      mediaUrl: json['media_url'] as String,
+      previewUrl: json['preview_url'] as String?,
+      blurHash: json['blur_hash'] as String?,
+      title: json['title'] as String?,
+    );
 
-const _$MediaTypeDtoEnumMap = {MediaTypeDto.image: 'image', MediaTypeDto.video: 'video'};
+const _$MediaTypeDtoEnumMap = {
+  MediaTypeDto.image: 'image',
+  MediaTypeDto.video: 'video',
+};
 
 const _$MediaStatusDtoEnumMap = {
   MediaStatusDto.pending: 'pending',

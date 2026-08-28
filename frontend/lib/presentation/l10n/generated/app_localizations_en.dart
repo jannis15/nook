@@ -87,12 +87,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Only supported images and videos can be uploaded.';
 
   @override
-  String get mediaInfoContentHashLabel => 'Content hash';
-
-  @override
-  String get mediaInfoDimensionsLabel => 'Dimensions';
-
-  @override
   String get mediaInfoMimeTypeLabel => 'MIME type';
 
   @override

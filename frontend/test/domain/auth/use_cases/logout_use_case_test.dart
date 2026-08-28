@@ -59,15 +59,12 @@ void main() {
   });
 }
 
-typedef _LogoutHandler =
-    Future<Result<Unit, AuthFailure>> Function(_FakeAuthRepository repository);
+typedef _LogoutHandler = Future<Result<Unit, AuthFailure>> Function(_FakeAuthRepository repository);
 
 class _FakeAuthRepository implements AuthRepository {
-  _FakeAuthRepository(
-    AppIdentity initialIdentity, {
-    required _LogoutHandler onLogout,
-  }) : identitySubject = BehaviorSubject.seeded(initialIdentity),
-       _onLogout = onLogout;
+  _FakeAuthRepository(AppIdentity initialIdentity, {required _LogoutHandler onLogout})
+    : identitySubject = BehaviorSubject.seeded(initialIdentity),
+      _onLogout = onLogout;
 
   final BehaviorSubject<AppIdentity> identitySubject;
   final _LogoutHandler _onLogout;
@@ -76,10 +73,7 @@ class _FakeAuthRepository implements AuthRepository {
   ValueStream<AppIdentity> get identity => identitySubject.stream;
 
   @override
-  Future<Result<Unit, AuthFailure>> loginWithPassword({
-    required String email,
-    required String password,
-  }) {
+  Future<Result<Unit, AuthFailure>> loginWithPassword({required String email, required String password}) {
     throw UnimplementedError();
   }
 

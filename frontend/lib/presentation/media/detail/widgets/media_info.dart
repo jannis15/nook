@@ -26,9 +26,6 @@ class MediaInfo extends StatelessWidget {
       (context.l10n.mediaInfoMimeTypeLabel, media.mimeType),
       (context.l10n.mediaInfoSizeLabel, formatBytes(media.fileSize)),
       (context.l10n.mediaCreatedLabel, DateFormat.yMMMd(context.l10n.localeName).format(media.createdAt.toLocal())),
-      if ((media.width, media.height) case (final int width, final int height))
-        (context.l10n.mediaInfoDimensionsLabel, '$width × $height'),
-      if (media.contentHash case final String hash when hash.isNotEmpty) (context.l10n.mediaInfoContentHashLabel, hash),
     ];
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),

@@ -25,13 +25,10 @@ abstract final class MediaMapper {
       },
       createdAt: media.createdAt,
       updatedAt: media.updatedAt,
-      contentHash: media.contentHash,
+      previewUrl: media.previewUrl,
+      blurHash: media.blurHash,
       title: media.title,
       description: media.description,
-      width: media.width,
-      height: media.height,
-      capturedAt: media.capturedAt,
-      durationSeconds: media.durationSeconds,
     );
   }
 
@@ -55,13 +52,10 @@ abstract final class MediaMapper {
       createdAt: media.createdAt,
       updatedAt: media.updatedAt,
       mediaUrl: media.mediaUrl,
-      contentHash: media.contentHash,
+      previewUrl: media.previewUrl,
+      blurHash: media.blurHash,
       title: media.title,
       description: media.description,
-      width: media.width,
-      height: media.height,
-      capturedAt: media.capturedAt,
-      durationSeconds: media.durationSeconds,
     );
   }
 }

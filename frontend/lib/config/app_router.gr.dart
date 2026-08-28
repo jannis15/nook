@@ -64,12 +64,14 @@ class MediaDetailRoute extends PageRouteInfo<MediaDetailRouteArgs> {
   MediaDetailRoute({
     required String mediaId,
     Media? initialMedia,
+    Key? key,
     List<PageRouteInfo>? children,
   }) : super(
          MediaDetailRoute.name,
          args: MediaDetailRouteArgs(
            mediaId: mediaId,
            initialMedia: initialMedia,
+           key: key,
          ),
          rawPathParams: {'mediaId': mediaId},
          initialChildren: children,
@@ -80,27 +82,47 @@ class MediaDetailRoute extends PageRouteInfo<MediaDetailRouteArgs> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<MediaDetailRouteArgs>();
+      final pathParams = data.inheritedPathParams;
+      final args = data.argsAs<MediaDetailRouteArgs>(
+        orElse: () =>
+            MediaDetailRouteArgs(mediaId: pathParams.getString('mediaId')),
+      );
       return MediaDetailPage(
         mediaId: args.mediaId,
         initialMedia: args.initialMedia,
+        key: args.key,
       );
     },
   );
 }
 
-/// Arguments for [MediaDetailRoute].
 class MediaDetailRouteArgs {
-  /// Default constructor.
-  const MediaDetailRouteArgs({required this.mediaId, this.initialMedia});
+  const MediaDetailRouteArgs({
+    required this.mediaId,
+    this.initialMedia,
+    this.key,
+  });
 
-  /// Identifier from the media detail route path.
   final String mediaId;
 
-  /// Media already available from the originating library view.
   final Media? initialMedia;
 
+  final Key? key;
+
   @override
-  String toString() =>
-      'MediaDetailRouteArgs{mediaId: $mediaId, initialMedia: $initialMedia}';
+  String toString() {
+    return 'MediaDetailRouteArgs{mediaId: $mediaId, initialMedia: $initialMedia, key: $key}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! MediaDetailRouteArgs) return false;
+    return mediaId == other.mediaId &&
+        initialMedia == other.initialMedia &&
+        key == other.key;
+  }
+
+  @override
+  int get hashCode => mediaId.hashCode ^ initialMedia.hashCode ^ key.hashCode;
 }

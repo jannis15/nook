@@ -17,7 +17,5 @@ abstract class MediaDetailState with _$MediaDetailState {
     @Default(false) bool isHudVisible,
     @Default(false) bool isHudClickMode,
     @Default(false) bool isInfoVisible,
-    @Default(false) bool restoreHudAfterInfo,
-    @Default(false) bool restoreHudClickModeAfterInfo,
   }) = _MediaDetailState;
 }

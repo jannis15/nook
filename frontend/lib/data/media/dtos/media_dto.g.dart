@@ -16,15 +16,15 @@ MediaDto _$MediaDtoFromJson(Map<String, dynamic> json) => MediaDto(
   createdAt: DateTime.parse(json['created_at'] as String),
   updatedAt: DateTime.parse(json['updated_at'] as String),
   description: json['description'] as String?,
-  capturedAt: json['captured_at'] == null ? null : DateTime.parse(json['captured_at'] as String),
-  contentHash: json['content_hash'] as String?,
+  previewUrl: json['preview_url'] as String?,
+  blurHash: json['blur_hash'] as String?,
   title: json['title'] as String?,
-  width: (json['width'] as num?)?.toInt(),
-  height: (json['height'] as num?)?.toInt(),
-  durationSeconds: (json['duration_seconds'] as num?)?.toDouble(),
 );
 
-const _$MediaTypeDtoEnumMap = {MediaTypeDto.image: 'image', MediaTypeDto.video: 'video'};
+const _$MediaTypeDtoEnumMap = {
+  MediaTypeDto.image: 'image',
+  MediaTypeDto.video: 'video',
+};
 
 const _$MediaStatusDtoEnumMap = {
   MediaStatusDto.pending: 'pending',

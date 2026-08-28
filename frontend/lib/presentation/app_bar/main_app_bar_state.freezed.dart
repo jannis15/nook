@@ -221,6 +221,7 @@ return $default(_that.user,_that.isLoggingOut);case _:
 class _MainAppBarState extends MainAppBarState {
   const _MainAppBarState({required this.user, this.isLoggingOut = false}): super._();
 
+
 @override final  MainAppBarUser? user;
 @override@JsonKey() final  bool isLoggingOut;
 
@@ -297,7 +298,7 @@ $MainAppBarUserCopyWith<$Res>? get user {
 /// @nodoc
 mixin _$MainAppBarUser {
 
-  String get id; String? get displayName; String get email;
+ String get id; String? get displayName; String get email;
 /// Create a copy of MainAppBarUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -328,7 +329,7 @@ abstract mixin class $MainAppBarUserCopyWith<$Res>  {
   factory $MainAppBarUserCopyWith(MainAppBarUser value, $Res Function(MainAppBarUser) _then) = _$MainAppBarUserCopyWithImpl;
 @useResult
 $Res call({
-  String id, String? displayName, String email
+ String id, String? displayName, String email
 });
 
 
@@ -345,11 +346,11 @@ class _$MainAppBarUserCopyWithImpl<$Res>
 
 /// Create a copy of MainAppBarUser
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? displayName = freezed,Object? email = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? displayName = freezed,Object? email = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
-as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -493,6 +494,7 @@ return $default(_that.id,_that.displayName,_that.email);case _:
 class _MainAppBarUser extends MainAppBarUser {
   const _MainAppBarUser({required this.id, required this.displayName, required this.email}): super._();
 
+
 @override final  String id;
 @override final  String? displayName;
 @override final  String email;
@@ -544,11 +546,11 @@ class __$MainAppBarUserCopyWithImpl<$Res>
 
 /// Create a copy of MainAppBarUser
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? displayName = freezed,Object? email = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? displayName = freezed,Object? email = null,}) {
   return _then(_MainAppBarUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,displayName: freezed == displayName ? _self.displayName : displayName // ignore: cast_nullable_to_non_nullable
-as String?,email: freezed == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

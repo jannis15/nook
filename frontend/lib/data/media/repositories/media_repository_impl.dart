@@ -74,6 +74,30 @@ class MediaRepositoryImpl implements MediaRepository {
   }
 
   @override
+  Future<Result<Media, MediaFailure>> waitForMediaStatus(String id) async {
+    try {
+      final response = await _dio.get<Map<String, Object?>>(
+        '/media/$id/status',
+        queryParameters: const {'wait': 25},
+        options: Options(receiveTimeout: const Duration(seconds: 30)),
+      );
+      final body = response.data;
+
+      if (body == null) {
+        return const Error(UnknownMediaFailure());
+      }
+
+      return Success(MediaMapper.toDomain(MediaResponseDto.fromJson(body).media));
+    } on DioException catch (error) {
+      _logger.warning('Could not load media processing status.', error, error.stackTrace);
+      return Error(_failureFromDioException(error));
+    } catch (error, stackTrace) {
+      _logger.severe('Could not load media processing status.', error, stackTrace);
+      return const Error(UnknownMediaFailure());
+    }
+  }
+
+  @override
   Future<Result<Media, MediaFailure>> uploadMedia({
     required String filename,
     required String mimeType,

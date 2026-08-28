@@ -18,13 +18,10 @@ class MediaDetailDto {
     required this.createdAt,
     required this.updatedAt,
     required this.description,
-    required this.capturedAt,
     required this.mediaUrl,
-    this.contentHash,
+    required this.previewUrl,
+    required this.blurHash,
     this.title,
-    this.width,
-    this.height,
-    this.durationSeconds,
   });
 
   /// Creates a media detail DTO from API JSON.
@@ -54,27 +51,18 @@ class MediaDetailDto {
   /// The last update timestamp.
   final DateTime updatedAt;
 
-  /// The optional content hash.
-  final String? contentHash;
-
   /// The optional title.
   final String? title;
 
   /// The optional description.
   final String? description;
 
-  /// The optional media width.
-  final int? width;
-
-  /// The optional media height.
-  final int? height;
-
-  /// The optional capture timestamp.
-  final DateTime? capturedAt;
-
-  /// The optional video duration in seconds.
-  final double? durationSeconds;
-
   /// The signed URL for the original media file.
   final String mediaUrl;
+
+  /// The signed URL for the derived preview image.
+  final String? previewUrl;
+
+  /// The BlurHash generated from the derived preview image.
+  final String? blurHash;
 }

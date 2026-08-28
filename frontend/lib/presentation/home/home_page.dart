@@ -5,11 +5,13 @@ import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nook/config/app_breakpoints.dart';
 import 'package:nook/domain/media/entities/media.dart';
 import 'package:nook/domain/media/entities/media_failure.dart';
 import 'package:nook/domain/media/entities/supported_media_file_types.dart';
 import 'package:nook/domain/media/use_cases/list_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/upload_media_use_case.dart';
+import 'package:nook/domain/media/use_cases/wait_for_media_status_use_case.dart';
 import 'package:nook/presentation/app_bar/main_app_bar.dart';
 import 'package:nook/presentation/home/cubit/home_cubit.dart';
 import 'package:nook/presentation/home/cubit/home_presentation_event.dart';
@@ -31,8 +33,11 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          HomeCubit(listMedia: context.read<ListMediaUseCase>(), uploadMedia: context.read<UploadMediaUseCase>()),
+      create: (context) => HomeCubit(
+        listMedia: context.read<ListMediaUseCase>(),
+        uploadMedia: context.read<UploadMediaUseCase>(),
+        waitForMediaStatus: context.read<WaitForMediaStatusUseCase>(),
+      ),
       child: const _HomeView(),
     );
   }
@@ -241,9 +246,9 @@ class _HomeViewState extends State<_HomeView> {
             slivers: [
               SliverLayoutBuilder(
                 builder: (context, constraints) {
-                  final horizontalPadding = constraints.crossAxisExtent > 1228
-                      ? (constraints.crossAxisExtent - 1180) / 2
-                      : 24.0;
+                  final horizontalPadding = constraints.crossAxisExtent > AppBreakpoints.centredContent
+                      ? (constraints.crossAxisExtent - AppBreakpoints.contentMaxWidth) / 2
+                      : AppBreakpoints.contentHorizontalGutter;
 
                   return SliverMainAxisGroup(
                     slivers: [
@@ -260,7 +265,7 @@ class _HomeViewState extends State<_HomeView> {
                         ),
                       ),
                       SliverPadding(
-                        padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, 120),
+                        padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, 88),
                         sliver: MediaLibrarySliver(
                           layoutMode: AppLayoutMode.web,
                           items: items,

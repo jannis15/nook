@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:flutter/widgets.dart';
 import 'package:nook/config/auth_route_guards.dart';
 import 'package:nook/domain/auth/use_cases/watch_identity_use_case.dart';
 import 'package:nook/domain/media/entities/media.dart';

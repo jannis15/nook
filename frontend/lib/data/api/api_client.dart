@@ -6,10 +6,7 @@ import 'package:nook/domain/auth/repositories/auth_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Creates an API client with the current Supabase bearer token.
-Dio createApiClient(
-  SupabaseClient supabaseClient,
-  AuthRepository authRepository,
-) {
+Dio createApiClient(SupabaseClient supabaseClient, AuthRepository authRepository) {
   final dio = Dio(BaseOptions(baseUrl: _apiBaseUrl));
   dio.interceptors.add(_AuthInterceptor(supabaseClient, authRepository));
 

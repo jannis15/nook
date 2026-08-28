@@ -6,4 +6,5 @@ part of 'pending_media_dto.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-PendingMediaDto _$PendingMediaDtoFromJson(Map<String, dynamic> json) => PendingMediaDto(id: json['id'] as String);
+PendingMediaDto _$PendingMediaDtoFromJson(Map<String, dynamic> json) =>
+    PendingMediaDto(id: json['id'] as String);

@@ -34,13 +34,10 @@ class Media {
     required this.status,
     required this.createdAt,
     required this.updatedAt,
-    this.contentHash,
+    this.previewUrl,
+    this.blurHash,
     this.title,
     this.description,
-    this.width,
-    this.height,
-    this.capturedAt,
-    this.durationSeconds,
   });
 
   /// The stable media identifier.
@@ -67,26 +64,17 @@ class Media {
   /// When the media record was last updated.
   final DateTime updatedAt;
 
-  /// The content hash, when available.
-  final String? contentHash;
+  /// The signed URL for the derived preview image, when ready.
+  final String? previewUrl;
+
+  /// The BlurHash generated from the derived preview image, when ready.
+  final String? blurHash;
 
   /// The user-defined title, when available.
   final String? title;
 
   /// The user-defined description, when available.
   final String? description;
-
-  /// The original media width in pixels, when available.
-  final int? width;
-
-  /// The original media height in pixels, when available.
-  final int? height;
-
-  /// When the media was captured, when available.
-  final DateTime? capturedAt;
-
-  /// The video duration in seconds, when available.
-  final double? durationSeconds;
 
   /// The user-defined title when present, otherwise the original filename.
   String get displayName {
@@ -108,13 +96,10 @@ class MediaDetail extends Media {
     required super.createdAt,
     required super.updatedAt,
     required this.mediaUrl,
-    super.contentHash,
+    super.previewUrl,
+    super.blurHash,
     super.title,
     super.description,
-    super.width,
-    super.height,
-    super.capturedAt,
-    super.durationSeconds,
   });
 
   /// The signed URL to the original media file.
