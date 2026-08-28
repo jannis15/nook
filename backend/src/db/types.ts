@@ -36,55 +36,85 @@ export type Database = {
     Tables: {
       media: {
         Row: {
+          blur_hash: string | null
+          content_hash: string | null
           created_at: string
           description: string | null
+          duration_seconds: number | null
           file_size: number
+          height: number | null
           id: string
           media_type: Database["public"]["Enums"]["media_type"]
           metadata: Json
           mime_type: string
           original_filename: string
           owner_id: string
+          preview_storage_key: string | null
+          preview_timestamp_seconds: number | null
+          processing_attempt_count: number
           processing_error: string | null
+          processing_lease_expires_at: string | null
+          processing_lease_token: string | null
           status: Database["public"]["Enums"]["media_status"]
           storage_key: string
           title: string | null
           updated_at: string
           upload_expires_at: string
+          width: number | null
         }
         Insert: {
+          blur_hash?: string | null
+          content_hash?: string | null
           created_at?: string
           description?: string | null
+          duration_seconds?: number | null
           file_size: number
+          height?: number | null
           id?: string
           media_type: Database["public"]["Enums"]["media_type"]
           metadata?: Json
           mime_type: string
           original_filename: string
           owner_id: string
+          preview_storage_key?: string | null
+          preview_timestamp_seconds?: number | null
+          processing_attempt_count?: number
           processing_error?: string | null
+          processing_lease_expires_at?: string | null
+          processing_lease_token?: string | null
           status?: Database["public"]["Enums"]["media_status"]
           storage_key: string
           title?: string | null
           updated_at?: string
           upload_expires_at: string
+          width?: number | null
         }
         Update: {
+          blur_hash?: string | null
+          content_hash?: string | null
           created_at?: string
           description?: string | null
+          duration_seconds?: number | null
           file_size?: number
+          height?: number | null
           id?: string
           media_type?: Database["public"]["Enums"]["media_type"]
           metadata?: Json
           mime_type?: string
           original_filename?: string
           owner_id?: string
+          preview_storage_key?: string | null
+          preview_timestamp_seconds?: number | null
+          processing_attempt_count?: number
           processing_error?: string | null
+          processing_lease_expires_at?: string | null
+          processing_lease_token?: string | null
           status?: Database["public"]["Enums"]["media_status"]
           storage_key?: string
           title?: string | null
           updated_at?: string
           upload_expires_at?: string
+          width?: number | null
         }
         Relationships: [
           {
@@ -125,7 +155,90 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      claim_media_processing_jobs: {
+        Args: { p_lease_seconds?: number; p_limit?: number }
+        Returns: {
+          blur_hash: string | null
+          content_hash: string | null
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          file_size: number
+          height: number | null
+          id: string
+          media_type: Database["public"]["Enums"]["media_type"]
+          metadata: Json
+          mime_type: string
+          original_filename: string
+          owner_id: string
+          preview_storage_key: string | null
+          preview_timestamp_seconds: number | null
+          processing_attempt_count: number
+          processing_error: string | null
+          processing_lease_expires_at: string | null
+          processing_lease_token: string | null
+          status: Database["public"]["Enums"]["media_status"]
+          storage_key: string
+          title: string | null
+          updated_at: string
+          upload_expires_at: string
+          width: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "media"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      finalize_media_processing_job: {
+        Args: {
+          p_blur_hash?: string
+          p_content_hash?: string
+          p_duration_seconds?: number
+          p_height?: number
+          p_lease_token: string
+          p_media_id: string
+          p_preview_storage_key?: string
+          p_preview_timestamp_seconds?: number
+          p_processing_error?: string
+          p_status: Database["public"]["Enums"]["media_status"]
+          p_width?: number
+        }
+        Returns: {
+          blur_hash: string | null
+          content_hash: string | null
+          created_at: string
+          description: string | null
+          duration_seconds: number | null
+          file_size: number
+          height: number | null
+          id: string
+          media_type: Database["public"]["Enums"]["media_type"]
+          metadata: Json
+          mime_type: string
+          original_filename: string
+          owner_id: string
+          preview_storage_key: string | null
+          preview_timestamp_seconds: number | null
+          processing_attempt_count: number
+          processing_error: string | null
+          processing_lease_expires_at: string | null
+          processing_lease_token: string | null
+          status: Database["public"]["Enums"]["media_status"]
+          storage_key: string
+          title: string | null
+          updated_at: string
+          upload_expires_at: string
+          width: number | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "media"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
     }
     Enums: {
       media_status: "pending" | "processing" | "ready" | "failed"

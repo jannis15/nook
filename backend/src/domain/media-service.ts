@@ -24,6 +24,7 @@ type MediaDeleteResult =
   | { ok: false; error: { code: MediaErrorCode; message: string } };
 
 const mediaBucket = 'media';
+const mediaStatusPollIntervalMs = 1_000;
 
 export async function listOwnMedia(
   supabase: Supabase,
@@ -86,6 +87,65 @@ export async function getOwnMediaById(
       error: {
         code: 'internal_server_error',
         message: 'Media could not be loaded',
+      },
+    };
+  }
+}
+
+/**
+ * Waits for a processing item to reach a terminal state without exposing a
+ * signed original URL to clients that only need processing status.
+ */
+export async function waitForOwnMediaStatusById(
+  supabase: Supabase,
+  userId: string,
+  mediaId: string,
+  waitSeconds: number,
+  requestId: string,
+): Promise<MediaDetailResult> {
+  try {
+    const deadline = Date.now() + waitSeconds * 1_000;
+
+    while (true) {
+      const media = await findMediaById(supabase, userId, mediaId);
+      if (!media) {
+        logger.debug({ requestId, userId, mediaId }, 'Media status not found');
+        return {
+          ok: false,
+          error: { code: 'not_found', message: 'Media not found' },
+        };
+      }
+
+      const entity = toMediaEntity(media);
+      if (
+        entity.status === 'ready' ||
+        entity.status === 'failed' ||
+        Date.now() >= deadline
+      ) {
+        logger.debug(
+          { requestId, userId, mediaId, status: entity.status },
+          'Media status loaded',
+        );
+        return { ok: true, media: entity };
+      }
+
+      await new Promise<void>((resolve) => {
+        setTimeout(
+          resolve,
+          Math.min(mediaStatusPollIntervalMs, deadline - Date.now()),
+        );
+      });
+    }
+  } catch (error) {
+    logger.debug(
+      { error, requestId, userId, mediaId },
+      'Media status load failed',
+    );
+    return {
+      ok: false,
+      error: {
+        code: 'internal_server_error',
+        message: 'Media status could not be loaded',
       },
     };
   }

@@ -18,9 +18,12 @@ vi.mock('../../lib/logger.js', () => ({
   logger,
 }));
 
-const { deleteOwnMediaById, getOwnMediaById, listOwnMedia } = await import(
-  '../../domain/media-service.js'
-);
+const {
+  deleteOwnMediaById,
+  getOwnMediaById,
+  listOwnMedia,
+  waitForOwnMediaStatusById,
+} = await import('../../domain/media-service.js');
 
 const supabase = {} as Supabase;
 const requestId = 'request-1';
@@ -39,6 +42,13 @@ const imageRow: MediaRow = {
   file_size: 12345,
   status: 'ready',
   processing_error: null,
+  preview_storage_key: null,
+  blur_hash: null,
+  content_hash: null,
+  width: null,
+  height: null,
+  duration_seconds: null,
+  preview_timestamp_seconds: null,
   metadata: {},
   created_at: '2026-07-29T00:00:00.000Z',
   updated_at: '2026-07-29T00:00:00.000Z',
@@ -75,6 +85,13 @@ describe('media service', () => {
           mediaType: 'image',
           mimeType: imageRow.mime_type,
           fileSize: imageRow.file_size,
+          previewStorageKey: imageRow.preview_storage_key,
+          blurHash: imageRow.blur_hash,
+          contentHash: imageRow.content_hash,
+          width: imageRow.width,
+          height: imageRow.height,
+          durationSeconds: imageRow.duration_seconds,
+          previewTimestampSeconds: imageRow.preview_timestamp_seconds,
           status: 'ready',
           processingError: imageRow.processing_error,
           metadata: imageRow.metadata,
@@ -138,6 +155,43 @@ describe('media service', () => {
         message: 'Media not found',
       },
     });
+  });
+
+  it('returns a processing media status without requiring it to be ready', async () => {
+    findMediaById.mockResolvedValue({ ...imageRow, status: 'processing' });
+
+    await expect(
+      waitForOwnMediaStatusById(supabase, userId, mediaId, 0, requestId),
+    ).resolves.toMatchObject({
+      ok: true,
+      media: { id: mediaId, status: 'processing' },
+    });
+  });
+
+  it('waits for processing media to become ready', async () => {
+    vi.useFakeTimers();
+    findMediaById
+      .mockResolvedValueOnce({ ...imageRow, status: 'processing' })
+      .mockResolvedValueOnce(imageRow);
+
+    try {
+      const result = waitForOwnMediaStatusById(
+        supabase,
+        userId,
+        mediaId,
+        25,
+        requestId,
+      );
+      await vi.advanceTimersByTimeAsync(1_000);
+
+      await expect(result).resolves.toMatchObject({
+        ok: true,
+        media: { id: mediaId, status: 'ready' },
+      });
+      expect(findMediaById).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('maps list failures to internal_server_error', async () => {

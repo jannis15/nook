@@ -26,6 +26,18 @@ npm run supabase:status
 
 `npm run dev` checks whether local Supabase is running, starts it if needed, and then starts the Hono backend watcher.
 
+Run the media processor in a second terminal after starting the API:
+
+```sh
+npm run worker:dev
+```
+
+The worker claims `processing` uploads, produces `preview.webp` and its
+BlurHash, then marks the media ready. Video processing requires `ffmpeg` and
+`ffprobe` on `PATH`; on macOS install them with `brew install ffmpeg`. Use
+`npm run worker:once` to process one claimed batch with an already configured
+Supabase environment.
+
 Use the values from `npm run supabase:status` to update `.env.local`, including `SUPABASE_SECRET_KEY`, if your local values differ. Do not expose this key to clients.
 
 The Hono server runs on `http://localhost:3001` by default. API documentation is generated from the route schemas and is available at `http://localhost:3001/docs`.

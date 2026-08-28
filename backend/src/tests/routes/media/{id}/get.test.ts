@@ -65,6 +65,7 @@ describe('GET /media/:id', () => {
         mime_type: videoMedia.mimeType,
         file_size: videoMedia.fileSize,
         status: videoMedia.status,
+        preview_url: null,
         created_at: videoMedia.createdAt,
         updated_at: videoMedia.updatedAt,
       },

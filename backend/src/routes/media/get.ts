@@ -70,7 +70,6 @@ export function registerGetMediaListRoute(app: App) {
       limit: query.limit,
       ...(query.cursor ? { cursor: query.cursor } : {}),
       ...(query.media_type ? { mediaType: query.media_type } : {}),
-      status: 'ready' as const,
     };
     const result = await listOwnMedia(
       c.get('supabase'),

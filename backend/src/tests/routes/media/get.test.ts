@@ -68,6 +68,7 @@ describe('GET /media', () => {
           mime_type: imageMedia.mimeType,
           file_size: imageMedia.fileSize,
           status: imageMedia.status,
+          preview_url: null,
           created_at: imageMedia.createdAt,
           updated_at: imageMedia.updatedAt,
         },
@@ -81,7 +82,6 @@ describe('GET /media', () => {
       testUserId,
       {
         mediaType: 'image',
-        status: 'ready',
         limit: 25,
       },
       testRequestId,
@@ -99,7 +99,7 @@ describe('GET /media', () => {
     expect(listOwnMedia).toHaveBeenCalledWith(
       testSupabase,
       testUserId,
-      { limit: 50, status: 'ready' },
+      { limit: 50 },
       testRequestId,
     );
   });
@@ -128,7 +128,6 @@ describe('GET /media', () => {
       {
         cursor: { createdAt: imageMedia.createdAt, id: imageMedia.id },
         limit: 50,
-        status: 'ready',
       },
       testRequestId,
     );

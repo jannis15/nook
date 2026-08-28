@@ -7,6 +7,7 @@ const mediaUrlExpiresInSeconds = 60 * 60;
 
 type MediaResponseOptions = {
   includeMediaUrl?: boolean;
+  includePreviewUrl?: boolean;
 };
 
 export function toMediaResponse(
@@ -27,6 +28,10 @@ export async function toMediaResponse(
   const mediaUrl = options.includeMediaUrl
     ? await createSignedStorageUrl(supabase, media.storageKey)
     : null;
+  const previewUrl =
+    options.includePreviewUrl === false
+      ? null
+      : await createSignedStorageUrl(supabase, media.previewStorageKey);
   const base = {
     id: media.id,
     ...(options.includeMediaUrl ? { media_url: mediaUrl } : {}),
@@ -37,6 +42,13 @@ export async function toMediaResponse(
     mime_type: media.mimeType,
     file_size: media.fileSize,
     status: media.status,
+    preview_url: previewUrl,
+    blur_hash: media.blurHash,
+    content_hash: media.contentHash,
+    width: media.width,
+    height: media.height,
+    duration_seconds: media.durationSeconds,
+    preview_timestamp_seconds: media.previewTimestampSeconds,
     created_at: media.createdAt,
     updated_at: media.updatedAt,
   };

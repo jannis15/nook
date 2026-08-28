@@ -5,6 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "node scripts/dev.mjs",
+    "worker:dev": "node scripts/worker-dev.mjs",
+    "worker:once": "tsx src/media-worker.ts --once",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "biome lint .",
@@ -29,9 +31,11 @@
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.5.1",
     "@supabase/supabase-js": "^2.111.0",
+    "blurhash": "^2.0.5",
     "dotenv": "^17.4.2",
     "hono": "^4.12.32",
     "pino": "^10.3.1",
+    "sharp": "^0.35.4",
     "zod": "^4.4.3"
   },
   "devDependencies": {

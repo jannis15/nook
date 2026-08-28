@@ -88,7 +88,7 @@ export function registerPostMediaRoute(app: App) {
       {
         media: {
           id: result.value.media.id,
-          status: 'pending',
+          status: 'pending' as const,
         },
         signed_upload_url: result.value.signedUploadUrl,
         upload_expires_at: result.value.uploadExpiresAt,

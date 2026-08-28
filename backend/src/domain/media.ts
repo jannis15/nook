@@ -12,6 +12,13 @@ export type BaseMediaEntity = {
   description: string | null;
   mimeType: string;
   fileSize: number;
+  previewStorageKey: string | null;
+  blurHash: string | null;
+  contentHash: string | null;
+  width: number | null;
+  height: number | null;
+  durationSeconds: number | null;
+  previewTimestampSeconds: number | null;
   metadata: Json;
   createdAt: string;
   updatedAt: string;
@@ -49,6 +56,13 @@ export function toMediaEntity(row: MediaRow): MediaEntity {
     description: row.description,
     mimeType: row.mime_type,
     fileSize: row.file_size,
+    previewStorageKey: row.preview_storage_key,
+    blurHash: row.blur_hash,
+    contentHash: row.content_hash,
+    width: row.width,
+    height: row.height,
+    durationSeconds: row.duration_seconds,
+    previewTimestampSeconds: row.preview_timestamp_seconds,
     metadata: row.metadata,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

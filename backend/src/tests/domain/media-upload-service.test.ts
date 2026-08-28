@@ -36,6 +36,13 @@ const pendingMedia: MediaRow = {
   file_size: 5,
   status: 'pending',
   processing_error: null,
+  preview_storage_key: null,
+  blur_hash: null,
+  content_hash: null,
+  width: null,
+  height: null,
+  duration_seconds: null,
+  preview_timestamp_seconds: null,
   metadata: {},
   created_at: '2026-08-09T00:00:00.000Z',
   upload_expires_at: '2099-08-09T02:00:00.000Z',
@@ -115,23 +122,23 @@ describe('media upload service', () => {
     expect(createSignedUploadUrl).not.toHaveBeenCalled();
   });
 
-  it('marks an upload ready after Storage reports the expected object size', async () => {
+  it('queues an upload for processing after Storage reports the expected object size', async () => {
     const { supabase, list } = createSupabase();
     findMediaById.mockResolvedValue(pendingMedia);
     list.mockResolvedValue({
       data: [{ name: 'original-photo.jpg', metadata: { size: 5 } }],
       error: null,
     });
-    updateMedia.mockResolvedValue({ ...pendingMedia, status: 'ready' });
+    updateMedia.mockResolvedValue({ ...pendingMedia, status: 'processing' });
 
     await expect(
       completeOwnMediaUpload(supabase, userId, mediaId, requestId),
     ).resolves.toMatchObject({
       ok: true,
-      value: { id: mediaId, status: 'ready' },
+      value: { id: mediaId, status: 'processing' },
     });
     expect(updateMedia).toHaveBeenCalledWith(supabase, userId, mediaId, {
-      status: 'ready',
+      status: 'processing',
       processing_error: null,
     });
   });

@@ -10,6 +10,13 @@ const baseMediaSchema = z.object({
   mime_type: z.string(),
   file_size: z.number().int().nonnegative(),
   status: mediaStatusSchema,
+  preview_url: z.string().nullable(),
+  blur_hash: z.string().nullable(),
+  content_hash: z.string().nullable(),
+  width: z.number().int().positive().nullable(),
+  height: z.number().int().positive().nullable(),
+  duration_seconds: z.number().nonnegative().nullable(),
+  preview_timestamp_seconds: z.number().nonnegative().nullable(),
   created_at: z.string(),
   updated_at: z.string(),
 });
@@ -39,6 +46,10 @@ export const mediaListResponseSchema = z.object({
 
 export const mediaResponseSchema = z.object({
   media: mediaDetailSchema,
+});
+
+export const mediaStatusResponseSchema = z.object({
+  media: mediaSchema,
 });
 
 export const initializeMediaUploadResponseSchema = z.object({

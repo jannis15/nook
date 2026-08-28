@@ -171,7 +171,7 @@ export async function completeOwnMediaUpload(
     }
 
     const verifiedMedia = await updateMedia(supabase, userId, mediaId, {
-      status: 'ready',
+      status: 'processing',
       processing_error: null,
     });
     logger.debug({ requestId, userId, mediaId }, 'Media upload completed');
