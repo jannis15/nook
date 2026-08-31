@@ -8,12 +8,20 @@ import {
 } from '../test-utils.js';
 
 const completeOwnMediaUpload = vi.fn();
+const triggerMediaWorker = vi.fn();
+
+vi.mock('../../../../lib/logger.js', () => ({
+  logger: { error: vi.fn() },
+}));
 
 vi.mock('../../../../middleware/auth.js', () => ({
   requireAuth: testRequireAuth,
 }));
 vi.mock('../../../../domain/media-upload-service.js', () => ({
   completeOwnMediaUpload,
+}));
+vi.mock('../../../../lib/media-worker-trigger.js', () => ({
+  triggerMediaWorker,
 }));
 
 const { registerCompleteMediaUploadRoute } = await import(
@@ -23,7 +31,10 @@ const { registerCompleteMediaUploadRoute } = await import(
 const mediaId = '10000000-0000-4000-8000-000000000001';
 
 describe('POST /media/:id/complete', () => {
-  beforeEach(() => completeOwnMediaUpload.mockReset());
+  beforeEach(() => {
+    completeOwnMediaUpload.mockReset();
+    triggerMediaWorker.mockReset();
+  });
 
   it('passes the authenticated owner and media ID to completion', async () => {
     completeOwnMediaUpload.mockResolvedValue({

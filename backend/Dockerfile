@@ -9,7 +9,7 @@ COPY tsconfig.json ./
 COPY src ./src
 RUN npm run build
 
-FROM node:22-bookworm-slim
+FROM node:22-bookworm-slim AS runtime
 
 WORKDIR /app
 
@@ -21,5 +21,18 @@ RUN npm ci --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
 
 USER node
+
+FROM runtime AS worker
+
+USER root
+RUN apt-get update \
+  && apt-get install --no-install-recommends --yes ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
+
+USER node
+
+CMD ["node", "dist/media-worker.js", "--once"]
+
+FROM runtime AS api
 
 CMD ["npm", "start"]

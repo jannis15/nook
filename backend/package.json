@@ -33,6 +33,7 @@
     "@supabase/supabase-js": "^2.111.0",
     "blurhash": "^2.0.5",
     "dotenv": "^17.4.2",
+    "google-auth-library": "^11.0.2",
     "hono": "^4.12.32",
     "pino": "^10.3.1",
     "sharp": "^0.35.4",

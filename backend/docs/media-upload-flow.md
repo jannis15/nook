@@ -73,8 +73,9 @@ After the direct upload succeeds, the client calls
 `POST /media/{media-id}/complete`.
 
 This is how the backend is notified that the client believes the upload
-succeeded. There is currently no storage webhook, background worker, polling,
-or other asynchronous upload notification.
+succeeded. It is also the event that starts media processing; Storage upload
+events alone are not used because the backend must first verify the object and
+its expected byte size.
 
 The backend verifies that:
 
@@ -85,9 +86,21 @@ The backend verifies that:
 - The object size reported by Storage exactly matches the file size supplied at
   initialization.
 
-On success, the backend sets the record to `ready`, clears any processing error,
-and returns HTTP `200` with the full media response. Calling completion again
-for a ready item returns the ready media again.
+On success, the backend sets the record to `processing`, clears any processing
+error, starts a Cloud Run Job, and returns HTTP `200` with the full media
+response. Calling completion again for a ready item returns the ready media
+again.
+
+The Cloud Run Job runs the media worker once. It atomically claims up to two
+`processing` rows using the database lease, creates the preview, BlurHash, and
+content hash, then marks each row `ready` or `failed`. It exits when no further
+claimed rows remain. This is event-driven: the worker is not connected or
+polling while there are no uploads. Duplicate completion requests or job starts
+are safe because only one worker can claim a row at a time.
+
+If Cloud Run cannot start the job, the API logs the failure but still returns
+the successful completion response. The row remains `processing` and can be
+recovered by manually running the worker job.
 
 If verification fails, the backend removes the stored object when possible,
 sets the record to `failed`, and records a processing error. An expired pending
@@ -154,10 +167,9 @@ storage, BlurHash, content hash, dimensions, duration, and video poster
 timestamp fields. List and detail responses include `preview_url` and
 `blur_hash`; they are `null` until a media processor populates them.
 
-The backend long-poll endpoint, Flutter wait loop, and local media worker are
-implemented. The worker claims processing uploads, creates derived assets, and
-changes them to `ready` or `failed`. Deploying the worker container remains a
-separate task.
+The backend long-poll endpoint, Flutter wait loop, and event-triggered Cloud
+Run worker job are implemented. The worker claims processing uploads, creates
+derived assets, and changes them to `ready` or `failed`.
 
 ### Preview Assets
 

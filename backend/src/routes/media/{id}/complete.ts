@@ -2,6 +2,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 import type { App } from '../../../app-types.js';
 import { completeOwnMediaUpload } from '../../../domain/media-upload-service.js';
 import { apiError, errorResponseSchema } from '../../../lib/errors.js';
+import { logger } from '../../../lib/logger.js';
+import { triggerMediaWorker } from '../../../lib/media-worker-trigger.js';
 import { openApiTags } from '../../../lib/openapi-tags.js';
 import { requireAuth } from '../../../middleware/auth.js';
 import { toMediaResponse } from '../mapper.js';
@@ -69,6 +71,14 @@ export function registerCompleteMediaUploadRoute(app: App) {
         apiError(result.error.code, result.error.message),
         statusByErrorCode[result.error.code],
       );
+    try {
+      await triggerMediaWorker(result.value.id);
+    } catch (error) {
+      logger.error(
+        { error, mediaId: result.value.id, requestId: c.get('requestId') },
+        'Could not trigger media worker job',
+      );
+    }
     return c.json(
       {
         media: await toMediaResponse(c.get('supabase'), result.value, {

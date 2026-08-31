@@ -18,6 +18,9 @@ export const env = {
     process.env.CORS_ALLOWED_ORIGINS ??
       'http://localhost:3000,http://localhost:8080',
   ),
+  cloudRunJobName: process.env.MEDIA_WORKER_JOB_NAME,
+  gcpProjectId: process.env.GCP_PROJECT_ID,
+  gcpRegion: process.env.GCP_REGION,
   supabaseUrl: requiredEnv('SUPABASE_URL'),
   supabaseSecretKey: requiredEnv('SUPABASE_SECRET_KEY'),
 };
