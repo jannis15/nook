@@ -11,7 +11,10 @@ class WaitForMediaStatusUseCase {
   final MediaRepository _repository;
 
   /// Waits for the next status update for [id].
-  Future<Result<Media, MediaFailure>> call(String id) {
-    return _repository.waitForMediaStatus(id);
+  Future<Result<Media, MediaFailure>> call(
+    String id, {
+    Future<void>? cancellation,
+  }) {
+    return _repository.waitForMediaStatus(id, cancellation: cancellation);
   }
 }

@@ -126,7 +126,9 @@ class _HomeViewState extends State<_HomeView> {
           mimeType: mimeType,
           fileSize: file.size,
           createdAt: DateTime.now(),
-          mediaType: mimeType.startsWith('video/') ? MediaType.video : MediaType.image,
+          mediaType: mimeType.startsWith('video/')
+              ? MediaType.video
+              : MediaType.image,
           bytes: bytes,
         ),
       );
@@ -139,7 +141,11 @@ class _HomeViewState extends State<_HomeView> {
   }
 
   void _openMedia(UploadedMediaLibraryItem item) {
-    unawaited(context.pushRoute(MediaDetailRoute(mediaId: item.media.id, initialMedia: item.media)));
+    unawaited(
+      context.pushRoute(
+        MediaDetailRoute(mediaId: item.media.id, initialMedia: item.media),
+      ),
+    );
   }
 
   Future<void> _showMobileMediaActions(UploadedMediaLibraryItem item) async {
@@ -159,8 +165,14 @@ class _HomeViewState extends State<_HomeView> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.delete_outline_rounded, color: context.colorScheme.error),
-              title: Text(context.l10n.mediaDeleteAction, style: TextStyle(color: context.colorScheme.error)),
+              leading: Icon(
+                Icons.delete_outline_rounded,
+                color: context.colorScheme.error,
+              ),
+              title: Text(
+                context.l10n.mediaDeleteAction,
+                style: TextStyle(color: context.colorScheme.error),
+              ),
               onTap: () async {
                 Navigator.of(sheetContext).pop();
                 await _confirmDeleteMedia(item);
@@ -190,13 +202,16 @@ class _HomeViewState extends State<_HomeView> {
         ],
       ),
     );
-    if (confirmed == true && mounted) unawaited(context.read<HomeCubit>().deleteMedia(item));
+    if (confirmed == true && mounted) {
+      unawaited(context.read<HomeCubit>().deleteMedia(item));
+    }
   }
 
   void _showFailure(MediaFailure failure) {
     final message = switch (failure) {
       UnauthenticatedMediaFailure() => context.l10n.mediaFailureUnauthenticated,
       InvalidMediaFailure() => context.l10n.mediaFailureUnsupported,
+      MediaNotFoundFailure() => context.l10n.mediaFailureUnknown,
       UnknownMediaFailure() => context.l10n.mediaFailureUnknown,
     };
 
@@ -228,8 +243,16 @@ class _HomeViewState extends State<_HomeView> {
             final hasError = state is HomeError;
 
             return switch (context.layoutMode) {
-              AppLayoutMode.mobile => _buildMobileLayout(items: items, isLoading: isLoading, hasError: hasError),
-              AppLayoutMode.web => _buildWebLayout(items: items, isLoading: isLoading, hasError: hasError),
+              AppLayoutMode.mobile => _buildMobileLayout(
+                items: items,
+                isLoading: isLoading,
+                hasError: hasError,
+              ),
+              AppLayoutMode.web => _buildWebLayout(
+                items: items,
+                isLoading: isLoading,
+                hasError: hasError,
+              ),
             };
           },
         ),
@@ -237,7 +260,11 @@ class _HomeViewState extends State<_HomeView> {
     );
   }
 
-  Widget _buildMobileLayout({required List<MediaLibraryItem> items, required bool isLoading, required bool hasError}) {
+  Widget _buildMobileLayout({
+    required List<MediaLibraryItem> items,
+    required bool isLoading,
+    required bool hasError,
+  }) {
     return Scaffold(
       appBar: const MainAppBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -264,7 +291,8 @@ class _HomeViewState extends State<_HomeView> {
                       layoutMode: AppLayoutMode.mobile,
                       isLoading: isLoading,
                       addMediaButtonKey: _inlineAddMediaButtonKey,
-                      onRefresh: () => unawaited(context.read<HomeCubit>().loadMedia()),
+                      onRefresh: () =>
+                          unawaited(context.read<HomeCubit>().loadMedia()),
                       onAddMedia: _pickAndUploadMedia,
                     ),
                   ),
@@ -276,7 +304,9 @@ class _HomeViewState extends State<_HomeView> {
                     items: items,
                     isLoading: isLoading,
                     hasError: hasError,
-                    onRemoveFailedUpload: context.read<HomeCubit>().removeFailedUpload,
+                    onRemoveFailedUpload: context
+                        .read<HomeCubit>()
+                        .removeFailedUpload,
                     onDeleteMedia: _confirmDeleteMedia,
                     onShowMobileMediaActions: _showMobileMediaActions,
                   ),
@@ -289,7 +319,11 @@ class _HomeViewState extends State<_HomeView> {
     );
   }
 
-  Widget _buildWebLayout({required List<MediaLibraryItem> items, required bool isLoading, required bool hasError}) {
+  Widget _buildWebLayout({
+    required List<MediaLibraryItem> items,
+    required bool isLoading,
+    required bool hasError,
+  }) {
     return Scaffold(
       appBar: const MainAppBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -308,32 +342,50 @@ class _HomeViewState extends State<_HomeView> {
             slivers: [
               SliverLayoutBuilder(
                 builder: (context, constraints) {
-                  final horizontalPadding = constraints.crossAxisExtent > AppBreakpoints.centredContent
-                      ? (constraints.crossAxisExtent - AppBreakpoints.contentMaxWidth) / 2
+                  final horizontalPadding =
+                      constraints.crossAxisExtent >
+                          AppBreakpoints.centredContent
+                      ? (constraints.crossAxisExtent -
+                                AppBreakpoints.contentMaxWidth) /
+                            2
                       : AppBreakpoints.contentHorizontalGutter;
 
                   return SliverMainAxisGroup(
                     slivers: [
                       SliverPadding(
-                        padding: EdgeInsets.fromLTRB(horizontalPadding, 24, horizontalPadding, 32),
+                        padding: EdgeInsets.fromLTRB(
+                          horizontalPadding,
+                          24,
+                          horizontalPadding,
+                          32,
+                        ),
                         sliver: SliverToBoxAdapter(
                           child: MediaLibraryActionBar(
                             layoutMode: AppLayoutMode.web,
                             isLoading: isLoading,
                             addMediaButtonKey: _inlineAddMediaButtonKey,
-                            onRefresh: () => unawaited(context.read<HomeCubit>().loadMedia()),
+                            onRefresh: () => unawaited(
+                              context.read<HomeCubit>().loadMedia(),
+                            ),
                             onAddMedia: _pickAndUploadMedia,
                           ),
                         ),
                       ),
                       SliverPadding(
-                        padding: EdgeInsets.fromLTRB(horizontalPadding, 0, horizontalPadding, 88),
+                        padding: EdgeInsets.fromLTRB(
+                          horizontalPadding,
+                          0,
+                          horizontalPadding,
+                          88,
+                        ),
                         sliver: MediaLibrarySliver(
                           layoutMode: AppLayoutMode.web,
                           items: items,
                           isLoading: isLoading,
                           hasError: hasError,
-                          onRemoveFailedUpload: context.read<HomeCubit>().removeFailedUpload,
+                          onRemoveFailedUpload: context
+                              .read<HomeCubit>()
+                              .removeFailedUpload,
                           onDeleteMedia: _confirmDeleteMedia,
                           onShowMobileMediaActions: _showMobileMediaActions,
                         ),

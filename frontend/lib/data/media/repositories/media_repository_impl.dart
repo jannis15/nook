@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -25,7 +26,10 @@ class MediaRepositoryImpl implements MediaRepository {
   final Dio _dio;
 
   @override
-  Future<Result<MediaPage, MediaFailure>> listMedia({String? cursor, int limit = 50}) async {
+  Future<Result<MediaPage, MediaFailure>> listMedia({
+    String? cursor,
+    int limit = 50,
+  }) async {
     try {
       final response = await _dio.get<Map<String, Object?>>(
         '/media',
@@ -40,7 +44,9 @@ class MediaRepositoryImpl implements MediaRepository {
       final listResponse = MediaListResponseDto.fromJson(body);
       return Success(
         MediaPage(
-          media: listResponse.media.map(MediaMapper.toDomain).toList(growable: false),
+          media: listResponse.media
+              .map(MediaMapper.toDomain)
+              .toList(growable: false),
           nextCursor: listResponse.nextCursor,
         ),
       );
@@ -63,7 +69,9 @@ class MediaRepositoryImpl implements MediaRepository {
         return const Error(UnknownMediaFailure());
       }
 
-      return Success(MediaMapper.toDetailDomain(MediaDetailResponseDto.fromJson(body).media));
+      return Success(
+        MediaMapper.toDetailDomain(MediaDetailResponseDto.fromJson(body).media),
+      );
     } on DioException catch (error) {
       _logger.warning('Could not load media detail.', error, error.stackTrace);
       return Error(_failureFromDioException(error));
@@ -88,11 +96,20 @@ class MediaRepositoryImpl implements MediaRepository {
   }
 
   @override
-  Future<Result<Media, MediaFailure>> waitForMediaStatus(String id) async {
+  Future<Result<Media, MediaFailure>> waitForMediaStatus(
+    String id, {
+    Future<void>? cancellation,
+  }) async {
+    final cancelToken = CancelToken();
+    if (cancellation != null) {
+      unawaited(cancellation.then((_) => cancelToken.cancel()));
+    }
+
     try {
       final response = await _dio.get<Map<String, Object?>>(
         '/media/$id/status',
         queryParameters: const {'wait': 25},
+        cancelToken: cancelToken,
         options: Options(receiveTimeout: const Duration(seconds: 30)),
       );
       final body = response.data;
@@ -101,12 +118,22 @@ class MediaRepositoryImpl implements MediaRepository {
         return const Error(UnknownMediaFailure());
       }
 
-      return Success(MediaMapper.toDomain(MediaResponseDto.fromJson(body).media));
+      return Success(
+        MediaMapper.toDomain(MediaResponseDto.fromJson(body).media),
+      );
     } on DioException catch (error) {
-      _logger.warning('Could not load media processing status.', error, error.stackTrace);
+      _logger.warning(
+        'Could not load media processing status.',
+        error,
+        error.stackTrace,
+      );
       return Error(_failureFromDioException(error));
     } catch (error, stackTrace) {
-      _logger.severe('Could not load media processing status.', error, stackTrace);
+      _logger.severe(
+        'Could not load media processing status.',
+        error,
+        stackTrace,
+      );
       return const Error(UnknownMediaFailure());
     }
   }
@@ -120,7 +147,11 @@ class MediaRepositoryImpl implements MediaRepository {
     try {
       final initializeResponse = await _dio.post<Map<String, Object?>>(
         '/media/uploads',
-        data: MediaUploadRequestDto(filename: filename, mimeType: mimeType, fileSize: bytes.length).toJson(),
+        data: MediaUploadRequestDto(
+          filename: filename,
+          mimeType: mimeType,
+          fileSize: bytes.length,
+        ).toJson(),
       );
       final initializeBody = initializeResponse.data;
 
@@ -128,18 +159,27 @@ class MediaRepositoryImpl implements MediaRepository {
         return const Error(UnknownMediaFailure());
       }
 
-      final upload = MediaUploadInitializationResponseDto.fromJson(initializeBody);
+      final upload = MediaUploadInitializationResponseDto.fromJson(
+        initializeBody,
+      );
       await Dio().put<void>(
         upload.signedUploadUrl,
         data: bytes,
-        options: Options(contentType: mimeType, headers: const {'x-upsert': 'false'}),
+        options: Options(
+          contentType: mimeType,
+          headers: const {'x-upsert': 'false'},
+        ),
       );
-      final completeResponse = await _dio.post<Map<String, Object?>>('/media/${upload.media.id}/complete');
+      final completeResponse = await _dio.post<Map<String, Object?>>(
+        '/media/${upload.media.id}/complete',
+      );
       final body = completeResponse.data;
 
       if (body == null) return const Error(UnknownMediaFailure());
 
-      return Success(MediaMapper.toDomain(MediaResponseDto.fromJson(body).media));
+      return Success(
+        MediaMapper.toDomain(MediaResponseDto.fromJson(body).media),
+      );
     } on DioException catch (error) {
       _logger.warning('Could not upload media.', error, error.stackTrace);
       return Error(_failureFromDioException(error));
@@ -153,6 +193,7 @@ class MediaRepositoryImpl implements MediaRepository {
     return switch (error.response?.statusCode) {
       400 => InvalidMediaFailure(_errorMessage(error.response?.data)),
       401 => const UnauthenticatedMediaFailure(),
+      404 => const MediaNotFoundFailure(),
       _ => const UnknownMediaFailure(),
     };
   }

@@ -10,6 +10,12 @@ final class UnauthenticatedMediaFailure extends MediaFailure {
   const UnauthenticatedMediaFailure();
 }
 
+/// The requested media no longer exists.
+final class MediaNotFoundFailure extends MediaFailure {
+  /// Default constructor.
+  const MediaNotFoundFailure();
+}
+
 /// The media input is invalid.
 final class InvalidMediaFailure extends MediaFailure {
   /// Default constructor.

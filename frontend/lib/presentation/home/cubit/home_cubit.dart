@@ -14,7 +14,8 @@ import 'package:nook/presentation/home/cubit/home_state.dart';
 import 'package:nook/presentation/home/models/media_library_item.dart';
 
 /// Manages the media library and media upload operations.
-class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, HomePresentationEvent> {
+class HomeCubit extends Cubit<HomeState>
+    with BlocPresentationMixin<HomeState, HomePresentationEvent> {
   static const _maxConcurrentMediaStatusWaits = 4;
 
   /// Default constructor.
@@ -39,6 +40,7 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
   int _activeMediaStatusWaits = 0;
   final List<(MediaLibraryItem, String)> _queuedMediaStatusWaits = [];
   final Set<String> _waitingMediaIds = {};
+  final Map<String, Completer<void>> _mediaStatusCancellations = {};
   final Set<String> _deletingMediaIds = {};
 
   /// Loads the current user's media library.
@@ -60,12 +62,18 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
       case Success(:final success):
         final pendingItems = existingItems.whereType<PendingMediaLibraryItem>();
         final uploadedItems = success.media
-            .map((media) => UploadedMediaLibraryItem(media, isDeleting: _deletingMediaIds.contains(media.id)))
+            .map(
+              (media) => UploadedMediaLibraryItem(
+                media,
+                isDeleting: _deletingMediaIds.contains(media.id),
+              ),
+            )
             .toList();
         _nextCursor = success.nextCursor;
         _emitItems([...pendingItems, ...uploadedItems]);
         for (final item in uploadedItems) {
-          if (item.media.status == MediaStatus.pending || item.media.status == MediaStatus.processing) {
+          if (item.media.status == MediaStatus.pending ||
+              item.media.status == MediaStatus.processing) {
             _queueMediaStatusWait(item, item.media.id);
           }
         }
@@ -94,15 +102,24 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
 
     switch (result) {
       case Success(:final success):
-        final existingMediaIds = _items.whereType<UploadedMediaLibraryItem>().map((item) => item.media.id).toSet();
+        final existingMediaIds = _items
+            .whereType<UploadedMediaLibraryItem>()
+            .map((item) => item.media.id)
+            .toSet();
         final uploadedItems = success.media
             .where((media) => !existingMediaIds.contains(media.id))
-            .map((media) => UploadedMediaLibraryItem(media, isDeleting: _deletingMediaIds.contains(media.id)))
+            .map(
+              (media) => UploadedMediaLibraryItem(
+                media,
+                isDeleting: _deletingMediaIds.contains(media.id),
+              ),
+            )
             .toList();
         _nextCursor = success.nextCursor;
         _emitItems([..._items, ...uploadedItems]);
         for (final item in uploadedItems) {
-          if (item.media.status == MediaStatus.pending || item.media.status == MediaStatus.processing) {
+          if (item.media.status == MediaStatus.pending ||
+              item.media.status == MediaStatus.processing) {
             _queueMediaStatusWait(item, item.media.id);
           }
         }
@@ -133,20 +150,36 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
             case MediaStatus.ready:
               _replaceItem(
                 pendingItem.id,
-                UploadedMediaLibraryItem(success, localPreviewBytes: pendingItem.bytes),
+                UploadedMediaLibraryItem(
+                  success,
+                  localPreviewBytes: pendingItem.bytes,
+                ),
                 uploadedMediaId: success.id,
               );
             case MediaStatus.pending || MediaStatus.processing:
-              final uploadedItem = UploadedMediaLibraryItem(success, localPreviewBytes: pendingItem.bytes);
-              _replaceItem(pendingItem.id, uploadedItem, uploadedMediaId: success.id);
+              final uploadedItem = UploadedMediaLibraryItem(
+                success,
+                localPreviewBytes: pendingItem.bytes,
+              );
+              _replaceItem(
+                pendingItem.id,
+                uploadedItem,
+                uploadedMediaId: success.id,
+              );
               _queueMediaStatusWait(uploadedItem, success.id);
             case MediaStatus.failed:
               firstFailure ??= const UnknownMediaFailure();
-              _replaceItem(pendingItem.id, pendingItem.copyWith(status: PendingMediaStatus.failed));
+              _replaceItem(
+                pendingItem.id,
+                pendingItem.copyWith(status: PendingMediaStatus.failed),
+              );
           }
         case Error(:final error):
           firstFailure ??= error;
-          _replaceItem(pendingItem.id, pendingItem.copyWith(status: PendingMediaStatus.failed));
+          _replaceItem(
+            pendingItem.id,
+            pendingItem.copyWith(status: PendingMediaStatus.failed),
+          );
       }
     }
 
@@ -160,6 +193,7 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
     if (!_waitingMediaIds.add(mediaId)) {
       return;
     }
+    _mediaStatusCancellations[mediaId] = Completer<void>();
     _queuedMediaStatusWaits.add((item, mediaId));
     _startQueuedMediaStatusWaits();
   }
@@ -169,42 +203,69 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
         _activeMediaStatusWaits < _maxConcurrentMediaStatusWaits &&
         _queuedMediaStatusWaits.isNotEmpty) {
       final (item, mediaId) = _queuedMediaStatusWaits.removeAt(0);
+      final cancellation = _mediaStatusCancellations[mediaId];
+      if (cancellation == null) continue;
       _activeMediaStatusWaits += 1;
       unawaited(
-        _waitForMediaReady(item, mediaId).whenComplete(() {
+        _waitForMediaReady(item, mediaId, cancellation.future).whenComplete(() {
           _activeMediaStatusWaits -= 1;
-          _waitingMediaIds.remove(mediaId);
+          if (identical(_mediaStatusCancellations[mediaId], cancellation)) {
+            _mediaStatusCancellations.remove(mediaId);
+            _waitingMediaIds.remove(mediaId);
+          }
           _startQueuedMediaStatusWaits();
         }),
       );
     }
   }
 
-  Future<void> _waitForMediaReady(MediaLibraryItem item, String mediaId) async {
+  Future<void> _waitForMediaReady(
+    MediaLibraryItem item,
+    String mediaId,
+    Future<void> cancellation,
+  ) async {
     while (!isClosed) {
-      final statusResult = await _waitForMediaStatus(mediaId);
-      if (isClosed) return;
+      final statusResult = await _waitForMediaStatus(
+        mediaId,
+        cancellation: cancellation,
+      );
+      if (isClosed ||
+          _mediaStatusCancellations[mediaId]?.future != cancellation) {
+        return;
+      }
 
       switch (statusResult) {
         case Success(:final success):
           switch (success.status) {
             case MediaStatus.ready:
               if (success.previewUrl != null) {
-                _replaceItem(item.id, UploadedMediaLibraryItem(success), uploadedMediaId: mediaId);
+                _replaceItem(
+                  item.id,
+                  UploadedMediaLibraryItem(success),
+                  uploadedMediaId: mediaId,
+                );
               }
               // A processor must not publish ready media without its preview.
               // Keep the local card rather than busy-looping status calls.
               return;
             case MediaStatus.failed:
               _replaceItem(item.id, switch (item) {
-                PendingMediaLibraryItem() => item.copyWith(status: PendingMediaStatus.failed),
+                PendingMediaLibraryItem() => item.copyWith(
+                  status: PendingMediaStatus.failed,
+                ),
                 UploadedMediaLibraryItem() => UploadedMediaLibraryItem(success),
               });
-              emitPresentation(const HomeMediaOperationFailed(UnknownMediaFailure()));
+              emitPresentation(
+                const HomeMediaOperationFailed(UnknownMediaFailure()),
+              );
               return;
             case MediaStatus.pending || MediaStatus.processing:
               continue;
           }
+        case Error(:final error)
+            when error is MediaNotFoundFailure ||
+                error is UnauthenticatedMediaFailure:
+          return;
         case Error():
           await Future<void>.delayed(const Duration(seconds: 1));
       }
@@ -228,13 +289,18 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
     if (!_deletingMediaIds.add(item.id)) return;
     _replaceItem(
       item.id,
-      UploadedMediaLibraryItem(item.media, localPreviewBytes: item.localPreviewBytes, isDeleting: true),
+      UploadedMediaLibraryItem(
+        item.media,
+        localPreviewBytes: item.localPreviewBytes,
+        isDeleting: true,
+      ),
     );
 
     final result = await _deleteMedia(item.id);
     switch (result) {
       case Success():
         _deletingMediaIds.remove(item.id);
+        _cancelMediaStatusWait(item.id);
         _removeItem(item.id);
       case Error(:final error):
         _deletingMediaIds.remove(item.id);
@@ -250,12 +316,17 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
     };
   }
 
-  void _replaceItem(String pendingItemId, MediaLibraryItem replacement, {String? uploadedMediaId}) {
+  void _replaceItem(
+    String pendingItemId,
+    MediaLibraryItem replacement, {
+    String? uploadedMediaId,
+  }) {
     _emitItems([
       for (final item in _items)
         if (item.id == pendingItemId)
           replacement
-        else if (item is UploadedMediaLibraryItem && item.media.id == uploadedMediaId)
+        else if (item is UploadedMediaLibraryItem &&
+            item.media.id == uploadedMediaId)
           ...const <MediaLibraryItem>[]
         else
           item,
@@ -268,5 +339,22 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
 
   void _removeItem(String itemId) {
     _emitItems(_items.where((item) => item.id != itemId).toList());
+  }
+
+  void _cancelMediaStatusWait(String mediaId) {
+    _queuedMediaStatusWaits.removeWhere((entry) => entry.$2 == mediaId);
+    _waitingMediaIds.remove(mediaId);
+    final cancellation = _mediaStatusCancellations.remove(mediaId);
+    if (cancellation != null && !cancellation.isCompleted) {
+      cancellation.complete();
+    }
+  }
+
+  @override
+  Future<void> close() async {
+    for (final mediaId in _mediaStatusCancellations.keys.toList()) {
+      _cancelMediaStatusWait(mediaId);
+    }
+    return super.close();
   }
 }
