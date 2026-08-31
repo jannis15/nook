@@ -72,7 +72,7 @@ class _LoginViewState extends State<_LoginView> {
                     child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.email],
+                      autofillHints: const [AutofillHints.username],
                       onChanged: context.read<LoginCubit>().emailChanged,
                       decoration: InputDecoration(
                         labelText: context.l10n.loginEmailLabel,

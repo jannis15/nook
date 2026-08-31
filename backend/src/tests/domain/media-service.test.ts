@@ -143,6 +143,17 @@ describe('media service', () => {
     expect(findMediaById).toHaveBeenCalledWith(supabase, userId, mediaId);
   });
 
+  it('returns processing media detail after its original upload completes', async () => {
+    findMediaById.mockResolvedValue({ ...imageRow, status: 'processing' });
+
+    await expect(
+      getOwnMediaById(supabase, userId, mediaId, requestId),
+    ).resolves.toMatchObject({
+      ok: true,
+      media: { id: mediaId, status: 'processing' },
+    });
+  });
+
   it('maps missing media to not_found', async () => {
     findMediaById.mockResolvedValue(null);
 

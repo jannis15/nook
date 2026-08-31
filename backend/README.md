@@ -13,6 +13,68 @@ This is currently the backend foundation: local Supabase Auth/PostgreSQL, reques
 - Eventually read and write collection and tag records
 - Keep storage-provider details abstract enough to allow future migration
 
+## Production: Google Cloud Run
+
+Deploy the API to Cloud Run. Supabase remains the managed Auth, PostgreSQL, and
+Storage provider; only `SUPABASE_SECRET_KEY` belongs in Secret Manager.
+
+Prerequisites: a billing-enabled Google Cloud project, the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install), and a rotated Supabase service-role key. The existing `.env.staging` contains a service-role key and must not be used as a deployment configuration source.
+
+From `backend/`, authenticate and select the project and region:
+
+```sh
+gcloud auth login
+gcloud config set project nook-media
+gcloud config set run/region europe-west1
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com secretmanager.googleapis.com
+```
+
+Create a dedicated runtime service account and secret. Enter the newly rotated
+key without adding it to a file:
+
+```sh
+gcloud iam service-accounts create nook-api --display-name="Nook API"
+read -s SUPABASE_SECRET_KEY
+printf %s "$SUPABASE_SECRET_KEY" | gcloud secrets create nook-supabase-secret-key --data-file=- --replication-policy=automatic
+unset SUPABASE_SECRET_KEY
+gcloud secrets add-iam-policy-binding nook-supabase-secret-key --member="serviceAccount:nook-api@nook-media.iam.gserviceaccount.com" --role="roles/secretmanager.secretAccessor"
+```
+
+If the secret already exists, replace the `create` command with:
+
+```sh
+printf %s "$SUPABASE_SECRET_KEY" | gcloud secrets versions add nook-supabase-secret-key --data-file=-
+```
+
+Deploy the API, replacing the project ID, region, Supabase URL, and allowed
+origins where needed. The `^@^` delimiter permits the comma-separated CORS
+origin list.
+
+```sh
+gcloud run deploy nook-api \
+  --source . \
+  --allow-unauthenticated \
+  --service-account=nook-api@nook-media.iam.gserviceaccount.com \
+  --set-env-vars '^@^NODE_ENV=production@CORS_ALLOWED_ORIGINS=https://nook-media.web.app@SUPABASE_URL=https://YOUR_PROJECT.supabase.co' \
+  --set-secrets=SUPABASE_SECRET_KEY=nook-supabase-secret-key:latest
+```
+
+Cloud Run prints the service URL. Verify it before configuring the Flutter app:
+
+```sh
+curl -i "$(gcloud run services describe nook-api --format='value(status.url)')/health"
+```
+
+Set that HTTPS URL as the frontend API base URL, rebuild the Flutter web app,
+and deploy it. If the frontend uses a custom domain, add it to
+`CORS_ALLOWED_ORIGINS` and redeploy the API. API documentation is disabled in
+production by default; set `ENABLE_DOCS=true` only if it is intentionally
+public.
+
+The media processor is not deployed by the API command. It polls for jobs and
+requires `ffmpeg` and `ffprobe`, so deploy it separately as a Cloud Run job or
+another worker process with the same Supabase secret.
+
 ## Development
 
 From this directory:

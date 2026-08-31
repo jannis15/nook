@@ -72,40 +72,28 @@ class _UploadedPreviewContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fallback = _MediaPreviewFallback(mediaType: media.mediaType, isFailed: media.status == MediaStatus.failed);
-    final isProcessing = media.status == MediaStatus.pending || media.status == MediaStatus.processing;
     final localPreviewBytes = this.localPreviewBytes;
     if (media.mediaType == MediaType.image && localPreviewBytes != null) {
-      return _withProcessingOverlay(_PendingImagePreview(bytes: localPreviewBytes), isProcessing);
+      return _PendingImagePreview(bytes: localPreviewBytes);
     }
     final previewUrl = media.previewUrl;
     final blurHash = media.blurHash;
     if (previewUrl == null) {
-      return _withProcessingOverlay(
-        blurHash == null ? fallback : BlurHashPreview(hash: blurHash, fallback: fallback),
-        isProcessing,
-      );
+      return blurHash == null ? fallback : BlurHashPreview(hash: blurHash, fallback: fallback);
     }
 
-    return _withProcessingOverlay(
-      LayoutBuilder(
-        builder: (context, constraints) => CachedNetworkImage(
-          imageUrl: previewUrl,
-          fit: BoxFit.cover,
-          memCacheWidth: (constraints.maxWidth * MediaQuery.devicePixelRatioOf(context)).round(),
-          fadeInDuration: Duration.zero,
-          fadeOutDuration: Duration.zero,
-          placeholder: (context, _) =>
-              blurHash == null ? fallback : BlurHashPreview(hash: blurHash, fallback: fallback),
-          errorWidget: (context, _, _) =>
-              blurHash == null ? fallback : BlurHashPreview(hash: blurHash, fallback: fallback),
-        ),
+    return LayoutBuilder(
+      builder: (context, constraints) => CachedNetworkImage(
+        imageUrl: previewUrl,
+        fit: BoxFit.cover,
+        memCacheWidth: (constraints.maxWidth * MediaQuery.devicePixelRatioOf(context)).round(),
+        fadeInDuration: Duration.zero,
+        fadeOutDuration: Duration.zero,
+        placeholder: (context, _) => blurHash == null ? fallback : BlurHashPreview(hash: blurHash, fallback: fallback),
+        errorWidget: (context, _, _) =>
+            blurHash == null ? fallback : BlurHashPreview(hash: blurHash, fallback: fallback),
       ),
-      isProcessing,
     );
-  }
-
-  Widget _withProcessingOverlay(Widget preview, bool isProcessing) {
-    return isProcessing ? Stack(fit: StackFit.expand, children: [preview, const _MediaProcessingOverlay()]) : preview;
   }
 }
 

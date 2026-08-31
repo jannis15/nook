@@ -67,7 +67,7 @@ export async function getOwnMediaById(
   try {
     const media = await findMediaById(supabase, userId, mediaId);
 
-    if (!media || media.status !== 'ready') {
+    if (!media) {
       logger.debug({ requestId, userId, mediaId }, 'Media not found');
       return {
         ok: false,

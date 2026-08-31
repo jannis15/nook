@@ -1,0 +1,12 @@
+# Cloud Build only needs the files copied by the Dockerfile.
+.git
+node_modules/
+dist/
+.env*
+supabase/
+bruno/
+docs/
+scripts/
+coverage/
+*.log
+README.md

@@ -137,7 +137,9 @@ class HomeCubit extends Cubit<HomeState> with BlocPresentationMixin<HomeState, H
                 uploadedMediaId: success.id,
               );
             case MediaStatus.pending || MediaStatus.processing:
-              _queueMediaStatusWait(pendingItem, success.id);
+              final uploadedItem = UploadedMediaLibraryItem(success, localPreviewBytes: pendingItem.bytes);
+              _replaceItem(pendingItem.id, uploadedItem, uploadedMediaId: success.id);
+              _queueMediaStatusWait(uploadedItem, success.id);
             case MediaStatus.failed:
               firstFailure ??= const UnknownMediaFailure();
               _replaceItem(pendingItem.id, pendingItem.copyWith(status: PendingMediaStatus.failed));

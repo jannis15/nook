@@ -1,0 +1,8 @@
+node_modules
+dist
+.env*
+supabase
+bruno
+docs
+coverage
+*.log
