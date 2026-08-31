@@ -2,39 +2,65 @@
 
 **A calm, personal space for the photos and videos that matter.**
 
-Nook is a privacy-conscious media library for organizing and accessing personal photos and videos across devices. It is built around ownership, portability, thoughtful design, and the freedom to evolve without being tied permanently to one provider.
+Nook is a privacy-conscious personal media library for uploading, browsing, and
+viewing photos and videos across devices.
 
-The project is in initial setup. The repository currently contains the early backend/frontend foundation, not the full media-library product implementation.
+## Current State
 
-## Direction
+The staging web app is live at https://nook-media.web.app.
 
-Nook starts with one practical product goal: sign in, upload a photo, view it in a gallery, and access it from another device. The current implementation is intentionally earlier than that: it is establishing local Supabase, authentication/profile APIs, tests, and development workflow before media upload work begins.
+The implemented flow supports:
 
-The intended stack is:
+- Email/password sign-in through Supabase Auth
+- Authenticated profiles
+- Direct-to-Supabase private Storage uploads for supported images and videos
+- Media library listing, detail views, deletion, and processing status waits
+- Image and video previews, BlurHash placeholders, dimensions, durations, and
+  SHA-256 content hashes
+- Event-driven background processing after upload verification
 
-- Flutter for Android and web
-- TypeScript and Hono for the backend
-- Google Cloud Run for backend deployment
-- Supabase Auth, PostgreSQL, Storage, and Row Level Security for the prototype
+After a client uploads an original directly to Supabase Storage, it calls the
+backend completion endpoint. The backend verifies the object and starts a
+short-lived Cloud Run Job. The job generates a WebP preview and metadata, then
+marks the media `ready` or `failed`. The worker is not continuously running.
+
+## Deployed Architecture
+
+- **Flutter web**: Firebase Hosting
+- **API**: TypeScript/Hono on Google Cloud Run
+- **Media worker**: On-demand Cloud Run Job with `ffmpeg` for video previews
+- **Auth, database, and private object storage**: Supabase
+- **Runtime secrets**: Google Secret Manager
+
+The public API is available at:
+
+```text
+https://nook-api-906436983434.europe-west1.run.app
+```
+
+The API accepts only explicit configured browser origins and validates Supabase
+bearer tokens before accessing user data.
 
 ## Repository Layout
 
 ```text
 .
-├── backend/              # TypeScript/Hono backend scaffold
-│   └── supabase/         # Local Supabase config and migrations
-├── frontend/             # Flutter app scaffold for Android and web
+├── backend/              # Hono API, Cloud Run images, worker, Supabase schema
+│   ├── docs/             # API and media-flow documentation
+│   └── supabase/         # Local Supabase config, migrations, and seed data
+├── frontend/             # Flutter web and Android client
 ├── PROJECT_CONTEXT.md    # Product, architecture, and data-model context
 └── README.md             # Project overview
 ```
 
-## Development
+## Local Development
 
-Use the project-specific READMEs for setup and local development commands:
+Use the project-specific READMEs for setup and commands:
 
-- `backend/README.md` for backend dependencies, local Supabase, and database commands
-- `frontend/README.md` for Flutter/FVM setup and running the app
+- `backend/README.md`: API, local Supabase, tests, and Cloud Run deployment
+- `frontend/README.md`: Flutter/FVM setup and local web development
+- `backend/docs/media-upload-flow.md`: upload, processing, previews, and
+  status-wait lifecycle
 
-## Context
-
-See `PROJECT_CONTEXT.md` for the current product principles, initial scope, architecture direction, and draft data model.
+Never commit `.env` files or service keys. Local environment files are ignored;
+Cloud Run reads its Supabase server key from Secret Manager.
