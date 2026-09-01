@@ -15,17 +15,22 @@ class AuthLoadingCubit extends Cubit<void> with BlocPresentationMixin<void, Auth
     : _watchIdentity = watchIdentity,
       _watchOwnProfile = watchOwnProfile,
       super(null) {
-    _identitySubscription = _watchIdentity().listen(_identityChanged);
-    _profileSubscription = _watchOwnProfile().listen(_profileChanged);
-    _identityChanged(_watchIdentity().value);
-    _profileChanged(_watchOwnProfile().value);
+    // Presentation listeners are attached after cubit construction.
+    scheduleMicrotask(() {
+      if (isClosed) {
+        return;
+      }
+
+      _identitySubscription = _watchIdentity().listen(_identityChanged);
+      _profileSubscription = _watchOwnProfile().listen(_profileChanged);
+    });
   }
 
   final WatchIdentityUseCase _watchIdentity;
   final WatchOwnProfileUseCase _watchOwnProfile;
   bool _hasResolvedProfile = false;
-  late final StreamSubscription<AppIdentity> _identitySubscription;
-  late final StreamSubscription<AppProfile?> _profileSubscription;
+  StreamSubscription<AppIdentity>? _identitySubscription;
+  StreamSubscription<AppProfile?>? _profileSubscription;
 
   void _identityChanged(AppIdentity identity) {
     if (identity is AnonymousAppIdentity) {
@@ -48,8 +53,8 @@ class AuthLoadingCubit extends Cubit<void> with BlocPresentationMixin<void, Auth
 
   @override
   Future<void> close() async {
-    await _identitySubscription.cancel();
-    await _profileSubscription.cancel();
+    await _identitySubscription?.cancel();
+    await _profileSubscription?.cancel();
     return super.close();
   }
 }
