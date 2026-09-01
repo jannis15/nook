@@ -3,11 +3,14 @@ import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nook/domain/auth/entities/oauth_provider.dart';
 import 'package:nook/domain/auth/use_cases/login_use_case.dart';
+import 'package:nook/domain/auth/use_cases/login_with_oauth_use_case.dart';
 import 'package:nook/presentation/auth/login/login_cubit.dart';
 import 'package:nook/presentation/auth/login/login_error_localizations.dart';
 import 'package:nook/presentation/auth/login/login_presentation_event.dart';
 import 'package:nook/presentation/auth/login/login_state.dart';
+import 'package:nook/presentation/auth/login/widgets/oauth_provider_icon.dart';
 import 'package:nook/presentation/auth/login/widgets/tanuki_button_icon.dart';
 import 'package:nook/presentation/auth/widgets/auth_page_scaffold.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
@@ -22,7 +25,8 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => LoginCubit(login: context.read<LoginUseCase>()),
+      create: (context) =>
+          LoginCubit(login: context.read<LoginUseCase>(), loginWithOAuth: context.read<LoginWithOAuthUseCase>()),
       child: BlocPresentationListener<LoginCubit, LoginPresentationEvent>(
         listener: (context, event) {
           showAppNotification(context, event.localized(context.l10n), type: AppNotificationType.error);
@@ -135,6 +139,33 @@ class _LoginViewState extends State<_LoginView> {
                   TextButton(
                     onPressed: () => context.router.replacePath('/auth/register'),
                     child: Text(context.l10n.loginCreateAccountButton),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        child: Text(context.l10n.loginOrContinueWithLabel),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  OutlinedButton.icon(
+                    onPressed: state.isSubmitting
+                        ? null
+                        : () => context.read<LoginCubit>().loginWithOAuth(AppOAuthProvider.google),
+                    icon: const OAuthProviderIcon(provider: AppOAuthProvider.google),
+                    label: Text(context.l10n.loginGoogleButton),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: state.isSubmitting
+                        ? null
+                        : () => context.read<LoginCubit>().loginWithOAuth(AppOAuthProvider.github),
+                    icon: const OAuthProviderIcon(provider: AppOAuthProvider.github),
+                    label: Text(context.l10n.loginGitHubButton),
                   ),
                 ],
               ),

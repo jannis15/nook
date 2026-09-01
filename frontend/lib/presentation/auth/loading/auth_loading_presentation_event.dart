@@ -4,6 +4,12 @@ sealed class AuthLoadingPresentationEvent {
   const AuthLoadingPresentationEvent();
 }
 
+/// A username must be selected before entering the application.
+final class UsernameRequired extends AuthLoadingPresentationEvent {
+  /// Default constructor.
+  const UsernameRequired();
+}
+
 /// Authentication is no longer active.
 final class AuthenticationRequired extends AuthLoadingPresentationEvent {
   /// Default constructor.

@@ -74,6 +74,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginCreateAccountButton => 'Create account';
 
   @override
+  String get loginOrContinueWithLabel => 'or continue with';
+
+  @override
+  String get loginGoogleButton => 'Continue with Google';
+
+  @override
+  String get loginGitHubButton => 'Continue with GitHub';
+
+  @override
+  String get usernameTitle => 'Choose a username';
+
+  @override
+  String get usernameSubtitle => 'Your username identifies your Nook profile.';
+
+  @override
+  String get usernameLabel => 'Username';
+
+  @override
+  String get usernameUnavailableError => 'This username is already taken.';
+
+  @override
+  String get usernameCompletionFailedError =>
+      'Could not save your username. Try again.';
+
+  @override
+  String get usernameContinueButton => 'Continue';
+
+  @override
   String get registrationTitle => 'Create your account';
 
   @override

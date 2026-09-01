@@ -35,9 +35,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => unawaited(_syncSystemUi()),
-    );
+    WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_syncSystemUi()));
   }
 
   @override
@@ -56,8 +54,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
     }
   }
 
-  Future<void> _restoreSystemUi() =>
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  Future<void> _restoreSystemUi() => SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
   Future<void> _navigateBack() async {
     await _restoreSystemUi();
@@ -76,9 +73,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
       showDragHandle: true,
       builder: (_) => SafeArea(
         child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.sizeOf(context).height * 0.86,
-          ),
+          constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.86),
           child: MediaInfo(media: media),
         ),
       ),
@@ -97,10 +92,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocPresentationListener<
-      MediaDetailCubit,
-      MediaDetailPresentationEvent
-    >(
+    return BlocPresentationListener<MediaDetailCubit, MediaDetailPresentationEvent>(
       listener: (context, event) {
         switch (event) {
           case MediaDetailLoadFailed(:final failure):
@@ -109,8 +101,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
       },
       child: BlocListener<MediaDetailCubit, MediaDetailState>(
         listenWhen: (previous, current) =>
-            previous.isHudVisible != current.isHudVisible ||
-            previous.isInfoVisible != current.isInfoVisible,
+            previous.isHudVisible != current.isHudVisible || previous.isInfoVisible != current.isInfoVisible,
         listener: (_, _) => unawaited(_syncSystemUi()),
         child: PopScope(
           onPopInvokedWithResult: (_, _) => unawaited(_restoreSystemUi()),
@@ -131,11 +122,7 @@ class _MediaDetailViewState extends State<MediaDetailView> {
 }
 
 class _MediaDetailContent extends StatelessWidget {
-  const _MediaDetailContent({
-    required this.state,
-    required this.onBack,
-    required this.onMobileInfo,
-  });
+  const _MediaDetailContent({required this.state, required this.onBack, required this.onMobileInfo});
 
   final MediaDetailState state;
   final VoidCallback onBack;
@@ -163,14 +150,9 @@ class _MediaDetailContent extends StatelessWidget {
             color: Colors.black,
             child: Center(
               child: switch (media.mediaType) {
-                MediaType.image => ImageMediaDetailView(
-                  media: media,
-                  onToggleHud: () => cubit.toggleHud(media),
-                ),
+                MediaType.image => ImageMediaDetailView(media: media, onToggleHud: () => cubit.toggleHud(media)),
                 MediaType.video => switch (media) {
-                  final MediaDetail detail => VideoMediaDetailView(
-                    media: detail,
-                  ),
+                  final MediaDetail detail => VideoMediaDetailView(media: detail),
                   Media(:final previewUrl) =>
                     previewUrl == null
                         ? MediaFallback(media: media)
@@ -180,20 +162,14 @@ class _MediaDetailContent extends StatelessWidget {
                             child: CachedNetworkImage(
                               imageUrl: previewUrl,
                               fit: BoxFit.contain,
-                              errorWidget: (_, _, _) =>
-                                  MediaFallback(media: media),
+                              errorWidget: (_, _, _) => MediaFallback(media: media),
                             ),
                           ),
                 },
               },
             ),
           ),
-          if (isWeb)
-            _WebInfoPanel(
-              media: media,
-              isVisible: state.isInfoVisible,
-              onClose: cubit.closeInfo,
-            ),
+          if (isWeb) _WebInfoPanel(media: media, isVisible: state.isInfoVisible, onClose: cubit.closeInfo),
           if (!(isWeb && state.isInfoVisible))
             _MediaHud(
               media: media,
@@ -214,12 +190,7 @@ class _MediaDetailContent extends StatelessWidget {
 }
 
 class _MediaHud extends StatelessWidget {
-  const _MediaHud({
-    required this.media,
-    required this.isVisible,
-    required this.onBack,
-    required this.onInfo,
-  });
+  const _MediaHud({required this.media, required this.isVisible, required this.onBack, required this.onInfo});
 
   final Media media;
   final bool isVisible;
@@ -261,9 +232,7 @@ class _MediaHud extends StatelessWidget {
                       onPressed: onBack,
                       icon: const Icon(Icons.arrow_back_rounded),
                       color: Colors.white,
-                      tooltip: MaterialLocalizations.of(
-                        context,
-                      ).backButtonTooltip,
+                      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                     ),
                     Expanded(
                       child: Padding(
@@ -272,11 +241,9 @@ class _MediaHud extends StatelessWidget {
                           media.displayName,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleMedium?.copyWith(color: Colors.white, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),
@@ -298,11 +265,7 @@ class _MediaHud extends StatelessWidget {
 }
 
 class _WebInfoPanel extends StatelessWidget {
-  const _WebInfoPanel({
-    required this.media,
-    required this.isVisible,
-    required this.onClose,
-  });
+  const _WebInfoPanel({required this.media, required this.isVisible, required this.onClose});
 
   final Media media;
   final bool isVisible;
@@ -315,10 +278,7 @@ class _WebInfoPanel extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: onClose,
-            ),
+            child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: onClose),
           ),
           Align(
             alignment: Alignment.centerRight,
@@ -356,10 +316,7 @@ class _InfoPanel extends StatelessWidget {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 20),
-                    child: Text(
-                      context.l10n.mediaDetailsTitle,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+                    child: Text(context.l10n.mediaDetailsTitle, style: Theme.of(context).textTheme.titleLarge),
                   ),
                 ),
                 IconButton(

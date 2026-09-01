@@ -32,6 +32,8 @@ class AuthLoadingPage extends StatelessWidget {
               unawaited(context.router.replacePath('/home'));
             case EmailVerificationRequired():
               unawaited(context.router.replacePath('/auth/verify-email'));
+            case UsernameRequired():
+              unawaited(context.router.replacePath('/auth/username'));
           }
         },
         child: const AuthPageScaffold(child: Center(child: CircularProgressIndicator())),

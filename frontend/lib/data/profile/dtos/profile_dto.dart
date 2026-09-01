@@ -6,7 +6,7 @@ part 'profile_dto.g.dart';
 @JsonSerializable(createToJson: false)
 class ProfileDto {
   /// Default constructor.
-  const ProfileDto({required this.id, required this.email, required this.displayName});
+  const ProfileDto({required this.id, required this.email, required this.username, required this.isUsernameConfigured});
 
   /// Creates a profile DTO from API JSON.
   factory ProfileDto.fromJson(Map<String, Object?> json) => _$ProfileDtoFromJson(json);
@@ -17,6 +17,9 @@ class ProfileDto {
   /// The user's email address.
   final String email;
 
-  /// The optional display name.
-  final String? displayName;
+  /// The user's username.
+  final String username;
+
+  /// Whether the user has selected a username.
+  final bool isUsernameConfigured;
 }

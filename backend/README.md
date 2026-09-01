@@ -75,6 +75,17 @@ The media processor is not deployed by the API command. It polls for jobs and
 requires `ffmpeg` and `ffprobe`, so deploy it separately as a Cloud Run job or
 another worker process with the same Supabase secret.
 
+## OAuth setup
+
+Supabase brokers Google and GitHub OAuth and issues the session consumed by the Flutter client. The API validates the resulting Supabase bearer token and provisions the required Nook profile through the database trigger.
+
+1. Apply `supabase/migrations/20260901000001_add_profile_username_completion.sql` to the hosted Supabase project.
+2. In Supabase Dashboard, enable Google and GitHub under Authentication > Sign In / Up and provide each provider's client ID and client secret.
+3. Register `https://<project-ref>.supabase.co/auth/v1/callback` in both provider consoles.
+4. Set the web Site URL and allowed web and Android redirect URLs in Supabase Authentication URL configuration.
+
+OAuth-provider email addresses are verified by Supabase. New OAuth profiles are marked as requiring a username; the frontend blocks application routes until the user completes that required step.
+
 ## Development
 
 From this directory:

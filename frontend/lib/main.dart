@@ -15,6 +15,7 @@ import 'package:nook/domain/auth/repositories/auth_repository.dart';
 import 'package:nook/domain/auth/repositories/email_verification_repository.dart';
 import 'package:nook/domain/auth/repositories/registration_repository.dart';
 import 'package:nook/domain/auth/use_cases/login_use_case.dart';
+import 'package:nook/domain/auth/use_cases/login_with_oauth_use_case.dart';
 import 'package:nook/domain/auth/use_cases/logout_use_case.dart';
 import 'package:nook/domain/auth/use_cases/refresh_email_verification_use_case.dart';
 import 'package:nook/domain/auth/use_cases/register_use_case.dart';
@@ -26,6 +27,7 @@ import 'package:nook/domain/media/use_cases/load_media_detail_use_case.dart';
 import 'package:nook/domain/media/use_cases/upload_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/wait_for_media_status_use_case.dart';
 import 'package:nook/domain/profile/repositories/profile_repository.dart';
+import 'package:nook/domain/profile/use_cases/complete_username_use_case.dart';
 import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
 import 'package:nook/presentation/l10n/generated/app_localizations.dart';
@@ -59,12 +61,14 @@ Future<void> main() async {
         RepositoryProvider<MediaRepository>.value(value: mediaRepository),
         RepositoryProvider<WatchIdentityUseCase>.value(value: watchIdentity),
         RepositoryProvider<WatchOwnProfileUseCase>.value(value: watchOwnProfile),
+        RepositoryProvider<CompleteUsernameUseCase>.value(value: CompleteUsernameUseCase(profileRepository)),
         RepositoryProvider<DeleteMediaUseCase>.value(value: DeleteMediaUseCase(mediaRepository)),
         RepositoryProvider<ListMediaUseCase>.value(value: ListMediaUseCase(mediaRepository)),
         RepositoryProvider<LoadMediaDetailUseCase>.value(value: LoadMediaDetailUseCase(mediaRepository)),
         RepositoryProvider<UploadMediaUseCase>.value(value: UploadMediaUseCase(mediaRepository)),
         RepositoryProvider<WaitForMediaStatusUseCase>.value(value: WaitForMediaStatusUseCase(mediaRepository)),
         RepositoryProvider<LoginUseCase>.value(value: LoginUseCase(authRepository)),
+        RepositoryProvider<LoginWithOAuthUseCase>.value(value: LoginWithOAuthUseCase(authRepository)),
         RepositoryProvider<LogoutUseCase>.value(value: LogoutUseCase(authRepository)),
         RepositoryProvider<RegisterUseCase>.value(value: RegisterUseCase(registrationRepository)),
         RepositoryProvider<RefreshEmailVerificationUseCase>.value(

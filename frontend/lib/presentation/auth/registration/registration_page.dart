@@ -5,6 +5,7 @@ import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:nook/config/app_env.dart';
 import 'package:nook/domain/auth/use_cases/register_use_case.dart';
 import 'package:nook/presentation/auth/login/widgets/tanuki_button_icon.dart';
 import 'package:nook/presentation/auth/registration/registration_cubit.dart';
@@ -24,19 +25,35 @@ class RegistrationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => RegistrationCubit(register: context.read<RegisterUseCase>()),
-      child: BlocPresentationListener<RegistrationCubit, RegistrationPresentationEvent>(
-        listener: (context, event) {
-          switch (event) {
-            case EmailVerificationRequired():
-              TextInput.finishAutofillContext();
-              unawaited(context.router.replacePath('/auth/verify-email'));
-            case RegistrationUsernameUnavailable() || RegistrationSubmissionFailed():
-              showAppNotification(context, event.localized(context.l10n), type: AppNotificationType.error);
-          }
-        },
-        child: const _RegistrationView(),
-      ),
+      create: (context) =>
+          RegistrationCubit(register: context.read<RegisterUseCase>()),
+      child:
+          BlocPresentationListener<
+            RegistrationCubit,
+            RegistrationPresentationEvent
+          >(
+            listener: (context, event) {
+              switch (event) {
+                case EmailVerificationRequired():
+                  TextInput.finishAutofillContext();
+                  unawaited(
+                    context.router.replacePath(
+                      AppEnv.isLocalSupabase
+                          ? '/auth/login'
+                          : '/auth/verify-email',
+                    ),
+                  );
+                case RegistrationUsernameUnavailable() ||
+                    RegistrationSubmissionFailed():
+                  showAppNotification(
+                    context,
+                    event.localized(context.l10n),
+                    type: AppNotificationType.error,
+                  );
+              }
+            },
+            child: const _RegistrationView(),
+          ),
     );
   }
 }
@@ -77,10 +94,14 @@ class _RegistrationViewState extends State<_RegistrationView> {
                   TextFormField(
                     textInputAction: TextInputAction.next,
                     autofillHints: const [AutofillHints.newUsername],
-                    onChanged: context.read<RegistrationCubit>().usernameChanged,
+                    onChanged: context
+                        .read<RegistrationCubit>()
+                        .usernameChanged,
                     decoration: InputDecoration(
                       labelText: context.l10n.registrationUsernameLabel,
-                      errorText: state.usernameErrors.isEmpty ? null : state.usernameErrors.localized(context.l10n),
+                      errorText: state.usernameErrors.isEmpty
+                          ? null
+                          : state.usernameErrors.localized(context.l10n),
                       border: const OutlineInputBorder(),
                     ),
                   ),
@@ -103,17 +124,26 @@ class _RegistrationViewState extends State<_RegistrationView> {
                     autocorrect: false,
                     textInputAction: TextInputAction.done,
                     autofillHints: const [AutofillHints.newPassword],
-                    onChanged: context.read<RegistrationCubit>().passwordChanged,
-                    onFieldSubmitted: (_) => context.read<RegistrationCubit>().submit(),
+                    onChanged: context
+                        .read<RegistrationCubit>()
+                        .passwordChanged,
+                    onFieldSubmitted: (_) =>
+                        context.read<RegistrationCubit>().submit(),
                     decoration: InputDecoration(
                       labelText: context.l10n.registrationPasswordLabel,
-                      errorText: state.passwordErrors.isEmpty ? null : state.passwordErrors.localized(context.l10n),
+                      errorText: state.passwordErrors.isEmpty
+                          ? null
+                          : state.passwordErrors.localized(context.l10n),
                       border: const OutlineInputBorder(),
                       suffixIcon: IconButton(
                         tooltip: _isPasswordVisible
                             ? context.l10n.registrationHidePasswordButton
                             : context.l10n.registrationShowPasswordButton,
-                        icon: Icon(_isPasswordVisible ? Icons.visibility_off_outlined : Icons.visibility_outlined),
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                        ),
                         onPressed: () {
                           setState(() {
                             _isPasswordVisible = !_isPasswordVisible;
@@ -124,10 +154,17 @@ class _RegistrationViewState extends State<_RegistrationView> {
                   ),
                   const SizedBox(height: 24),
                   FilledButton.icon(
-                    onPressed: state.isSubmitting ? null : context.read<RegistrationCubit>().submit,
-                    icon: state.isSubmitting ? const SizedBox.shrink() : const TanukiButtonIcon(),
+                    onPressed: state.isSubmitting
+                        ? null
+                        : context.read<RegistrationCubit>().submit,
+                    icon: state.isSubmitting
+                        ? const SizedBox.shrink()
+                        : const TanukiButtonIcon(),
                     label: state.isSubmitting
-                        ? const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                        ? const SizedBox.square(
+                            dimension: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : Text(context.l10n.registrationCreateAccountButton),
                   ),
                   const SizedBox(height: 8),

@@ -7,6 +7,7 @@ import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 import 'package:nook/presentation/auth/loading/auth_loading_page.dart';
 import 'package:nook/presentation/auth/login/login_page.dart';
 import 'package:nook/presentation/auth/registration/registration_page.dart';
+import 'package:nook/presentation/auth/username/username_page.dart';
 import 'package:nook/presentation/auth/verification/email_verification_page.dart';
 import 'package:nook/presentation/home/home_page.dart';
 import 'package:nook/presentation/media/media_detail_page.dart';
@@ -37,9 +38,18 @@ class AppRouter extends RootStackRouter {
       path: '/media/:mediaId',
       guards: [AuthRouteGuard(_watchIdentity, _watchOwnProfile)],
     ),
-    AutoRoute(page: LoginRoute.page, path: '/auth/login', guards: [GuestRouteGuard(_watchIdentity)]),
-    AutoRoute(page: RegistrationRoute.page, path: '/auth/register', guards: [GuestRouteGuard(_watchIdentity)]),
+    AutoRoute(page: LoginRoute.page, path: '/auth/login', guards: [GuestRouteGuard(_watchIdentity, _watchOwnProfile)]),
+    AutoRoute(
+      page: RegistrationRoute.page,
+      path: '/auth/register',
+      guards: [GuestRouteGuard(_watchIdentity, _watchOwnProfile)],
+    ),
     AutoRoute(page: EmailVerificationRoute.page, path: '/auth/verify-email'),
+    AutoRoute(
+      page: UsernameRoute.page,
+      path: '/auth/username',
+      guards: [UsernameRouteGuard(_watchIdentity, _watchOwnProfile)],
+    ),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];
 }

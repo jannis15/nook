@@ -214,6 +214,60 @@ abstract class AppLocalizations {
   /// **'Create account'**
   String get loginCreateAccountButton;
 
+  /// No description provided for @loginOrContinueWithLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'or continue with'**
+  String get loginOrContinueWithLabel;
+
+  /// No description provided for @loginGoogleButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get loginGoogleButton;
+
+  /// No description provided for @loginGitHubButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with GitHub'**
+  String get loginGitHubButton;
+
+  /// No description provided for @usernameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a username'**
+  String get usernameTitle;
+
+  /// No description provided for @usernameSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your username identifies your Nook profile.'**
+  String get usernameSubtitle;
+
+  /// No description provided for @usernameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get usernameLabel;
+
+  /// No description provided for @usernameUnavailableError.
+  ///
+  /// In en, this message translates to:
+  /// **'This username is already taken.'**
+  String get usernameUnavailableError;
+
+  /// No description provided for @usernameCompletionFailedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save your username. Try again.'**
+  String get usernameCompletionFailedError;
+
+  /// No description provided for @usernameContinueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get usernameContinueButton;
+
   /// No description provided for @registrationTitle.
   ///
   /// In en, this message translates to:

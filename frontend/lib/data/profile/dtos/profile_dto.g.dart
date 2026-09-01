@@ -9,5 +9,6 @@ part of 'profile_dto.dart';
 ProfileDto _$ProfileDtoFromJson(Map<String, dynamic> json) => ProfileDto(
   id: json['id'] as String,
   email: json['email'] as String,
-  displayName: json['display_name'] as String?,
+  username: json['username'] as String,
+  isUsernameConfigured: json['is_username_configured'] as bool,
 );

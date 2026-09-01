@@ -29,6 +29,29 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   ValueStream<AppProfile?> get ownProfile => _ownProfile.stream;
 
+  @override
+  Future<Result<Unit, ProfileFailure>> completeUsername(String username) async {
+    try {
+      await _dio.patch<Map<String, Object?>>('/profiles/me/username', data: {'username': username});
+      await _refreshOwnProfile();
+      return Success.unit();
+    } on DioException catch (error) {
+      _logger.warning('Could not update the current profile username.', error, error.stackTrace);
+      if (error.response?.statusCode == 409) {
+        return const Error(UsernameUnavailableProfileFailure());
+      }
+
+      if (error.response?.statusCode == 401) {
+        return const Error(UnauthenticatedProfileFailure());
+      }
+
+      return const Error(UnknownProfileFailure());
+    } catch (error, stackTrace) {
+      _logger.severe('Could not update the current profile username.', error, stackTrace);
+      return const Error(UnknownProfileFailure());
+    }
+  }
+
   void _identityChanged(AppIdentity identity) {
     if (identity is AnonymousAppIdentity) {
       _ownProfile.add(null);

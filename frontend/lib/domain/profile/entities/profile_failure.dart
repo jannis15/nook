@@ -10,6 +10,12 @@ final class UnauthenticatedProfileFailure extends ProfileFailure {
   const UnauthenticatedProfileFailure();
 }
 
+/// The supplied username is already in use.
+final class UsernameUnavailableProfileFailure extends ProfileFailure {
+  /// Default constructor.
+  const UsernameUnavailableProfileFailure();
+}
+
 /// An unexpected profile operation failure.
 final class UnknownProfileFailure extends ProfileFailure {
   /// Default constructor.

@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:nook/domain/auth/entities/app_identity.dart';
 import 'package:nook/domain/auth/entities/auth_failure.dart';
+import 'package:nook/domain/auth/entities/oauth_provider.dart';
 import 'package:nook/domain/auth/repositories/auth_repository.dart';
 import 'package:nook/domain/auth/use_cases/logout_use_case.dart';
 import 'package:rxdart/rxdart.dart';
@@ -74,6 +75,11 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<Result<Unit, AuthFailure>> loginWithPassword({required String email, required String password}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<Unit, AuthFailure>> loginWithOAuth(AppOAuthProvider provider) {
     throw UnimplementedError();
   }
 

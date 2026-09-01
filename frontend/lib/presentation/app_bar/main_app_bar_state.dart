@@ -28,7 +28,7 @@ abstract class MainAppBarUser with _$MainAppBarUser {
 
   /// Creates an app bar user from [profile].
   factory MainAppBarUser.fromProfile(AppProfile profile) {
-    return MainAppBarUser(id: profile.id, displayName: profile.displayName, email: profile.email);
+    return MainAppBarUser(id: profile.id, displayName: profile.username, email: profile.email);
   }
 
   /// The name shown in the app bar.

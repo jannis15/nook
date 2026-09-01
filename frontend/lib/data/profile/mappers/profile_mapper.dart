@@ -5,6 +5,11 @@ import 'package:nook/domain/profile/entities/app_profile.dart';
 abstract final class ProfileMapper {
   /// Maps an API profile DTO to a domain profile entity.
   static AppProfile toDomain(ProfileDto profile) {
-    return AppProfile(id: profile.id, displayName: profile.displayName, email: profile.email);
+    return AppProfile(
+      id: profile.id,
+      email: profile.email,
+      username: profile.username,
+      isUsernameConfigured: profile.isUsernameConfigured,
+    );
   }
 }

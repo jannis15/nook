@@ -4,6 +4,7 @@ export const profileSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
   username: z.string(),
+  is_username_configured: z.boolean(),
   created_at: z.string(),
   updated_at: z.string(),
 });

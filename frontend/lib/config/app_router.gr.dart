@@ -75,6 +75,21 @@ class RegistrationRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [UsernamePage]
+class UsernameRoute extends PageRouteInfo<void> {
+  const UsernameRoute({List<PageRouteInfo>? children}) : super(UsernameRoute.name, initialChildren: children);
+
+  static const String name = 'UsernameRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const UsernamePage();
+    },
+  );
+}
+
+/// generated route for
 /// [EmailVerificationPage]
 class EmailVerificationRoute extends PageRouteInfo<void> {
   const EmailVerificationRoute({List<PageRouteInfo>? children})

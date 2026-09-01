@@ -29,3 +29,41 @@ export async function getOwnProfile(
   logger.debug({ requestId, userId }, 'Profile loaded');
   return { ok: true, profile };
 }
+
+type UpdateUsernameResult =
+  | { ok: true; profile: Profile }
+  | { ok: false; error: { code: 'conflict' | 'internal_server_error'; message: string } };
+
+/** Updates the authenticated user's username. */
+export async function updateOwnUsername(
+  supabase: Supabase,
+  userId: string,
+  username: string,
+  requestId: string,
+): Promise<UpdateUsernameResult> {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ username, is_username_configured: true })
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === '23505') {
+        return { ok: false, error: { code: 'conflict', message: 'Username is already taken' } };
+      }
+
+      throw error;
+    }
+
+    logger.info({ requestId, userId }, 'Profile username updated');
+    return { ok: true, profile: data };
+  } catch (error) {
+    logger.error({ error, requestId, userId }, 'Profile username update failed');
+    return {
+      ok: false,
+      error: { code: 'internal_server_error', message: 'Username could not be updated' },
+    };
+  }
+}

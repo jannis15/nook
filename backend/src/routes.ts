@@ -9,6 +9,7 @@ import { registerPostMediaRoute } from './routes/media/post.js';
 import { registerPostEmailVerificationResendRoute } from './routes/profiles/email-verification/post.js';
 import { registerGetEmailVerificationStatusRoute } from './routes/profiles/me/email-verification/get.js';
 import { registerGetMeRoute } from './routes/profiles/me/get.js';
+import { registerPatchOwnUsernameRoute } from './routes/profiles/me/username/patch.js';
 import { registerPostProfileRoute } from './routes/profiles/post.js';
 
 export function registerRoutes(app: App) {
@@ -23,4 +24,5 @@ export function registerRoutes(app: App) {
   registerPostEmailVerificationResendRoute(app);
   registerGetEmailVerificationStatusRoute(app);
   registerGetMeRoute(app);
+  registerPatchOwnUsernameRoute(app);
 }

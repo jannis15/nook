@@ -30,6 +30,10 @@ If the SDK or packages are missing, run `fvm install` and `fvm flutter pub get` 
 
 Authentication-aware navigation is handled at the router boundary. Unknown paths redirect to `/`, `/` redirects to the guarded default route, and AutoRoute guards choose between `/auth/login` and `/home` from the domain auth identity. The router also reevaluates guards from the auth identity stream, so session restore, sign-in, and sign-out can update navigation without page-level routing checks.
 
+## OAuth callbacks
+
+Configure each web deployment URL, including `http://localhost:3000` for local development, as a Supabase authentication redirect URL. Android OAuth returns to `de.jb.nook.frontend://login-callback`; this URL must also be added to Supabase authentication redirect URLs.
+
 ## Agent Guidance
 
 `AGENTS.md` contains local conventions for coding agents working in this frontend, such as layering and localization key naming rules.

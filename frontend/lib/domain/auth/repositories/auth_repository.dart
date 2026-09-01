@@ -1,6 +1,7 @@
 import 'package:multiple_result/multiple_result.dart';
 import 'package:nook/domain/auth/entities/app_identity.dart';
 import 'package:nook/domain/auth/entities/auth_failure.dart';
+import 'package:nook/domain/auth/entities/oauth_provider.dart';
 import 'package:rxdart/rxdart.dart';
 
 /// Contract for session authentication operations.
@@ -10,6 +11,9 @@ abstract interface class AuthRepository {
 
   /// Authenticates with an email address and password.
   Future<Result<Unit, AuthFailure>> loginWithPassword({required String email, required String password});
+
+  /// Starts OAuth sign-in with [provider].
+  Future<Result<Unit, AuthFailure>> loginWithOAuth(AppOAuthProvider provider);
 
   /// Refreshes the current authentication session.
   Future<Result<Unit, AuthFailure>> refreshSession();

@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:multiple_result/multiple_result.dart';
 import 'package:nook/domain/auth/entities/app_identity.dart';
 import 'package:nook/domain/auth/entities/auth_failure.dart';
+import 'package:nook/domain/auth/entities/oauth_provider.dart';
 import 'package:nook/domain/auth/repositories/auth_repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -32,6 +34,21 @@ class AuthRepositorySupabase implements AuthRepository {
         return const Error(InvalidCredentialsAuthFailure());
       }
 
+      return const Error(UnknownAuthFailure());
+    } catch (_) {
+      return const Error(UnknownAuthFailure());
+    }
+  }
+
+  @override
+  Future<Result<Unit, AuthFailure>> loginWithOAuth(AppOAuthProvider provider) async {
+    try {
+      await _supabaseClient.auth.signInWithOAuth(switch (provider) {
+        AppOAuthProvider.google => OAuthProvider.google,
+        AppOAuthProvider.github => OAuthProvider.github,
+      }, redirectTo: kIsWeb ? null : 'de.jb.nook.frontend://login-callback');
+      return Success.unit();
+    } on AuthException {
       return const Error(UnknownAuthFailure());
     } catch (_) {
       return const Error(UnknownAuthFailure());

@@ -131,6 +131,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_username_configured: boolean
           updated_at: string
           username: string
         }
@@ -138,6 +139,7 @@ export type Database = {
           created_at?: string
           email: string
           id: string
+          is_username_configured?: boolean
           updated_at?: string
           username: string
         }
@@ -145,6 +147,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          is_username_configured?: boolean
           updated_at?: string
           username?: string
         }
@@ -940,4 +943,3 @@ export const Constants = {
     },
   },
 } as const
-
