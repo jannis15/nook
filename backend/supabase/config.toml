@@ -3,7 +3,7 @@ project_id = "nook"
 [api]
 enabled = true
 port = 54321
-schemas = ["public", "storage", "graphql_public"]
+schemas = ["public", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
@@ -23,7 +23,7 @@ api_url = "http://127.0.0.1:54321"
 
 [storage]
 enabled = true
-file_size_limit = "100MiB"
+file_size_limit = "50MiB"
 
 [auth]
 enabled = true
@@ -35,7 +35,9 @@ enable_signup = false
 [auth.email]
 enable_signup = false
 enable_confirmations = true
+max_frequency = "1m"
+otp_length = 8
 
-[auth.email.template.confirmation]
-subject = "Confirm your Nook email"
-content_path = "./supabase/templates/confirmation.html"
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
