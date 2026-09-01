@@ -22,28 +22,59 @@ const seededUser = {
 };
 
 describeIntegration('Supabase backend-only data access integration', () => {
-  it('creates a profile when a user signs up', async () => {
-    const displayName = 'Integration Signup User';
+  it('creates a profile when the backend creates a user', async () => {
     let userId: string | undefined;
 
     try {
-      const signedUpUser = await signUpTestUser(displayName);
-      userId = signedUpUser.userId;
+      const createdUser = await createTestUser();
+      userId = createdUser.userId;
 
       const { data, error } = await createAdminSupabaseClient()
         .from('profiles')
-        .select('id, email, display_name')
+        .select('id, email, username')
         .eq('id', userId)
         .single();
 
       expect(error).toBeNull();
       expect(data).toEqual({
         id: userId,
-        email: signedUpUser.email,
-        display_name: displayName,
+        email: createdUser.email,
+        username: createdUser.username,
       });
     } finally {
       await deleteTestUser(userId);
+    }
+  });
+
+  it('denies public signup', async () => {
+    const { error } = await createSupabaseClient().auth.signUp({
+      email: `blocked-${Date.now()}@nook.local`,
+      password: 'password',
+    });
+
+    expect(error).not.toBeNull();
+  });
+
+  it('enforces unique usernames for backend-created users', async () => {
+    let firstUserId: string | undefined;
+    let secondUserId: string | undefined;
+
+    try {
+      const firstUser = await createTestUser();
+      firstUserId = firstUser.userId;
+      const { data, error } =
+        await createAdminSupabaseClient().auth.admin.createUser({
+          email: `duplicate-${Date.now()}@nook.local`,
+          password: 'password',
+          email_confirm: true,
+          user_metadata: { username: firstUser.username },
+        });
+      secondUserId = data.user?.id;
+
+      expect(error).not.toBeNull();
+    } finally {
+      await deleteTestUser(secondUserId);
+      await deleteTestUser(firstUserId);
     }
   });
 
@@ -51,12 +82,12 @@ describeIntegration('Supabase backend-only data access integration', () => {
     const client = await signInSeededUser();
     const { error: readError } = await client
       .from('profiles')
-      .select('id, email, display_name')
+      .select('id, email, username')
       .eq('id', seededUser.id)
       .single();
     const { error: updateError } = await client
       .from('profiles')
-      .update({ display_name: 'Blocked update' })
+      .update({ username: 'blocked_update' })
       .eq('id', seededUser.id);
 
     expect(readError).not.toBeNull();
@@ -157,29 +188,28 @@ async function signInSeededUser() {
   return createSupabaseClient(data.session?.access_token);
 }
 
-async function signUpTestUser(displayName: string) {
-  const client = createSupabaseClient();
+async function createTestUser() {
   const uniqueId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const email = `integration-${uniqueId}@nook.local`;
+  const username = `integration_${uniqueId.replace(/[^a-z0-9_]/g, '')}`;
 
-  const { data, error } = await client.auth.signUp({
-    email,
-    password: 'password',
-    options: {
-      data: {
-        display_name: displayName,
+  const { data, error } =
+    await createAdminSupabaseClient().auth.admin.createUser({
+      email,
+      password: 'password',
+      email_confirm: true,
+      user_metadata: {
+        username,
       },
-    },
-  });
+    });
 
   expect(error).toBeNull();
-  expect(data.session?.access_token).toBeDefined();
   expect(data.user?.id).toBeDefined();
 
   return {
-    client: createSupabaseClient(data.session?.access_token),
     email,
     userId: data.user?.id ?? '',
+    username,
   };
 }
 

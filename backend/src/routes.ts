@@ -7,7 +7,7 @@ import { registerGetMediaStatusRoute } from './routes/media/{id}/status.js';
 import { registerGetMediaListRoute } from './routes/media/get.js';
 import { registerPostMediaRoute } from './routes/media/post.js';
 import { registerGetMeRoute } from './routes/profiles/me/get.js';
-import { registerPatchMeRoute } from './routes/profiles/me/patch.js';
+import { registerPostProfileRoute } from './routes/profiles/post.js';
 
 export function registerRoutes(app: App) {
   registerGetHealthRoute(app);
@@ -17,6 +17,6 @@ export function registerRoutes(app: App) {
   registerGetMediaStatusRoute(app);
   registerGetMediaByIdRoute(app);
   registerDeleteMediaByIdRoute(app);
+  registerPostProfileRoute(app);
   registerGetMeRoute(app);
-  registerPatchMeRoute(app);
 }

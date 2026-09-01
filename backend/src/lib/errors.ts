@@ -5,6 +5,7 @@ export const apiErrorCodes = [
   'validation_error',
   'missing_bearer_token',
   'invalid_bearer_token',
+  'email_not_verified',
   'not_found',
   'profile_not_found',
   'conflict',

@@ -31,7 +31,7 @@ describe('GET /profiles/me', () => {
     const profile: Profile = {
       id: testUserId,
       email: 'test@nook.local',
-      display_name: 'Test User',
+      username: 'test_user',
       created_at: '2026-07-28T00:00:00.000Z',
       updated_at: '2026-07-28T00:00:00.000Z',
     };

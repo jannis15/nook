@@ -84,7 +84,9 @@ describe('requireAuth', () => {
 
   it('accepts a case-insensitive bearer scheme and stores auth variables', async () => {
     getUser.mockResolvedValue({
-      data: { user: { id: 'user-1' } },
+      data: {
+        user: { id: 'user-1', email_confirmed_at: '2026-09-01T00:00:00Z' },
+      },
       error: null,
     });
 
@@ -117,6 +119,25 @@ describe('requireAuth', () => {
       error: {
         code: 'invalid_bearer_token',
         message: 'Invalid bearer token',
+      },
+    });
+  });
+
+  it('rejects a user whose email is not verified', async () => {
+    getUser.mockResolvedValue({
+      data: { user: { id: 'user-1', email_confirmed_at: null } },
+      error: null,
+    });
+
+    const response = await createTestApp().request('/protected', {
+      headers: { authorization: 'Bearer access-token' },
+    });
+
+    expect(response.status).toBe(403);
+    await expect(response.json()).resolves.toEqual({
+      error: {
+        code: 'email_not_verified',
+        message: 'Email verification is required',
       },
     });
   });

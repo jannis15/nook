@@ -37,7 +37,7 @@ insert into auth.users (
   '',
   now(),
   '{"provider":"email","providers":["email"]}',
-  '{"display_name":"Test User"}',
+  '{"username":"test_user"}',
   now(),
   now()
 ) on conflict (id) do update set
@@ -74,7 +74,7 @@ insert into auth.identities (
   now()
 ) on conflict (provider_id, provider) do nothing;
 
-insert into public.profiles (id, email, display_name)
-values ('00000000-0000-0000-0000-000000000001', 'test@nook.local', 'Test User')
+insert into public.profiles (id, email, username)
+values ('00000000-0000-0000-0000-000000000001', 'test@nook.local', 'test_user')
 on conflict (id) do update set
   email = excluded.email;

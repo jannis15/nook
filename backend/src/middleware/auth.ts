@@ -47,6 +47,17 @@ export const requireAuth = createMiddleware<{
       );
     }
 
+    if (!data.user.email_confirmed_at) {
+      logger.debug(
+        { path: new URL(c.req.url).pathname, requestId },
+        'Auth failed: email not verified',
+      );
+      return c.json(
+        apiError('email_not_verified', 'Email verification is required'),
+        403,
+      );
+    }
+
     userId = data.user.id;
   } catch (error) {
     logger.error(

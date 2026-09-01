@@ -3,7 +3,7 @@ import { z } from '@hono/zod-openapi';
 export const profileSchema = z.object({
   id: z.string().uuid(),
   email: z.string().email(),
-  display_name: z.string().nullable(),
+  username: z.string(),
   created_at: z.string(),
   updated_at: z.string(),
 });
