@@ -16,8 +16,11 @@ final class AnonymousAppIdentity extends AppIdentity {
 /// An identity for an authenticated user.
 final class AuthenticatedAppIdentity extends AppIdentity {
   /// Default constructor.
-  const AuthenticatedAppIdentity({required this.id});
+  const AuthenticatedAppIdentity({required this.id, required this.isEmailVerified});
 
   /// The stable user identifier.
   final String id;
+
+  /// Whether the user's email address has been verified.
+  final bool isEmailVerified;
 }

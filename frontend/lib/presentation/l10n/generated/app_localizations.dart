@@ -100,6 +100,48 @@ abstract class AppLocalizations {
   /// **'Nook'**
   String get appTitle;
 
+  /// No description provided for @emailVerificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your email'**
+  String get emailVerificationTitle;
+
+  /// No description provided for @emailVerificationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We sent you a verification email. Open the link in that email, then refresh this page.'**
+  String get emailVerificationDescription;
+
+  /// No description provided for @emailVerificationRefreshButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get emailVerificationRefreshButton;
+
+  /// No description provided for @emailVerificationRefreshFailedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not refresh your verification status. Try again.'**
+  String get emailVerificationRefreshFailedError;
+
+  /// No description provided for @emailVerificationPendingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email address is not verified yet.'**
+  String get emailVerificationPendingError;
+
+  /// No description provided for @emailVerificationLogoutButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get emailVerificationLogoutButton;
+
+  /// No description provided for @emailVerificationLogoutFailedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out failed. Try again.'**
+  String get emailVerificationLogoutFailedError;
+
   /// No description provided for @loginTitle.
   ///
   /// In en, this message translates to:
@@ -165,6 +207,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sign in'**
   String get loginSignInButton;
+
+  /// No description provided for @loginCreateAccountButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get loginCreateAccountButton;
+
+  /// No description provided for @registrationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your account'**
+  String get registrationTitle;
+
+  /// No description provided for @registrationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save and organise your personal media library.'**
+  String get registrationSubtitle;
+
+  /// No description provided for @registrationUsernameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Username'**
+  String get registrationUsernameLabel;
+
+  /// No description provided for @registrationUsernameRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a username.'**
+  String get registrationUsernameRequiredError;
+
+  /// No description provided for @registrationUsernameTooShortError.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 3 characters.'**
+  String get registrationUsernameTooShortError;
+
+  /// No description provided for @registrationUsernameTooLongError.
+  ///
+  /// In en, this message translates to:
+  /// **'Use no more than 30 characters.'**
+  String get registrationUsernameTooLongError;
+
+  /// No description provided for @registrationUsernameInvalidCharactersError.
+  ///
+  /// In en, this message translates to:
+  /// **'Use only lowercase letters, numbers, and underscores.'**
+  String get registrationUsernameInvalidCharactersError;
+
+  /// No description provided for @registrationUsernameUnavailableError.
+  ///
+  /// In en, this message translates to:
+  /// **'This username is already taken.'**
+  String get registrationUsernameUnavailableError;
+
+  /// No description provided for @registrationEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get registrationEmailLabel;
+
+  /// No description provided for @registrationEmailRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email.'**
+  String get registrationEmailRequiredError;
+
+  /// No description provided for @registrationEmailInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get registrationEmailInvalidError;
+
+  /// No description provided for @registrationPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get registrationPasswordLabel;
+
+  /// No description provided for @registrationPasswordRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a password.'**
+  String get registrationPasswordRequiredError;
+
+  /// No description provided for @registrationPasswordTooShortError.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 12 characters.'**
+  String get registrationPasswordTooShortError;
+
+  /// No description provided for @registrationPasswordLowercaseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Include a lowercase letter.'**
+  String get registrationPasswordLowercaseError;
+
+  /// No description provided for @registrationPasswordUppercaseError.
+  ///
+  /// In en, this message translates to:
+  /// **'Include an uppercase letter.'**
+  String get registrationPasswordUppercaseError;
+
+  /// No description provided for @registrationPasswordDigitError.
+  ///
+  /// In en, this message translates to:
+  /// **'Include a number.'**
+  String get registrationPasswordDigitError;
+
+  /// No description provided for @registrationPasswordSpecialCharacterError.
+  ///
+  /// In en, this message translates to:
+  /// **'Include an allowed special character.'**
+  String get registrationPasswordSpecialCharacterError;
+
+  /// No description provided for @registrationShowPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get registrationShowPasswordButton;
+
+  /// No description provided for @registrationHidePasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get registrationHidePasswordButton;
+
+  /// No description provided for @registrationSubmissionFailedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not create your account. Try again.'**
+  String get registrationSubmissionFailedError;
+
+  /// No description provided for @registrationCreateAccountButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get registrationCreateAccountButton;
+
+  /// No description provided for @registrationSignInButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Already have an account? Sign in'**
+  String get registrationSignInButton;
 
   /// No description provided for @homeLogoutButton.
   ///

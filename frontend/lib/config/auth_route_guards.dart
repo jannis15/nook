@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:nook/domain/auth/entities/app_identity.dart';
 import 'package:nook/domain/auth/use_cases/watch_identity_use_case.dart';
 import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 
@@ -14,7 +15,14 @@ class AuthRouteGuard extends AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if (_watchIdentity().value.isAuthenticated) {
+    final identity = _watchIdentity().value;
+    if (identity case AuthenticatedAppIdentity(:final isEmailVerified)) {
+      if (!isEmailVerified) {
+        unawaited(router.pushPath('/auth/verify-email'));
+        resolver.next(false);
+        return;
+      }
+
       if (_watchOwnProfile().value != null) {
         resolver.next();
         return;
@@ -39,8 +47,8 @@ class GuestRouteGuard extends AutoRouteGuard {
 
   @override
   void onNavigation(NavigationResolver resolver, StackRouter router) {
-    if (_watchIdentity().value.isAuthenticated) {
-      unawaited(router.pushPath('/auth/loading'));
+    if (_watchIdentity().value case AuthenticatedAppIdentity(:final isEmailVerified)) {
+      unawaited(router.pushPath(isEmailVerified ? '/auth/loading' : '/auth/verify-email'));
       resolver.next(false);
       return;
     }

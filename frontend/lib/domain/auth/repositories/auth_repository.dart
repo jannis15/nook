@@ -11,6 +11,9 @@ abstract interface class AuthRepository {
   /// Authenticates with an email address and password.
   Future<Result<Unit, AuthFailure>> loginWithPassword({required String email, required String password});
 
+  /// Refreshes the current authentication session.
+  Future<Result<Unit, AuthFailure>> refreshSession();
+
   /// Ends the current authenticated session.
   Future<Result<Unit, AuthFailure>> logout();
 }

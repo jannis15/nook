@@ -7,11 +7,17 @@ import 'package:nook/config/app_router.dart';
 import 'package:nook/config/app_theme.dart';
 import 'package:nook/data/api/api_client.dart';
 import 'package:nook/data/auth/auth_repository_supabase.dart';
+import 'package:nook/data/auth/repositories/email_verification_repository_impl.dart';
+import 'package:nook/data/auth/repositories/registration_repository_impl.dart';
 import 'package:nook/data/media/repositories/media_repository_impl.dart';
 import 'package:nook/data/profile/repositories/profile_repository_impl.dart';
 import 'package:nook/domain/auth/repositories/auth_repository.dart';
+import 'package:nook/domain/auth/repositories/email_verification_repository.dart';
+import 'package:nook/domain/auth/repositories/registration_repository.dart';
 import 'package:nook/domain/auth/use_cases/login_use_case.dart';
 import 'package:nook/domain/auth/use_cases/logout_use_case.dart';
+import 'package:nook/domain/auth/use_cases/refresh_email_verification_use_case.dart';
+import 'package:nook/domain/auth/use_cases/register_use_case.dart';
 import 'package:nook/domain/auth/use_cases/watch_identity_use_case.dart';
 import 'package:nook/domain/media/repositories/media_repository.dart';
 import 'package:nook/domain/media/use_cases/delete_media_use_case.dart';
@@ -36,6 +42,8 @@ Future<void> main() async {
   final supabaseClient = Supabase.instance.client;
   final authRepository = AuthRepositorySupabase(supabaseClient);
   final apiClient = createApiClient(supabaseClient, authRepository);
+  final registrationRepository = RegistrationRepositoryImpl(apiClient);
+  final emailVerificationRepository = EmailVerificationRepositoryImpl(apiClient);
   final profileRepository = ProfileRepositoryImpl(apiClient, authRepository: authRepository);
   final mediaRepository = MediaRepositoryImpl(apiClient);
   final watchIdentity = WatchIdentityUseCase(authRepository);
@@ -45,6 +53,8 @@ Future<void> main() async {
     MultiRepositoryProvider(
       providers: [
         RepositoryProvider<AuthRepository>.value(value: authRepository),
+        RepositoryProvider<RegistrationRepository>.value(value: registrationRepository),
+        RepositoryProvider<EmailVerificationRepository>.value(value: emailVerificationRepository),
         RepositoryProvider<ProfileRepository>.value(value: profileRepository),
         RepositoryProvider<MediaRepository>.value(value: mediaRepository),
         RepositoryProvider<WatchIdentityUseCase>.value(value: watchIdentity),
@@ -56,6 +66,10 @@ Future<void> main() async {
         RepositoryProvider<WaitForMediaStatusUseCase>.value(value: WaitForMediaStatusUseCase(mediaRepository)),
         RepositoryProvider<LoginUseCase>.value(value: LoginUseCase(authRepository)),
         RepositoryProvider<LogoutUseCase>.value(value: LogoutUseCase(authRepository)),
+        RepositoryProvider<RegisterUseCase>.value(value: RegisterUseCase(registrationRepository)),
+        RepositoryProvider<RefreshEmailVerificationUseCase>.value(
+          value: RefreshEmailVerificationUseCase(emailVerificationRepository, authRepository),
+        ),
       ],
       child: NookApp(watchIdentity: watchIdentity, watchOwnProfile: watchOwnProfile),
     ),

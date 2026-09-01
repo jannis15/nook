@@ -15,3 +15,9 @@ final class AuthenticatedProfileLoaded extends AuthLoadingPresentationEvent {
   /// Default constructor.
   const AuthenticatedProfileLoaded();
 }
+
+/// The authenticated user must verify their email address.
+final class EmailVerificationRequired extends AuthLoadingPresentationEvent {
+  /// Default constructor.
+  const EmailVerificationRequired();
+}

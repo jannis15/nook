@@ -39,6 +39,19 @@ class AuthRepositorySupabase implements AuthRepository {
   }
 
   @override
+  Future<Result<Unit, AuthFailure>> refreshSession() async {
+    try {
+      await _supabaseClient.auth.refreshSession();
+
+      return Success.unit();
+    } on AuthException {
+      return const Error(UnknownAuthFailure());
+    } catch (_) {
+      return const Error(UnknownAuthFailure());
+    }
+  }
+
+  @override
   Future<Result<Unit, AuthFailure>> logout() async {
     try {
       // Supabase clears the local session before attempting remote revocation.
@@ -55,6 +68,6 @@ class AuthRepositorySupabase implements AuthRepository {
       return const AnonymousAppIdentity();
     }
 
-    return AuthenticatedAppIdentity(id: user.id);
+    return AuthenticatedAppIdentity(id: user.id, isEmailVerified: user.emailConfirmedAt != null);
   }
 }

@@ -10,7 +10,7 @@ void main() {
   group('LogoutUseCase', () {
     test('returns success when logout clears identity synchronously', () async {
       final repository = _FakeAuthRepository(
-        const AuthenticatedAppIdentity(id: 'user-id'),
+        const AuthenticatedAppIdentity(id: 'user-id', isEmailVerified: true),
         onLogout: (repository) {
           repository.identitySubject.add(const AnonymousAppIdentity());
           return Future.value(Success.unit());
@@ -26,7 +26,7 @@ void main() {
 
     test('waits for identity to become anonymous before completing', () async {
       final repository = _FakeAuthRepository(
-        const AuthenticatedAppIdentity(id: 'user-id'),
+        const AuthenticatedAppIdentity(id: 'user-id', isEmailVerified: true),
         onLogout: (repository) {
           Future<void>.delayed(Duration.zero, () {
             repository.identitySubject.add(const AnonymousAppIdentity());
@@ -45,7 +45,7 @@ void main() {
 
     test('returns logout error without waiting for identity', () async {
       final repository = _FakeAuthRepository(
-        const AuthenticatedAppIdentity(id: 'user-id'),
+        const AuthenticatedAppIdentity(id: 'user-id', isEmailVerified: true),
         onLogout: (_) => Future.value(const Error(UnknownAuthFailure())),
       );
       final useCase = LogoutUseCase(repository);
@@ -74,6 +74,11 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<Result<Unit, AuthFailure>> loginWithPassword({required String email, required String password}) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<Unit, AuthFailure>> refreshSession() {
     throw UnimplementedError();
   }
 

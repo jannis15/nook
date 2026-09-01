@@ -30,11 +30,17 @@ class AuthLoadingCubit extends Cubit<void> with BlocPresentationMixin<void, Auth
   void _identityChanged(AppIdentity identity) {
     if (identity is AnonymousAppIdentity) {
       emitPresentation(const AuthenticationRequired());
+      return;
+    }
+
+    if (identity case AuthenticatedAppIdentity(:final isEmailVerified) when !isEmailVerified) {
+      emitPresentation(const EmailVerificationRequired());
     }
   }
 
   void _profileChanged(AppProfile? profile) {
-    if (profile != null && _watchIdentity().value.isAuthenticated && !_hasResolvedProfile) {
+    final identity = _watchIdentity().value;
+    if (profile != null && identity is AuthenticatedAppIdentity && identity.isEmailVerified && !_hasResolvedProfile) {
       _hasResolvedProfile = true;
       emitPresentation(const AuthenticatedProfileLoaded());
     }

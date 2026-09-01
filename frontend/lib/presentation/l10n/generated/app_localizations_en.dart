@@ -12,6 +12,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Nook';
 
   @override
+  String get emailVerificationTitle => 'Verify your email';
+
+  @override
+  String get emailVerificationDescription =>
+      'We sent you a verification email. Open the link in that email, then refresh this page.';
+
+  @override
+  String get emailVerificationRefreshButton => 'Refresh';
+
+  @override
+  String get emailVerificationRefreshFailedError =>
+      'Could not refresh your verification status. Try again.';
+
+  @override
+  String get emailVerificationPendingError =>
+      'Your email address is not verified yet.';
+
+  @override
+  String get emailVerificationLogoutButton => 'Sign out';
+
+  @override
+  String get emailVerificationLogoutFailedError =>
+      'Sign out failed. Try again.';
+
+  @override
   String get loginTitle => 'Nook';
 
   @override
@@ -44,6 +69,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginSignInButton => 'Sign in';
+
+  @override
+  String get loginCreateAccountButton => 'Create account';
+
+  @override
+  String get registrationTitle => 'Create your account';
+
+  @override
+  String get registrationSubtitle =>
+      'Save and organise your personal media library.';
+
+  @override
+  String get registrationUsernameLabel => 'Username';
+
+  @override
+  String get registrationUsernameRequiredError => 'Enter a username.';
+
+  @override
+  String get registrationUsernameTooShortError => 'Use at least 3 characters.';
+
+  @override
+  String get registrationUsernameTooLongError =>
+      'Use no more than 30 characters.';
+
+  @override
+  String get registrationUsernameInvalidCharactersError =>
+      'Use only lowercase letters, numbers, and underscores.';
+
+  @override
+  String get registrationUsernameUnavailableError =>
+      'This username is already taken.';
+
+  @override
+  String get registrationEmailLabel => 'Email';
+
+  @override
+  String get registrationEmailRequiredError => 'Enter your email.';
+
+  @override
+  String get registrationEmailInvalidError => 'Enter a valid email address.';
+
+  @override
+  String get registrationPasswordLabel => 'Password';
+
+  @override
+  String get registrationPasswordRequiredError => 'Enter a password.';
+
+  @override
+  String get registrationPasswordTooShortError => 'Use at least 12 characters.';
+
+  @override
+  String get registrationPasswordLowercaseError =>
+      'Include a lowercase letter.';
+
+  @override
+  String get registrationPasswordUppercaseError =>
+      'Include an uppercase letter.';
+
+  @override
+  String get registrationPasswordDigitError => 'Include a number.';
+
+  @override
+  String get registrationPasswordSpecialCharacterError =>
+      'Include an allowed special character.';
+
+  @override
+  String get registrationShowPasswordButton => 'Show password';
+
+  @override
+  String get registrationHidePasswordButton => 'Hide password';
+
+  @override
+  String get registrationSubmissionFailedError =>
+      'Could not create your account. Try again.';
+
+  @override
+  String get registrationCreateAccountButton => 'Create account';
+
+  @override
+  String get registrationSignInButton => 'Already have an account? Sign in';
 
   @override
   String get homeLogoutButton => 'Sign out';

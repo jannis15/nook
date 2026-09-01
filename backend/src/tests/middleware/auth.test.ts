@@ -23,7 +23,9 @@ vi.mock('../../lib/logger.js', () => ({
   logger,
 }));
 
-const { requireAuth } = await import('../../middleware/auth.js');
+const { requireAuth, requireSession } = await import(
+  '../../middleware/auth.js'
+);
 const testRequestId = 'request-1';
 
 describe('requireAuth', () => {
@@ -98,6 +100,7 @@ describe('requireAuth', () => {
     await expect(response.json()).resolves.toEqual({
       accessToken: 'access-token',
       hasSupabase: true,
+      isEmailVerified: true,
       userId: 'user-1',
     });
     expect(createSupabaseAdminClient).toHaveBeenCalledOnce();
@@ -142,6 +145,25 @@ describe('requireAuth', () => {
     });
   });
 
+  it('accepts an unverified user for session status checks', async () => {
+    getUser.mockResolvedValue({
+      data: { user: { id: 'user-1', email_confirmed_at: null } },
+      error: null,
+    });
+
+    const response = await createTestApp(requireSession).request('/protected', {
+      headers: { authorization: 'Bearer access-token' },
+    });
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      accessToken: 'access-token',
+      hasSupabase: true,
+      isEmailVerified: false,
+      userId: 'user-1',
+    });
+  });
+
   it('returns a typed error when auth verification fails', async () => {
     getUser.mockRejectedValue(new Error('auth unavailable'));
 
@@ -159,7 +181,7 @@ describe('requireAuth', () => {
   });
 });
 
-function createTestApp() {
+function createTestApp(middleware = requireAuth) {
   const app = new Hono<{
     Variables: AuthVariables & RequestVariables;
   }>();
@@ -168,11 +190,12 @@ function createTestApp() {
     c.set('requestId', testRequestId);
     await next();
   });
-  app.use('/protected', requireAuth);
+  app.use('/protected', middleware);
   app.get('/protected', (c) =>
     c.json({
       accessToken: c.get('accessToken'),
       hasSupabase: c.get('supabase') === supabase,
+      isEmailVerified: c.get('isEmailVerified'),
       userId: c.get('userId'),
     }),
   );

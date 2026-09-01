@@ -131,6 +131,11 @@ class _LoginViewState extends State<_LoginView> {
                         ? const SizedBox.square(dimension: 20, child: CircularProgressIndicator(strokeWidth: 2))
                         : Text(context.l10n.loginSignInButton),
                   ),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () => context.router.replacePath('/auth/register'),
+                    child: Text(context.l10n.loginCreateAccountButton),
+                  ),
                 ],
               ),
             ),

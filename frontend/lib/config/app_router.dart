@@ -6,6 +6,8 @@ import 'package:nook/domain/media/entities/media.dart';
 import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 import 'package:nook/presentation/auth/loading/auth_loading_page.dart';
 import 'package:nook/presentation/auth/login/login_page.dart';
+import 'package:nook/presentation/auth/registration/registration_page.dart';
+import 'package:nook/presentation/auth/verification/email_verification_page.dart';
 import 'package:nook/presentation/home/home_page.dart';
 import 'package:nook/presentation/media/media_detail_page.dart';
 
@@ -36,6 +38,8 @@ class AppRouter extends RootStackRouter {
       guards: [AuthRouteGuard(_watchIdentity, _watchOwnProfile)],
     ),
     AutoRoute(page: LoginRoute.page, path: '/auth/login', guards: [GuestRouteGuard(_watchIdentity)]),
+    AutoRoute(page: RegistrationRoute.page, path: '/auth/register', guards: [GuestRouteGuard(_watchIdentity)]),
+    AutoRoute(page: EmailVerificationRoute.page, path: '/auth/verify-email'),
     RedirectRoute(path: '*', redirectTo: '/'),
   ];
 }

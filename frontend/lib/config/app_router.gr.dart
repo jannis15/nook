@@ -59,6 +59,38 @@ class LoginRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [RegistrationPage]
+class RegistrationRoute extends PageRouteInfo<void> {
+  const RegistrationRoute({List<PageRouteInfo>? children})
+    : super(RegistrationRoute.name, initialChildren: children);
+
+  static const String name = 'RegistrationRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const RegistrationPage();
+    },
+  );
+}
+
+/// generated route for
+/// [EmailVerificationPage]
+class EmailVerificationRoute extends PageRouteInfo<void> {
+  const EmailVerificationRoute({List<PageRouteInfo>? children})
+    : super(EmailVerificationRoute.name, initialChildren: children);
+
+  static const String name = 'EmailVerificationRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const EmailVerificationPage();
+    },
+  );
+}
+
+/// generated route for
 /// [MediaDetailPage]
 class MediaDetailRoute extends PageRouteInfo<MediaDetailRouteArgs> {
   MediaDetailRoute({
