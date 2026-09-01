@@ -23,6 +23,7 @@ export const env = {
   gcpRegion: process.env.GCP_REGION,
   supabaseUrl: requiredEnv('SUPABASE_URL'),
   supabaseSecretKey: requiredEnv('SUPABASE_SECRET_KEY'),
+  isLocalSupabase: isLocalSupabaseUrl(requiredEnv('SUPABASE_URL')),
 };
 
 function optionalLogLevel(value: string): LevelWithSilent {
@@ -78,4 +79,13 @@ function optionalOrigins(value: string): string[] {
   }
 
   return origins;
+}
+
+function isLocalSupabaseUrl(value: string) {
+  try {
+    const hostname = new URL(value).hostname;
+    return hostname === 'localhost' || hostname === '127.0.0.1';
+  } catch {
+    return false;
+  }
 }

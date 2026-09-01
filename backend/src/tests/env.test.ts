@@ -55,6 +55,27 @@ describe('env port', () => {
   });
 });
 
+describe('env isLocalSupabase', () => {
+  afterEach(() => {
+    vi.resetModules();
+    process.env = { ...originalEnv };
+  });
+
+  it('identifies the local Supabase URL', async () => {
+    expect(
+      (await importEnv({ SUPABASE_URL: 'http://127.0.0.1:54321' }))
+        .isLocalSupabase,
+    ).toBe(true);
+  });
+
+  it('does not treat a hosted Supabase URL as local', async () => {
+    expect(
+      (await importEnv({ SUPABASE_URL: 'https://example.supabase.co' }))
+        .isLocalSupabase,
+    ).toBe(false);
+  });
+});
+
 async function importEnv(overrides: NodeJS.ProcessEnv) {
   vi.resetModules();
   process.env = {

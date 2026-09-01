@@ -11,3 +11,7 @@ export const profileSchema = z.object({
 export const profileResponseSchema = z.object({
   profile: profileSchema,
 });
+
+export const emailVerificationStatusResponseSchema = z.object({
+  is_email_verified: z.boolean(),
+});

@@ -6,6 +6,7 @@ import { registerGetMediaByIdRoute } from './routes/media/{id}/get.js';
 import { registerGetMediaStatusRoute } from './routes/media/{id}/status.js';
 import { registerGetMediaListRoute } from './routes/media/get.js';
 import { registerPostMediaRoute } from './routes/media/post.js';
+import { registerGetEmailVerificationStatusRoute } from './routes/profiles/me/email-verification/get.js';
 import { registerGetMeRoute } from './routes/profiles/me/get.js';
 import { registerPostProfileRoute } from './routes/profiles/post.js';
 
@@ -18,5 +19,6 @@ export function registerRoutes(app: App) {
   registerGetMediaByIdRoute(app);
   registerDeleteMediaByIdRoute(app);
   registerPostProfileRoute(app);
+  registerGetEmailVerificationStatusRoute(app);
   registerGetMeRoute(app);
 }

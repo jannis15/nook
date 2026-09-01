@@ -12,11 +12,14 @@ export const testUserId = '00000000-0000-0000-0000-000000000001';
 
 export const testRequireAuth = createMiddleware(async (c, next) => {
   c.set('accessToken', testAccessToken);
+  c.set('isEmailVerified', true);
   c.set('requestId', testRequestId);
   c.set('supabase', testSupabase);
   c.set('userId', testUserId);
   await next();
 });
+
+export const testRequireSession = testRequireAuth;
 
 export function createProfilesTestApp(
   registerRoute: (app: ProfilesTestApp) => void,

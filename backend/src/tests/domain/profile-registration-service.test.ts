@@ -6,8 +6,10 @@ const createUser = vi.hoisted(() => vi.fn());
 const deleteUser = vi.hoisted(() => vi.fn());
 const resend = vi.hoisted(() => vi.fn());
 const logger = vi.hoisted(() => ({ error: vi.fn(), info: vi.fn() }));
+const env = vi.hoisted(() => ({ isLocalSupabase: false }));
 
 vi.mock('../../lib/logger.js', () => ({ logger }));
+vi.mock('../../env.js', () => ({ env }));
 
 const { registerProfile } = await import(
   '../../domain/profile-registration-service.js'
@@ -39,6 +41,7 @@ describe('profile registration service', () => {
     resend.mockReset();
     logger.error.mockReset();
     logger.info.mockReset();
+    env.isLocalSupabase = false;
   });
 
   it('creates an unverified user and sends a verification email', async () => {
@@ -73,6 +76,23 @@ describe('profile registration service', () => {
       error: { code: 'conflict', message: 'Username is already taken' },
     });
     expect(createUser).not.toHaveBeenCalled();
+  });
+
+  it('auto-confirms a local registration without sending an email', async () => {
+    env.isLocalSupabase = true;
+    maybeSingle.mockResolvedValue({ data: null, error: null });
+    createUser.mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null,
+    });
+
+    await expect(
+      registerProfile(supabase, input, 'request-1'),
+    ).resolves.toEqual({ ok: true });
+    expect(createUser).toHaveBeenCalledWith(
+      expect.objectContaining({ email_confirm: true }),
+    );
+    expect(resend).not.toHaveBeenCalled();
   });
 
   it('returns an unknown error when Supabase rejects the password', async () => {

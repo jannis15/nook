@@ -1,4 +1,5 @@
 import type { Supabase } from '../lib/supabase.js';
+import { env } from '../env.js';
 import { logger } from '../lib/logger.js';
 
 type RegistrationErrorCode = 'conflict' | 'internal_server_error';
@@ -39,7 +40,7 @@ export async function registerProfile(
     const { data, error } = await supabase.auth.admin.createUser({
       email: input.email,
       password: input.password,
-      email_confirm: false,
+      email_confirm: env.isLocalSupabase,
       user_metadata: {
         username: input.username,
       },
@@ -56,14 +57,16 @@ export async function registerProfile(
       throw error ?? new Error('Supabase did not create a user');
     }
 
-    const { error: resendError } = await supabase.auth.resend({
-      type: 'signup',
-      email: input.email,
-    });
+    if (!env.isLocalSupabase) {
+      const { error: resendError } = await supabase.auth.resend({
+        type: 'signup',
+        email: input.email,
+      });
 
-    if (resendError) {
-      await supabase.auth.admin.deleteUser(data.user.id);
-      throw resendError;
+      if (resendError) {
+        await supabase.auth.admin.deleteUser(data.user.id);
+        throw resendError;
+      }
     }
 
     logger.info({ requestId, userId: data.user.id }, 'Profile registered');

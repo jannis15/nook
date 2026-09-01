@@ -6,11 +6,12 @@ import { createSupabaseAdminClient, type Supabase } from '../lib/supabase.js';
 
 export type AuthVariables = {
   accessToken: string;
+  isEmailVerified: boolean;
   supabase: Supabase;
   userId: string;
 };
 
-export const requireAuth = createMiddleware<{
+export const requireSession = createMiddleware<{
   Variables: AuthVariables & RequestVariables;
 }>(async (c, next) => {
   const authorization = c.req.header('authorization');
@@ -47,18 +48,8 @@ export const requireAuth = createMiddleware<{
       );
     }
 
-    if (!data.user.email_confirmed_at) {
-      logger.debug(
-        { path: new URL(c.req.url).pathname, requestId },
-        'Auth failed: email not verified',
-      );
-      return c.json(
-        apiError('email_not_verified', 'Email verification is required'),
-        403,
-      );
-    }
-
     userId = data.user.id;
+    c.set('isEmailVerified', data.user.email_confirmed_at !== null);
   } catch (error) {
     logger.error(
       { error, path: new URL(c.req.url).pathname, requestId },
@@ -77,4 +68,23 @@ export const requireAuth = createMiddleware<{
   logger.debug({ requestId, userId }, 'Auth succeeded');
 
   await next();
+});
+
+export const requireAuth = createMiddleware<{
+  Variables: AuthVariables & RequestVariables;
+}>(async (c, next) => {
+  await requireSession(c, async () => {
+    if (!c.get('isEmailVerified')) {
+      logger.debug(
+        { path: new URL(c.req.url).pathname, requestId: c.get('requestId') },
+        'Auth failed: email not verified',
+      );
+      return c.json(
+        apiError('email_not_verified', 'Email verification is required'),
+        403,
+      );
+    }
+
+    await next();
+  });
 });
