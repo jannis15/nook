@@ -32,7 +32,10 @@ export async function getOwnProfile(
 
 type UpdateUsernameResult =
   | { ok: true; profile: Profile }
-  | { ok: false; error: { code: 'conflict' | 'internal_server_error'; message: string } };
+  | {
+      ok: false;
+      error: { code: 'conflict' | 'internal_server_error'; message: string };
+    };
 
 /** Updates the authenticated user's username. */
 export async function updateOwnUsername(
@@ -51,7 +54,10 @@ export async function updateOwnUsername(
 
     if (error) {
       if (error.code === '23505') {
-        return { ok: false, error: { code: 'conflict', message: 'Username is already taken' } };
+        return {
+          ok: false,
+          error: { code: 'conflict', message: 'Username is already taken' },
+        };
       }
 
       throw error;
@@ -60,10 +66,16 @@ export async function updateOwnUsername(
     logger.info({ requestId, userId }, 'Profile username updated');
     return { ok: true, profile: data };
   } catch (error) {
-    logger.error({ error, requestId, userId }, 'Profile username update failed');
+    logger.error(
+      { error, requestId, userId },
+      'Profile username update failed',
+    );
     return {
       ok: false,
-      error: { code: 'internal_server_error', message: 'Username could not be updated' },
+      error: {
+        code: 'internal_server_error',
+        message: 'Username could not be updated',
+      },
     };
   }
 }

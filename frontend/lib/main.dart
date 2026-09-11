@@ -28,6 +28,7 @@ import 'package:nook/domain/media/use_cases/upload_media_use_case.dart';
 import 'package:nook/domain/media/use_cases/wait_for_media_status_use_case.dart';
 import 'package:nook/domain/profile/repositories/profile_repository.dart';
 import 'package:nook/domain/profile/use_cases/complete_username_use_case.dart';
+import 'package:nook/domain/profile/use_cases/refresh_own_profile_use_case.dart';
 import 'package:nook/domain/profile/use_cases/watch_own_profile_use_case.dart';
 import 'package:nook/presentation/l10n/app_localizations_context.dart';
 import 'package:nook/presentation/l10n/generated/app_localizations.dart';
@@ -62,6 +63,7 @@ Future<void> main() async {
         RepositoryProvider<WatchIdentityUseCase>.value(value: watchIdentity),
         RepositoryProvider<WatchOwnProfileUseCase>.value(value: watchOwnProfile),
         RepositoryProvider<CompleteUsernameUseCase>.value(value: CompleteUsernameUseCase(profileRepository)),
+        RepositoryProvider<RefreshOwnProfileUseCase>.value(value: RefreshOwnProfileUseCase(profileRepository)),
         RepositoryProvider<DeleteMediaUseCase>.value(value: DeleteMediaUseCase(mediaRepository)),
         RepositoryProvider<ListMediaUseCase>.value(value: ListMediaUseCase(mediaRepository)),
         RepositoryProvider<LoadMediaDetailUseCase>.value(value: LoadMediaDetailUseCase(mediaRepository)),

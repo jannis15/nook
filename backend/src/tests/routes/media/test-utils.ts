@@ -11,7 +11,7 @@ export const testRequestId = 'request-1';
 export const testSupabase = {
   storage: {
     from: () => ({
-      createSignedUrl: (storageKey: string) =>
+      createSignedUrl: (_storageKey: string) =>
         Promise.resolve({
           data: {
             signedUrl: testMediaUrl,

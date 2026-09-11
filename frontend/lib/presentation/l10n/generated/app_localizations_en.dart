@@ -12,6 +12,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Nook';
 
   @override
+  String get authLoadingErrorTitle => 'Could not load your profile';
+
+  @override
+  String get authLoadingErrorDescription =>
+      'Check your connection and try again.';
+
+  @override
+  String get authLoadingRetryButton => 'Try again';
+
+  @override
   String get emailVerificationTitle => 'Verify your email';
 
   @override

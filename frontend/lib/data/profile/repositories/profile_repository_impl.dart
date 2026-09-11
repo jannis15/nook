@@ -24,17 +24,20 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   final Dio _dio;
   final _ownProfile = BehaviorSubject<AppProfile?>.seeded(null);
+  final _ownProfileFailure = BehaviorSubject<ProfileFailure?>.seeded(null);
   late final StreamSubscription<AppIdentity> _authSubscription;
 
   @override
   ValueStream<AppProfile?> get ownProfile => _ownProfile.stream;
 
   @override
+  ValueStream<ProfileFailure?> get ownProfileFailure => _ownProfileFailure.stream;
+
+  @override
   Future<Result<Unit, ProfileFailure>> completeUsername(String username) async {
     try {
       await _dio.patch<Map<String, Object?>>('/profiles/me/username', data: {'username': username});
-      await _refreshOwnProfile();
-      return Success.unit();
+      return _refreshOwnProfile();
     } on DioException catch (error) {
       _logger.warning('Could not update the current profile username.', error, error.stackTrace);
       if (error.response?.statusCode == 409) {
@@ -55,20 +58,30 @@ class ProfileRepositoryImpl implements ProfileRepository {
   void _identityChanged(AppIdentity identity) {
     if (identity is AnonymousAppIdentity) {
       _ownProfile.add(null);
+      _ownProfileFailure.add(null);
       return;
     }
 
     _ownProfile.add(null);
+    _ownProfileFailure.add(null);
     unawaited(_refreshOwnProfile());
   }
 
-  Future<void> _refreshOwnProfile() async {
+  @override
+  Future<Result<Unit, ProfileFailure>> refreshOwnProfile() {
+    return _refreshOwnProfile();
+  }
+
+  Future<Result<Unit, ProfileFailure>> _refreshOwnProfile() async {
     final result = await _getOwnProfile();
     switch (result) {
       case Success(:final success):
         _ownProfile.add(success);
-      case Error():
-        break;
+        _ownProfileFailure.add(null);
+        return Success.unit();
+      case Error(:final error):
+        _ownProfileFailure.add(error);
+        return Error(error);
     }
   }
 
@@ -88,6 +101,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
         return const Error(UnauthenticatedProfileFailure());
       }
 
+      if (error.response?.statusCode == 404) {
+        return const Error(ProfileNotFoundProfileFailure());
+      }
+
       return const Error(UnknownProfileFailure());
     } catch (error, stackTrace) {
       _logger.severe('Could not load the current profile.', error, stackTrace);
@@ -99,5 +116,6 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<void> dispose() async {
     await _authSubscription.cancel();
     await _ownProfile.close();
+    await _ownProfileFailure.close();
   }
 }

@@ -1,4 +1,5 @@
 import 'package:nook/domain/profile/entities/app_profile.dart';
+import 'package:nook/domain/profile/entities/profile_failure.dart';
 import 'package:nook/domain/profile/repositories/profile_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -12,5 +13,10 @@ class WatchOwnProfileUseCase {
   /// Returns the current user's profile stream.
   ValueStream<AppProfile?> call() {
     return _profileRepository.ownProfile;
+  }
+
+  /// Returns the latest profile-loading failure.
+  ValueStream<ProfileFailure?> failures() {
+    return _profileRepository.ownProfileFailure;
   }
 }

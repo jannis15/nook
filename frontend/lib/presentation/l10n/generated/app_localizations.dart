@@ -100,6 +100,24 @@ abstract class AppLocalizations {
   /// **'Nook'**
   String get appTitle;
 
+  /// No description provided for @authLoadingErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load your profile'**
+  String get authLoadingErrorTitle;
+
+  /// No description provided for @authLoadingErrorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get authLoadingErrorDescription;
+
+  /// No description provided for @authLoadingRetryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get authLoadingRetryButton;
+
   /// No description provided for @emailVerificationTitle.
   ///
   /// In en, this message translates to:

@@ -8,7 +8,10 @@ import { profileResponseSchema } from '../types.js';
 
 const updateUsernameSchema = z
   .object({
-    username: z.string().trim().regex(/^[a-z0-9_]{3,30}$/),
+    username: z
+      .string()
+      .trim()
+      .regex(/^[a-z0-9_]{3,30}$/),
   })
   .strict();
 
@@ -52,7 +55,12 @@ const patchUsernameRoute = createRoute({
 export function registerPatchOwnUsernameRoute(app: App) {
   app.openapi(patchUsernameRoute, async (c) => {
     const body = c.req.valid('json');
-    const result = await updateOwnUsername(c.get('supabase'), c.get('userId'), body.username, c.get('requestId'));
+    const result = await updateOwnUsername(
+      c.get('supabase'),
+      c.get('userId'),
+      body.username,
+      c.get('requestId'),
+    );
 
     if (!result.ok) {
       return c.json(

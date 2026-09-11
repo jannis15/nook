@@ -1,6 +1,10 @@
 {
   "@@locale": "en",
   "appTitle": "Nook",
+  "@AUTH_LOADING_PAGE": {},
+  "authLoadingErrorTitle": "Could not load your profile",
+  "authLoadingErrorDescription": "Check your connection and try again.",
+  "authLoadingRetryButton": "Try again",
   "@EMAIL_VERIFICATION_PAGE": {},
   "emailVerificationTitle": "Verify your email",
   "emailVerificationDescription": "We sent you a verification email. Open the link in that email, then refresh this page.",

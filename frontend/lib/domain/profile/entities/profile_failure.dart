@@ -10,6 +10,12 @@ final class UnauthenticatedProfileFailure extends ProfileFailure {
   const UnauthenticatedProfileFailure();
 }
 
+/// The authenticated user does not have an application profile.
+final class ProfileNotFoundProfileFailure extends ProfileFailure {
+  /// Default constructor.
+  const ProfileNotFoundProfileFailure();
+}
+
 /// The supplied username is already in use.
 final class UsernameUnavailableProfileFailure extends ProfileFailure {
   /// Default constructor.

@@ -14,7 +14,7 @@ const profileRegistrationSchema = z
       .regex(/[a-z]/)
       .regex(/[A-Z]/)
       .regex(/\d/)
-      .regex(/[!@#$%^&*()_+\-=\[\]{}|;:,.?]/),
+      .regex(/[!@#$%^&*()_+\-=[\]{}|;:,.?]/),
     username: z
       .string()
       .trim()

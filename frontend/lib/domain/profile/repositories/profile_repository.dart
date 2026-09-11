@@ -8,6 +8,12 @@ abstract interface class ProfileRepository {
   /// The current user's profile, or `null` when unauthenticated.
   ValueStream<AppProfile?> get ownProfile;
 
+  /// The latest failure while loading the current user's profile.
+  ValueStream<ProfileFailure?> get ownProfileFailure;
+
   /// Sets the username for the authenticated user's profile.
   Future<Result<Unit, ProfileFailure>> completeUsername(String username);
+
+  /// Reloads the authenticated user's profile.
+  Future<Result<Unit, ProfileFailure>> refreshOwnProfile();
 }

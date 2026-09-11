@@ -8,8 +8,7 @@ class AppEnv {
     final missing = [
       if (!const bool.hasEnvironment('API_BASE_URL')) 'API_BASE_URL',
       if (!const bool.hasEnvironment('SUPABASE_URL')) 'SUPABASE_URL',
-      if (!const bool.hasEnvironment('SUPABASE_PUBLISHABLE_KEY'))
-        'SUPABASE_PUBLISHABLE_KEY',
+      if (!const bool.hasEnvironment('SUPABASE_PUBLISHABLE_KEY')) 'SUPABASE_PUBLISHABLE_KEY',
     ];
 
     if (missing.isNotEmpty) {
@@ -30,7 +29,5 @@ class AppEnv {
   }
 
   /// The Supabase publishable key supplied at build time.
-  static const supabasePublishableKey = String.fromEnvironment(
-    'SUPABASE_PUBLISHABLE_KEY',
-  );
+  static const supabasePublishableKey = String.fromEnvironment('SUPABASE_PUBLISHABLE_KEY');
 }

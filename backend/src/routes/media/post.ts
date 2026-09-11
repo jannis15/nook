@@ -4,7 +4,6 @@ import { initializeOwnMediaUpload } from '../../domain/media-upload-service.js';
 import { apiError, errorResponseSchema } from '../../lib/errors.js';
 import { openApiTags } from '../../lib/openapi-tags.js';
 import { requireAuth } from '../../middleware/auth.js';
-import { toMediaResponse } from './mapper.js';
 import { initializeMediaUploadResponseSchema } from './types.js';
 
 const postMediaRoute = createRoute({

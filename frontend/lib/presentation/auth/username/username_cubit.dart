@@ -55,7 +55,7 @@ class UsernameCubit extends Cubit<UsernameState> with BlocPresentationMixin<User
         switch (error) {
           case UsernameUnavailableProfileFailure():
             emitPresentation(const UsernameUnavailable());
-          case UnauthenticatedProfileFailure() || UnknownProfileFailure():
+          case ProfileNotFoundProfileFailure() || UnauthenticatedProfileFailure() || UnknownProfileFailure():
             emitPresentation(const UsernameCompletionFailed());
         }
     }
