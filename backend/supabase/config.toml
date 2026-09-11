@@ -30,7 +30,7 @@ enabled = true
 site_url = "https://nook-media.web.app"
 additional_redirect_urls = ["http://localhost:3000", "http://127.0.0.1:3000", "https://nook-media.web.app"]
 jwt_expiry = 3600
-enable_signup = false
+enable_signup = true
 
 [auth.email]
 enable_signup = true
