@@ -166,8 +166,11 @@ class MediaRepositoryImpl implements MediaRepository {
   }
 
   static String? _errorMessage(Object? responseBody) {
-    if (responseBody case final Map<String, Object?> body) {
-      return ErrorResponseDto.fromJson(body).message;
+    if (responseBody case final Map<String, dynamic> body) {
+      final responseError = body['error'];
+      if (responseError is Map<String, dynamic>) {
+        return ErrorResponseDto.fromJson(responseError).message;
+      }
     }
 
     return null;

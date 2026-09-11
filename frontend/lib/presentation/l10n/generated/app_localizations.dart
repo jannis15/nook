@@ -352,6 +352,12 @@ abstract class AppLocalizations {
   /// **'Enter a valid email address.'**
   String get registrationEmailInvalidError;
 
+  /// No description provided for @registrationEmailAlreadyRegisteredError.
+  ///
+  /// In en, this message translates to:
+  /// **'An account already exists for this email address.'**
+  String get registrationEmailAlreadyRegisteredError;
+
   /// No description provided for @registrationPasswordLabel.
   ///
   /// In en, this message translates to:

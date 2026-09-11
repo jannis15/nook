@@ -10,6 +10,7 @@ extension RegistrationPresentationEventLocalizations on RegistrationPresentation
   String localized(AppLocalizations l10n) {
     return switch (this) {
       EmailVerificationRequired() => l10n.emailVerificationDescription,
+      RegistrationEmailAlreadyRegistered() => l10n.registrationEmailAlreadyRegisteredError,
       RegistrationUsernameUnavailable() => l10n.registrationUsernameUnavailableError,
       RegistrationSubmissionFailed() => l10n.registrationSubmissionFailedError,
     };

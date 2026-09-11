@@ -42,11 +42,18 @@ class RegistrationRepositoryImpl implements RegistrationRepository {
       return const UnknownRegistrationFailure();
     }
 
-    if (responseBody case final Map<String, Object?> body) {
-      final message = ErrorResponseDto.fromJson(body).message;
-      if (message == 'Username is already taken') {
-        return const UsernameUnavailableRegistrationFailure();
+    if (responseBody case final Map<String, dynamic> body) {
+      final responseError = body['error'];
+      if (responseError is! Map<String, dynamic>) {
+        return const UnknownRegistrationFailure();
       }
+
+      final message = ErrorResponseDto.fromJson(responseError).message;
+      return switch (message) {
+        'Email is already registered' => const EmailAlreadyRegisteredRegistrationFailure(),
+        'Username is already taken' => const UsernameUnavailableRegistrationFailure(),
+        _ => const UnknownRegistrationFailure(),
+      };
     }
 
     return const UnknownRegistrationFailure();

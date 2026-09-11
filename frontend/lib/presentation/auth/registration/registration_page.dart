@@ -32,7 +32,9 @@ class RegistrationPage extends StatelessWidget {
             case EmailVerificationRequired():
               TextInput.finishAutofillContext();
               unawaited(context.router.replacePath(AppEnv.isLocalSupabase ? '/auth/login' : '/auth/verify-email'));
-            case RegistrationUsernameUnavailable() || RegistrationSubmissionFailed():
+            case RegistrationEmailAlreadyRegistered() ||
+                RegistrationUsernameUnavailable() ||
+                RegistrationSubmissionFailed():
               showAppNotification(context, event.localized(context.l10n), type: AppNotificationType.error);
           }
         },

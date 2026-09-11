@@ -10,6 +10,12 @@ final class UsernameUnavailableRegistrationFailure extends RegistrationFailure {
   const UsernameUnavailableRegistrationFailure();
 }
 
+/// The supplied email address is already registered.
+final class EmailAlreadyRegisteredRegistrationFailure extends RegistrationFailure {
+  /// Default constructor.
+  const EmailAlreadyRegisteredRegistrationFailure();
+}
+
 /// An unexpected registration failure.
 final class UnknownRegistrationFailure extends RegistrationFailure {
   /// Default constructor.

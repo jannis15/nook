@@ -98,6 +98,8 @@ class RegistrationCubit extends Cubit<RegistrationState>
         switch (error) {
           case UsernameUnavailableRegistrationFailure():
             emitPresentation(const RegistrationUsernameUnavailable());
+          case EmailAlreadyRegisteredRegistrationFailure():
+            emitPresentation(const RegistrationEmailAlreadyRegistered());
           case UnknownRegistrationFailure():
             emitPresentation(const RegistrationSubmissionFailed());
         }

@@ -48,6 +48,7 @@
   "registrationEmailLabel": "Email",
   "registrationEmailRequiredError": "Enter your email.",
   "registrationEmailInvalidError": "Enter a valid email address.",
+  "registrationEmailAlreadyRegisteredError": "An account already exists for this email address.",
   "registrationPasswordLabel": "Password",
   "registrationPasswordRequiredError": "Enter a password.",
   "registrationPasswordTooShortError": "Use at least 12 characters.",

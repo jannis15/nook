@@ -149,6 +149,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registrationEmailInvalidError => 'Enter a valid email address.';
 
   @override
+  String get registrationEmailAlreadyRegisteredError =>
+      'An account already exists for this email address.';
+
+  @override
   String get registrationPasswordLabel => 'Password';
 
   @override
