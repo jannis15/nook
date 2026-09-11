@@ -92,7 +92,7 @@ class RegistrationCubit extends Cubit<RegistrationState>
     switch (result) {
       case Success():
         emit(_stateWith(isSubmitting: false));
-        emitPresentation(const EmailVerificationRequired());
+        emitPresentation(const RegistrationCompleted());
       case Error(:final error):
         emit(_stateWith(isSubmitting: false));
         switch (error) {

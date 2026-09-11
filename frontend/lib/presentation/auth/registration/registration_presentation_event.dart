@@ -4,10 +4,10 @@ sealed class RegistrationPresentationEvent {
   const RegistrationPresentationEvent();
 }
 
-/// Registration completed and email verification is required.
-final class EmailVerificationRequired extends RegistrationPresentationEvent {
+/// Registration completed and the user must verify their email address.
+final class RegistrationCompleted extends RegistrationPresentationEvent {
   /// Default constructor.
-  const EmailVerificationRequired();
+  const RegistrationCompleted();
 }
 
 /// The submitted username is already in use.

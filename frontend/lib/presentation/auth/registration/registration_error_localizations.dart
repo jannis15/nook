@@ -9,7 +9,7 @@ extension RegistrationPresentationEventLocalizations on RegistrationPresentation
   /// Returns the localised text for this event.
   String localized(AppLocalizations l10n) {
     return switch (this) {
-      EmailVerificationRequired() => l10n.emailVerificationDescription,
+      RegistrationCompleted() => l10n.registrationVerificationEmailSent,
       RegistrationEmailAlreadyRegistered() => l10n.registrationEmailAlreadyRegisteredError,
       RegistrationUsernameUnavailable() => l10n.registrationUsernameUnavailableError,
       RegistrationSubmissionFailed() => l10n.registrationSubmissionFailedError,

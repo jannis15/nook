@@ -418,6 +418,12 @@ abstract class AppLocalizations {
   /// **'Could not create your account. Try again.'**
   String get registrationSubmissionFailedError;
 
+  /// No description provided for @registrationVerificationEmailSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your email address, then sign in.'**
+  String get registrationVerificationEmailSent;
+
   /// No description provided for @registrationCreateAccountButton.
   ///
   /// In en, this message translates to:

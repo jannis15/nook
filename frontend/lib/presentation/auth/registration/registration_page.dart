@@ -5,7 +5,6 @@ import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:nook/config/app_env.dart';
 import 'package:nook/domain/auth/use_cases/register_use_case.dart';
 import 'package:nook/presentation/auth/login/widgets/tanuki_button_icon.dart';
 import 'package:nook/presentation/auth/registration/registration_cubit.dart';
@@ -29,9 +28,10 @@ class RegistrationPage extends StatelessWidget {
       child: BlocPresentationListener<RegistrationCubit, RegistrationPresentationEvent>(
         listener: (context, event) {
           switch (event) {
-            case EmailVerificationRequired():
+            case RegistrationCompleted():
               TextInput.finishAutofillContext();
-              unawaited(context.router.replacePath(AppEnv.isLocalSupabase ? '/auth/login' : '/auth/verify-email'));
+              showAppNotification(context, event.localized(context.l10n), type: AppNotificationType.info);
+              unawaited(context.router.replacePath('/auth/login'));
             case RegistrationEmailAlreadyRegistered() ||
                 RegistrationUsernameUnavailable() ||
                 RegistrationSubmissionFailed():

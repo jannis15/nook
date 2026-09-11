@@ -59,6 +59,7 @@
   "registrationShowPasswordButton": "Show password",
   "registrationHidePasswordButton": "Hide password",
   "registrationSubmissionFailedError": "Could not create your account. Try again.",
+  "registrationVerificationEmailSent": "Verify your email address, then sign in.",
   "registrationCreateAccountButton": "Create account",
   "registrationSignInButton": "Already have an account? Sign in",
   "homeLogoutButton": "Sign out",

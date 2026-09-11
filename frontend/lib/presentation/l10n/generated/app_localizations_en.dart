@@ -187,6 +187,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not create your account. Try again.';
 
   @override
+  String get registrationVerificationEmailSent =>
+      'Verify your email address, then sign in.';
+
+  @override
   String get registrationCreateAccountButton => 'Create account';
 
   @override
